@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="150dp"
+    android:layout_height="280dp"
+    android:id="@+id/person_card_view"
+    app:cardCornerRadius="15dp"
+    android:elevation="10dp"
+    >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="180dp">
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/profilePersonView"
+                android:scaleType="centerCrop"
+                android:src="@drawable/place_holder"
+                ></ImageView>
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|start"
+                android:layout_margin="4dp"
+                android:background="@drawable/favourite_button"
+                android:src="@drawable/favourite"></ImageButton>
+        </FrameLayout>
+        <TextView
+            android:paddingVertical="15dp"
+            android:paddingHorizontal="20dp"
+            android:textSize="16dp"
+            android:textStyle="bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/personNameTextView"
+            ></TextView>
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>
