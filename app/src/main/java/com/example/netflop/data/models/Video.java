@@ -1,8 +1,13 @@
 package com.example.netflop.data.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import androidx.annotation.NonNull;
+
 import com.google.gson.annotations.SerializedName;
 
-public class Video{
+public class Video implements Parcelable {
     @SerializedName("iso_639_1")
     private String iso639_1;
 
@@ -33,6 +38,32 @@ public class Video{
         this.publishedAt = publishedAt;
         this.id = id;
     }
+
+    protected Video(Parcel in) {
+        iso639_1 = in.readString();
+        iso3166_1 = in.readString();
+        name = in.readString();
+        key = in.readString();
+        site = in.readString();
+        size = in.readInt();
+        type = in.readString();
+        byte tmpOfficial = in.readByte();
+        official = tmpOfficial == 0 ? null : tmpOfficial == 1;
+        publishedAt = in.readString();
+        id = in.readString();
+    }
+
+    public static final Creator<Video> CREATOR = new Creator<Video>() {
+        @Override
+        public Video createFromParcel(Parcel in) {
+            return new Video(in);
+        }
+
+        @Override
+        public Video[] newArray(int size) {
+            return new Video[size];
+        }
+    };
 
     public String getIso639_1() {
         return iso639_1;
@@ -72,5 +103,24 @@ public class Video{
 
     public String getId() {
         return id;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(@NonNull Parcel parcel, int i) {
+        parcel.writeString(iso639_1);
+        parcel.writeString(iso3166_1);
+        parcel.writeString(name);
+        parcel.writeString(key);
+        parcel.writeString(site);
+        parcel.writeInt(size);
+        parcel.writeString(type);
+        parcel.writeByte((byte) (official == null ? 0 : official ? 1 : 2));
+        parcel.writeString(publishedAt);
+        parcel.writeString(id);
     }
 }

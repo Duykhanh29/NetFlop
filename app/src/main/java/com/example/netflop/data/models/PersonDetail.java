@@ -10,9 +10,9 @@ public class PersonDetail {
     private List<String> alsoKnownAs;
     private String biography;
     private String birthday;
-    private Object deathday;
+    private String deathday;
     private int gender;
-    private Object homepage;
+    private String homepage;
     private int id;
     private String imdbID;
     @SerializedName("known_for_department")
@@ -24,7 +24,7 @@ public class PersonDetail {
     @SerializedName("profile_path")
     private String profilePath;
 
-    public PersonDetail(Boolean adult, List<String> alsoKnownAs, String biography, String birthday, Object deathday, int gender, Object homepage, int id, String imdbID, String knownForDepartment, String name, String placeOfBirth, Double popularity, String profilePath) {
+    public PersonDetail(Boolean adult, List<String> alsoKnownAs, String biography, String birthday, String deathday, int gender, String homepage, int id, String imdbID, String knownForDepartment, String name, String placeOfBirth, Double popularity, String profilePath) {
         this.adult = adult;
         this.alsoKnownAs = alsoKnownAs;
         this.biography = biography;
@@ -60,7 +60,7 @@ public class PersonDetail {
         return birthday;
     }
 
-    public Object getDeathday() {
+    public String getDeathday() {
         return deathday;
     }
 
@@ -68,7 +68,7 @@ public class PersonDetail {
         return gender;
     }
 
-    public Object getHomepage() {
+    public String getHomepage() {
         return homepage;
     }
 

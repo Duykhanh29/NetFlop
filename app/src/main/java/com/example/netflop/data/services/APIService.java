@@ -35,6 +35,9 @@ public interface APIService {
     @GET("movie/now_playing")
     Call<NowPlayingResponse> getNowPlaying();
 
+    @GET("movie/now_playing")
+    Call<NowPlayingResponse> getNowPlaying(@Query("page") int page);
+
     @GET("movie/popular")
     Call<PopularResponse> getPopular();
 

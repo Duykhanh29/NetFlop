@@ -4,10 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.movie_detail.AllTrailersActivity">
-    <androidx.recyclerview.widget.RecyclerView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/allTrailerRecyclerView"
-        ></androidx.recyclerview.widget.RecyclerView>
+    tools:context=".ui.home.AllTrendingPeopleActivity">
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -2,7 +2,7 @@ package com.example.netflop.data.models;
 
 import com.google.gson.annotations.SerializedName;
 
-class Profile{
+public class Profile{
     @SerializedName("aspect_ratio")
     private Double aspectRatio;
     private int height;

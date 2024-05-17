@@ -32,8 +32,9 @@ import com.example.netflop.ui.adapters.ListMovieAdapter;
 import com.example.netflop.ui.adapters.ListPersonAdapter;
 import com.example.netflop.ui.adapters.SecondListMovieAdapter;
 import com.example.netflop.ui.movie_detail.MovieDetailActivity;
+import com.example.netflop.ui.person_detail.PersonDetailActivity;
 import com.example.netflop.utils.ItemTouchHelperAdapter;
-import com.example.netflop.utils.VerticalSpacingItemDecorator;
+import com.example.netflop.utils.SpacingItemDecorator;
 import com.example.netflop.viewmodel.NowPlayingViewModel;
 import com.example.netflop.viewmodel.PopularMovieViewModel;
 import com.example.netflop.viewmodel.TopRatedViewModel;
@@ -72,20 +73,16 @@ public class HomeFragment extends Fragment implements ItemTouchHelperAdapter {
 
     RecyclerView playingNowRecyclerView,popularMovieRecyclerView,topRatedRecyclerView,trendingMovieRecyclerView,trendingPeopleRecyclerView,upcomingRecyclerView;
     TextView topRated,upcoming,trendingMovie,trendingPeople,nowPlaying,popularMovie;
-    TextView textView;
 
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        HomeViewModel homeViewModel =
-                new ViewModelProvider(this).get(HomeViewModel.class);
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
         binding();
         init();
         callAPIs();
         observeChanges();
-        homeViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
         return root;
     }
 
@@ -94,7 +91,6 @@ public class HomeFragment extends Fragment implements ItemTouchHelperAdapter {
         super.onCreate(savedInstanceState);
     }
     private void binding(){
-        textView=binding.textHome;
         playingNowRecyclerView=binding.recyclerViewPlayingNow;
         trendingMovieRecyclerView=binding.recyclerViewTrendingMovie;
         popularMovieRecyclerView=binding.recyclerViewPopularMovie;
@@ -143,7 +139,7 @@ public class HomeFragment extends Fragment implements ItemTouchHelperAdapter {
         upcomingRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
 
         // decoration
-        VerticalSpacingItemDecorator itemDecorator = new VerticalSpacingItemDecorator(10,10);
+        SpacingItemDecorator itemDecorator = new SpacingItemDecorator(10,10);
         //
         playingNowRecyclerView.addItemDecoration(itemDecorator);
         popularMovieRecyclerView.addItemDecoration(itemDecorator);
@@ -357,6 +353,9 @@ public class HomeFragment extends Fragment implements ItemTouchHelperAdapter {
     @Override
     public void onPersonClick(Person p) {
         selectedPerson=p;
+        Intent intent=new Intent(getActivity(), PersonDetailActivity.class);
+        intent.putExtra(StringConstants.personDetailDataKey,selectedPerson.getID());
+        startActivity(intent);
     }
 
     @Override

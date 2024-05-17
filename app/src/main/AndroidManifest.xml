@@ -16,6 +16,28 @@
         android:theme="@style/Theme.NetFlop"
         tools:targetApi="31">
         <activity
+            android:name=".ui.home.AllPlayingNowActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.home.AllUpcomingActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.home.AllTopRatedMovieActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.home.AllTrendingPeopleActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.home.AllPopularMovieActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.home.AllTrendingMovieActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.person_detail.PersonDetailActivity"
+            android:exported="false"
+            />
+        <activity
             android:name=".ui.movie_detail.YoutubePlayerActivity"
             android:exported="false" />
         <activity

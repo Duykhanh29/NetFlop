@@ -9,7 +9,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.text.SpannableString;
+import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.widget.ImageButton;
@@ -36,20 +38,19 @@ import com.example.netflop.data.models.SpokenLanguage;
 import com.example.netflop.data.models.Video;
 import com.example.netflop.data.responses.RecommendationMovieResponse;
 import com.example.netflop.data.responses.ReviewResponse;
-import com.example.netflop.databinding.ActivityMainBinding;
 import com.example.netflop.databinding.ActivityMovieDetailBinding;
 import com.example.netflop.helpers.CustomTextView;
 import com.example.netflop.ui.adapters.ListCastAdapter;
 import com.example.netflop.ui.adapters.ListMovieAdapter;
 import com.example.netflop.ui.adapters.ListReviewAdapter;
 import com.example.netflop.ui.adapters.ListTrailerAdapter;
+import com.example.netflop.ui.person_detail.PersonDetailActivity;
 import com.example.netflop.utils.ClickableSpanHandler;
 import com.example.netflop.utils.ItemTouchHelperAdapter;
 import com.example.netflop.utils.OnClickListener;
 import com.example.netflop.utils.OnTrailerClickListener;
-import com.example.netflop.utils.VerticalSpacingItemDecorator;
+import com.example.netflop.utils.SpacingItemDecorator;
 import com.example.netflop.viewmodel.MovieViewModel;
-import com.example.netflop.viewmodel.UpcomingViewModel;
 import com.google.android.flexbox.FlexboxLayout;
 
 import java.util.ArrayList;
@@ -176,8 +177,8 @@ public class MovieDetailActivity extends AppCompatActivity implements ItemTouchH
         trailerRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 //        reviewRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         // decoration
-        VerticalSpacingItemDecorator itemDecorator = new VerticalSpacingItemDecorator(10,10);
-        VerticalSpacingItemDecorator itemDecorator1 = new VerticalSpacingItemDecorator(10,5);
+        SpacingItemDecorator itemDecorator = new SpacingItemDecorator(10,10);
+        SpacingItemDecorator itemDecorator1 = new SpacingItemDecorator(10,5);
         //
         castRecyclerView.addItemDecoration(itemDecorator);
         crewRecyclerView.addItemDecoration(itemDecorator);
@@ -250,11 +251,21 @@ public class MovieDetailActivity extends AppCompatActivity implements ItemTouchH
                 SpannableString spannableString = ClickableSpanHandler.createClickableSpan(seeMoreTrailers.getText().toString(), new OnClickListener() {
                     @Override
                     public void onClick() {
-                        // nav to all trailers of movie
-                        navToAllTrailerActivity();
+//                        List<Video> listVideo=movieVideosData.getResults();
+//                        // nav to all trailers of movie
+//                        navToAllTrailerActivity(listVideo);
+                        Log.d("TAG1","wth");
                     }
                 });
                 seeMoreTrailers.setText(spannableString);
+                seeMoreTrailers.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        List<Video> listVideo=movieVideosData.getResults();
+                        // nav to all trailers of movie
+                        navToAllTrailerActivity(listVideo);
+                    }
+                });
             }else{
                 trailers=movieVideosData.getResults();
                 listTrailerAdapter=new ListTrailerAdapter(trailers,this,this);
@@ -407,7 +418,9 @@ public class MovieDetailActivity extends AppCompatActivity implements ItemTouchH
     @Override
     public void onCastClick(Cast cast) {
         selectedCast=cast;
-        // do sth
+        Intent intent=new Intent(this, PersonDetailActivity.class);
+        intent.putExtra(StringConstants.personDetailDataKey,selectedCast.getID());
+        startActivity(intent);
     }
 
     @Override
@@ -417,9 +430,9 @@ public class MovieDetailActivity extends AppCompatActivity implements ItemTouchH
         intent.putExtra(StringConstants.youtubeURLKey,selectedTrailer.getKey());
         startActivity(intent);
     }
-    private void navToAllTrailerActivity(){
+    private void navToAllTrailerActivity(List<Video> listVideo){
         Intent intent=new Intent(MovieDetailActivity.this,AllTrailersActivity.class);
-        intent.putExtra(StringConstants.movieIDDataKey,movieDetailData.getId());
+        intent.putParcelableArrayListExtra(StringConstants.listVideoKey, (ArrayList<? extends Parcelable>) listVideo);
         startActivity(intent);
     }
 }
