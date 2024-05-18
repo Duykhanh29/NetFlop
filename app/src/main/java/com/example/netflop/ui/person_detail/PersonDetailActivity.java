@@ -1,5 +1,6 @@
 package com.example.netflop.ui.person_detail;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
@@ -8,10 +9,16 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.denzcoskun.imageslider.ImageSlider;
 import com.denzcoskun.imageslider.constants.ScaleTypes;
@@ -28,6 +35,7 @@ import com.example.netflop.data.models.PersonImages;
 import com.example.netflop.data.models.Profile;
 import com.example.netflop.databinding.ActivityPersonDetailBinding;
 import com.example.netflop.ui.adapters.ListMovieCastAdapter;
+import com.example.netflop.ui.movie_detail.MovieDetailActivity;
 import com.example.netflop.utils.ItemMovieCastListener;
 import com.example.netflop.utils.SpacingItemDecorator;
 import com.example.netflop.viewmodel.PersonViewModel;
@@ -62,7 +70,7 @@ public class PersonDetailActivity extends AppCompatActivity implements ItemMovie
     TextView knownForDepartmentTV,popularityTV,birthdayTV,deadDayTV,genderTV,placeOfBirthTV,biographyTV,homePagePersonTV;
     ImageSlider imageSlider;
     ListView asKnownAsListView;
-
+    TextView isCrewHavingTV,isCastHavingTV;
 
 
 
@@ -92,13 +100,23 @@ public class PersonDetailActivity extends AppCompatActivity implements ItemMovie
         homePagePersonTV=binding.homePagePersonView;
         imageSlider=binding.imageSliderPersonDetail;
         asKnownAsListView=binding.alsoKnownAsView;
+        isCrewHavingTV=binding.isHavingCrewView;
+        isCastHavingTV=binding.isHavingCastView;
     }
     private void getData(){
         Intent intent=getIntent();
         personID=intent.getIntExtra(StringConstants.personDetailDataKey,-1);
     }
     private void initialize(){
-        toolbar=new Toolbar(this);
+        setSupportActionBar(toolbar);
+        toolbar.setNavigationIcon(R.drawable.black_arrow_back);
+        toolbar.setNavigationContentDescription("Back");
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
         personViewModel= new ViewModelProvider(this).get(PersonViewModel.class);
         castList=new ArrayList<>();
         crewList=new ArrayList<>();
@@ -114,7 +132,7 @@ public class PersonDetailActivity extends AppCompatActivity implements ItemMovie
         );
         castRecyclerView.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false));
         crewRecyclerView.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false));
-        SpacingItemDecorator itemDecorator=new SpacingItemDecorator(20,0);
+        SpacingItemDecorator itemDecorator=new SpacingItemDecorator(0,20);
         castRecyclerView.addItemDecoration(itemDecorator);
         crewRecyclerView.addItemDecoration(itemDecorator);
         asKnownAsListView.setAdapter(adapter);
@@ -201,11 +219,15 @@ public class PersonDetailActivity extends AppCompatActivity implements ItemMovie
                 castList=combinedCredit.getCast();
                 castAdapter=new ListMovieCastAdapter(castList,this,this);
                 castRecyclerView.setAdapter(castAdapter);
+            }else{
+                isCastHavingTV.setVisibility(View.VISIBLE);
             }
             if(combinedCredit.getCrew()!=null&&!combinedCredit.getCrew().isEmpty()){
                 crewList=combinedCredit.getCrew();
                 crewAdapter=new ListMovieCastAdapter(crewList,this,this);
                 crewRecyclerView.setAdapter(crewAdapter);
+            }else{
+                isCrewHavingTV.setVisibility(View.VISIBLE);
             }
         }
     }
@@ -228,5 +250,28 @@ public class PersonDetailActivity extends AppCompatActivity implements ItemMovie
     public void onMovieCastClick(MovieCast movieCast) {
         selectedMovieCast=movieCast;
         // do sth
+        if(selectedMovieCast.getMediaType()=="movie"){
+            Intent intent=new Intent(this, MovieDetailActivity.class);
+            intent.putExtra(StringConstants.movieDetailPageDataKey,selectedMovieCast.getId());
+            startActivity(intent);
+        }else{
+
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.person_detail_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int itemID= item.getItemId();
+        if(itemID==R.id.addFavouritePersonMenu){
+            Toast.makeText(this, "You clicked about", Toast.LENGTH_SHORT).show();
+        }
+        return true;
     }
 }

@@ -8,13 +8,16 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 
+import com.example.netflop.constants.StringConstants;
 import com.example.netflop.data.models.Cast;
 import com.example.netflop.data.models.Movie;
 import com.example.netflop.data.models.Person;
 import com.example.netflop.databinding.ActivityAllPlayingNowBinding;
 import com.example.netflop.ui.adapters.GridMoviesAdapter;
+import com.example.netflop.ui.movie_detail.MovieDetailActivity;
 import com.example.netflop.utils.ItemTouchHelperAdapter;
 import com.example.netflop.utils.SpacingItemDecorator;
 import com.example.netflop.viewmodel.NowPlayingViewModel;
@@ -28,6 +31,8 @@ public class AllPlayingNowActivity extends AppCompatActivity implements ItemTouc
     GridMoviesAdapter gridMoviesAdapter;
     List<Movie> listMovie;
     NowPlayingViewModel nowPlayingViewModel;
+
+    Movie selectedMovie;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,24 +74,27 @@ public class AllPlayingNowActivity extends AppCompatActivity implements ItemTouc
                 if (gridLayoutManager != null && gridLayoutManager.findLastCompletelyVisibleItemPosition() == gridMoviesAdapter.getItemCount() - 1) {
                     // Gọi phương thức để tải trang tiếp theo
                     nowPlayingViewModel.loadNextPage();
-                    observeDataChange();
+//                    observeDataChange();
                 }
             }
         });
 
     }
     private void updateRecyclerView(){
-        gridMoviesAdapter=new GridMoviesAdapter(listMovie,this,this);
-        allPlayingNowRecyclerView.setAdapter(gridMoviesAdapter);
+//        gridMoviesAdapter=new GridMoviesAdapter(listMovie,this,this);
+//        gridMoviesAdapter.notifyDataSetChanged();
+//        allPlayingNowRecyclerView.setAdapter(gridMoviesAdapter);
     }
     private void observeDataChange(){
         nowPlayingViewModel.getListMovieData().observe(this, new Observer<List<Movie>>() {
             @Override
             public void onChanged(List<Movie> movies) {
                 if(movies!=null&&!movies.isEmpty()){
-                    listMovie.clear();
-                    listMovie=movies;
-                    updateRecyclerView();
+//                    listMovie=movies;
+//                    updateRecyclerView();
+                    listMovie.clear();  // Clear the list to ensure no duplicates if needed
+                    listMovie.addAll(movies);
+                    gridMoviesAdapter.notifyDataSetChanged();
                 }
             }
         });
@@ -94,7 +102,10 @@ public class AllPlayingNowActivity extends AppCompatActivity implements ItemTouc
 
     @Override
     public void onMovieClick(Movie movie) {
-
+        selectedMovie=movie;
+        Intent intent=new Intent(this, MovieDetailActivity.class);
+        intent.putExtra(StringConstants.movieDetailPageDataKey,selectedMovie.getID());
+        startActivity(intent);
     }
 
     @Override

@@ -16,55 +16,66 @@
         android:paddingBottom="10dp"
         android:paddingTop="5dp"
         >
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/HeadingTextStyle"
-            android:paddingBottom="10dp"
-            android:id="@+id/listTrendingMovieID"></TextView>
-        <androidx.recyclerview.widget.RecyclerView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/recyclerViewTrendingMovie"
-            android:orientation="horizontal"
-            ></androidx.recyclerview.widget.RecyclerView>
 
-        <TextView
+
+        <!--      Now playing  -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            style="@style/HeadingTextStyle"
-            android:paddingBottom="10dp"
-            android:paddingTop="15dp"
-            android:id="@+id/listNowPlayingID"></TextView>
+            android:orientation="horizontal"
+            android:layout_marginRight="10dp"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/HeadingTextStyle"
+                android:paddingBottom="10dp"
+                android:paddingTop="15dp"
+                android:id="@+id/listNowPlayingID"></TextView>
+            <View
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                ></View>
+            <TextView
+                android:id="@+id/seeMoreNowPlayingMovie"
+                style="@style/NormalTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="See more"></TextView>
+        </LinearLayout>
         <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/recyclerViewPlayingNow"
             android:orientation="horizontal"
             ></androidx.recyclerview.widget.RecyclerView>
-
-
-        <TextView
+<!--      TopRated  -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            style="@style/HeadingTextStyle"
-            android:paddingBottom="10dp"
-            android:paddingTop="15dp"
-            android:id="@+id/listPopularMovieID"></TextView>
-        <androidx.recyclerview.widget.RecyclerView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/recyclerViewPopularMovie"
             android:orientation="horizontal"
-            ></androidx.recyclerview.widget.RecyclerView>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/HeadingTextStyle"
-            android:paddingBottom="10dp"
-            android:paddingTop="15dp"
-            android:id="@+id/listTopRatedMovieID"></TextView>
+            android:layout_marginRight="10dp"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/HeadingTextStyle"
+                android:paddingBottom="10dp"
+                android:paddingTop="15dp"
+                android:id="@+id/listTopRatedMovieID"></TextView>
+            <View
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                ></View>
+            <TextView
+                android:id="@+id/seeMoreTopRatedMovie"
+                style="@style/NormalTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="See more"></TextView>
+        </LinearLayout>
         <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -72,13 +83,103 @@
             android:orientation="horizontal"
             ></androidx.recyclerview.widget.RecyclerView>
 
-        <TextView
+
+        <!--      Trending movie  -->
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            style="@style/HeadingTextStyle"
-            android:paddingBottom="10dp"
-            android:paddingTop="15dp"
-            android:id="@+id/listUpcomingID"></TextView>
+            android:orientation="horizontal"
+            android:layout_marginRight="10dp"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/HeadingTextStyle"
+                android:paddingBottom="10dp"
+                android:id="@+id/listTrendingMovieID"></TextView>
+            <View
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                ></View>
+            <TextView
+                android:id="@+id/seeMoreTrendingMovie"
+                style="@style/NormalTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="See more"></TextView>
+        </LinearLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/recyclerViewTrendingMovie"
+            android:orientation="horizontal"
+            ></androidx.recyclerview.widget.RecyclerView>
+
+
+<!--        popular movie-->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginRight="10dp"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/HeadingTextStyle"
+                android:paddingBottom="10dp"
+                android:paddingTop="15dp"
+                android:id="@+id/listPopularMovieID"></TextView>
+            <View
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                ></View>
+            <TextView
+                android:id="@+id/seeMorePopularMovie"
+                style="@style/NormalTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="See more"></TextView>
+        </LinearLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/recyclerViewPopularMovie"
+            android:orientation="horizontal"
+            ></androidx.recyclerview.widget.RecyclerView>
+
+
+        <!--        upcoming-->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginRight="10dp"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/HeadingTextStyle"
+                android:paddingBottom="10dp"
+                android:paddingTop="15dp"
+                android:id="@+id/listUpcomingID"></TextView>
+            <View
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                ></View>
+            <TextView
+                android:id="@+id/seeMoreUpcomingMovie"
+                style="@style/NormalTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="See more"></TextView>
+        </LinearLayout>
         <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -86,13 +187,33 @@
             android:orientation="horizontal"
             ></androidx.recyclerview.widget.RecyclerView>
 
-        <TextView
+<!--        trending people-->
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            style="@style/HeadingTextStyle"
-            android:paddingBottom="10dp"
-            android:paddingTop="15dp"
-            android:id="@+id/listTrendingPeopleID"></TextView>
+            android:orientation="horizontal"
+            android:layout_marginRight="10dp"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/HeadingTextStyle"
+                android:paddingBottom="10dp"
+                android:paddingTop="15dp"
+                android:id="@+id/listTrendingPeopleID"></TextView>
+            <View
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                ></View>
+            <TextView
+                android:id="@+id/seeMoreTrendingPeople"
+                style="@style/NormalTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="See more"></TextView>
+        </LinearLayout>
         <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

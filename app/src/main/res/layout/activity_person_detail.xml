@@ -5,37 +5,44 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.person_detail.PersonDetailActivity">
+
     <androidx.appcompat.widget.Toolbar
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         app:layout_constraintTop_toTopOf="parent"
         android:id="@+id/toolBarView"
+        android:elevation="4dp"
+        app:titleTextColor="@color/black"
+        android:background="@color/teal_100"
+        app:menu="@menu/person_detail_menu"
+        android:gravity="center_vertical"
         >
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
-            <View
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                ></View>
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:gravity="start|center_vertical"
-                android:layout_weight="6"
-                android:ellipsize="marquee"
-                style="@style/HeadingTextStyle"
-                android:id="@+id/personNameView"
-                ></TextView>
-            <View
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                ></View>
-        </LinearLayout>
+        >
+<!--        <LinearLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:orientation="horizontal"-->
+<!--            android:gravity="center_vertical">-->
+<!--            <View-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:layout_weight="1"-->
+<!--                ></View>-->
+<!--            <TextView-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:gravity="start|center_vertical"-->
+<!--                android:layout_weight="6"-->
+<!--                android:ellipsize="marquee"-->
+<!--                style="@style/HeadingTextStyle"-->
+<!--                android:id="@+id/personNameView"-->
+<!--                ></TextView>-->
+<!--            <View-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:layout_weight="1"-->
+<!--                ></View>-->
+<!--        </LinearLayout>-->
     </androidx.appcompat.widget.Toolbar>
     <ScrollView
         android:layout_width="match_parent"
@@ -225,8 +232,18 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/castMovieRecyclerView"
                 android:paddingHorizontal="20dp"
-                android:layout_marginTop="5dp"
+                android:paddingVertical="10dp"
                 ></androidx.recyclerview.widget.RecyclerView>
+            <TextView
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:gravity="center"
+                android:text="No data"
+                android:id="@+id/isHavingCastView"
+                android:visibility="invisible"
+                android:layout_marginBottom="10dp"
+                ></TextView>
 
 <!--         crew   -->
 
@@ -244,10 +261,19 @@
                 android:id="@+id/crewMovieRecyclerView"
                 android:layout_marginBottom="10dp"
                 android:paddingHorizontal="20dp"
-                android:layout_marginTop="5dp"
+                android:paddingVertical="10dp"
                 ></androidx.recyclerview.widget.RecyclerView>
 
-
+            <TextView
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:gravity="center"
+                android:text="No data"
+                android:id="@+id/isHavingCrewView"
+                android:visibility="invisible"
+                android:layout_marginBottom="10dp"
+                ></TextView>
         </LinearLayout>
     </ScrollView>
 

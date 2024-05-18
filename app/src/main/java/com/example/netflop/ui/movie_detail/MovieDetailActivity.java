@@ -49,6 +49,7 @@ import com.example.netflop.utils.ClickableSpanHandler;
 import com.example.netflop.utils.ItemTouchHelperAdapter;
 import com.example.netflop.utils.OnClickListener;
 import com.example.netflop.utils.OnTrailerClickListener;
+import com.example.netflop.utils.SeeMoreOnClickListener;
 import com.example.netflop.utils.SpacingItemDecorator;
 import com.example.netflop.viewmodel.MovieViewModel;
 import com.google.android.flexbox.FlexboxLayout;
@@ -148,7 +149,7 @@ public class MovieDetailActivity extends AppCompatActivity implements ItemTouchH
     }
     private void getData(){
         Intent intent=getIntent();
-        movieID=intent.getIntExtra(StringConstants.movieDetailDataKey,-1);
+        movieID=intent.getIntExtra(StringConstants.movieDetailPageDataKey,-1);
     }
     private void initialize(){
         movieViewModel= new ViewModelProvider(this).get(MovieViewModel.class);
@@ -248,24 +249,12 @@ public class MovieDetailActivity extends AppCompatActivity implements ItemTouchH
                 listTrailerAdapter=new ListTrailerAdapter(trailers,this,this);
                 trailerRecyclerView.setAdapter(listTrailerAdapter);
                 seeMoreTrailers.setVisibility(View.VISIBLE);
-                SpannableString spannableString = ClickableSpanHandler.createClickableSpan(seeMoreTrailers.getText().toString(), new OnClickListener() {
-                    @Override
-                    public void onClick() {
-//                        List<Video> listVideo=movieVideosData.getResults();
-//                        // nav to all trailers of movie
-//                        navToAllTrailerActivity(listVideo);
-                        Log.d("TAG1","wth");
-                    }
+                SeeMoreOnClickListener.getSeeMoreOnClick(seeMoreTrailers,() -> {
+                    List<Video> listVideo=movieVideosData.getResults();
+                    // nav to all trailers of movie
+                    navToAllTrailerActivity(listVideo);
                 });
-                seeMoreTrailers.setText(spannableString);
-                seeMoreTrailers.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        List<Video> listVideo=movieVideosData.getResults();
-                        // nav to all trailers of movie
-                        navToAllTrailerActivity(listVideo);
-                    }
-                });
+
             }else{
                 trailers=movieVideosData.getResults();
                 listTrailerAdapter=new ListTrailerAdapter(trailers,this,this);

@@ -40,12 +40,20 @@ public interface APIService {
 
     @GET("movie/popular")
     Call<PopularResponse> getPopular();
+    @GET("movie/popular")
+    Call<PopularResponse> getPopular(@Query("page") int page);
 
     @GET("movie/top_rated")
     Call<TopRatedResponse> getTopRated();
 
+    @GET("movie/top_rated")
+    Call<TopRatedResponse> getTopRated(@Query("page") int page);
+
     @GET("movie/upcoming")
     Call<UpcomingResponse> getUpcoming();
+
+    @GET("movie/upcoming")
+    Call<UpcomingResponse> getUpcoming(@Query("page") int page);
 
     @GET("movie/{movie_id}")
     Call<MovieDetail> getMovieByID(@Path("movie_id") int id);
@@ -68,6 +76,9 @@ public interface APIService {
 
     @GET("person/popular")
     Call<PopularPeopleResponse> getPopularPeople();
+
+    @GET("person/popular")
+    Call<PopularPeopleResponse> getPopularPeople(@Path("movie_id") int id);
 
     @GET("person/{person_id}")
     Call<PersonDetail> getPersonDetail(@Path("person_id") int id);
@@ -96,8 +107,14 @@ public interface APIService {
     @GET("trending/movie/day")
     Call<TrendingMovieResponse> getTrendingMovies();
 
+    @GET("trending/movie/day")
+    Call<TrendingMovieResponse> getTrendingMovies(@Query("page") int page);
+
     @GET("trending/person/day")
     Call<TrendingPeopleResponse> getTrendingPeople();
+
+    @GET("trending/person/day")
+    Call<TrendingPeopleResponse> getTrendingPeople(@Query("page") int page);
 
     @GET("genre/movie/list")
     Call<List<Genre>> getGenreMovieList();

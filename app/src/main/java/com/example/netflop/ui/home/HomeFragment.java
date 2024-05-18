@@ -2,6 +2,7 @@ package com.example.netflop.ui.home;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.SpannableString;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +22,7 @@ import com.example.netflop.constants.StringConstants;
 import com.example.netflop.data.models.Cast;
 import com.example.netflop.data.models.Movie;
 import com.example.netflop.data.models.Person;
+import com.example.netflop.data.models.Video;
 import com.example.netflop.data.responses.NowPlayingResponse;
 import com.example.netflop.data.responses.PopularResponse;
 import com.example.netflop.data.responses.TopRatedResponse;
@@ -33,7 +35,10 @@ import com.example.netflop.ui.adapters.ListPersonAdapter;
 import com.example.netflop.ui.adapters.SecondListMovieAdapter;
 import com.example.netflop.ui.movie_detail.MovieDetailActivity;
 import com.example.netflop.ui.person_detail.PersonDetailActivity;
+import com.example.netflop.utils.ClickableSpanHandler;
 import com.example.netflop.utils.ItemTouchHelperAdapter;
+import com.example.netflop.utils.OnClickListener;
+import com.example.netflop.utils.SeeMoreOnClickListener;
 import com.example.netflop.utils.SpacingItemDecorator;
 import com.example.netflop.viewmodel.NowPlayingViewModel;
 import com.example.netflop.viewmodel.PopularMovieViewModel;
@@ -73,6 +78,7 @@ public class HomeFragment extends Fragment implements ItemTouchHelperAdapter {
 
     RecyclerView playingNowRecyclerView,popularMovieRecyclerView,topRatedRecyclerView,trendingMovieRecyclerView,trendingPeopleRecyclerView,upcomingRecyclerView;
     TextView topRated,upcoming,trendingMovie,trendingPeople,nowPlaying,popularMovie;
+    TextView seeMoreTrendingMovie,seeMorePopularMovie,seeMoreUpcoming,seeMoreNowPlayingMovie,seeMoreTrendingPeople,seeMoreTopRatedMovie;
 
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -83,6 +89,7 @@ public class HomeFragment extends Fragment implements ItemTouchHelperAdapter {
         init();
         callAPIs();
         observeChanges();
+        seeMoreListeners();
         return root;
     }
 
@@ -105,6 +112,14 @@ public class HomeFragment extends Fragment implements ItemTouchHelperAdapter {
         popularMovie=binding.listPopularMovieID;
         upcoming=binding.listUpcomingID;
         trendingPeople=binding.listTrendingPeopleID;
+
+        // see more
+        seeMoreTrendingMovie=binding.seeMoreTrendingMovie;
+        seeMoreNowPlayingMovie=binding.seeMoreNowPlayingMovie;
+        seeMorePopularMovie=binding.seeMorePopularMovie;
+        seeMoreTopRatedMovie=binding.seeMoreTopRatedMovie;
+        seeMoreTrendingPeople=binding.seeMoreTrendingPeople;
+        seeMoreUpcoming=binding.seeMoreUpcomingMovie;
     }
     private void init(){
         initializeDataUI();
@@ -112,6 +127,38 @@ public class HomeFragment extends Fragment implements ItemTouchHelperAdapter {
         initializeListData();
         initializeAdapter();
         initializeRecyclerView();
+    }
+    private void seeMoreListeners(){
+        // trending movie
+        SeeMoreOnClickListener.getSeeMoreOnClick(seeMoreTrendingMovie,() -> {
+            Intent intent=new Intent(getActivity(), AllTrendingMovieActivity.class);
+            startActivity(intent);
+        });
+        // trending people
+        SeeMoreOnClickListener.getSeeMoreOnClick(seeMoreTrendingPeople,() -> {
+            Intent intent=new Intent(getActivity(), AllTrendingPeopleActivity.class);
+            startActivity(intent);
+        });
+        // upcoming
+        SeeMoreOnClickListener.getSeeMoreOnClick(seeMoreUpcoming,() -> {
+            Intent intent=new Intent(getActivity(), AllUpcomingActivity.class);
+            startActivity(intent);
+        });
+        // popular movie
+        SeeMoreOnClickListener.getSeeMoreOnClick(seeMorePopularMovie,() -> {
+            Intent intent=new Intent(getActivity(), AllPopularMovieActivity.class);
+            startActivity(intent);
+        });
+        // top rated
+        SeeMoreOnClickListener.getSeeMoreOnClick(seeMoreTopRatedMovie,() -> {
+            Intent intent=new Intent(getActivity(), AllTopRatedMovieActivity.class);
+            startActivity(intent);
+        });
+        // now playing
+        SeeMoreOnClickListener.getSeeMoreOnClick(seeMoreNowPlayingMovie,() -> {
+            Intent intent=new Intent(getActivity(), AllPlayingNowActivity.class);
+            startActivity(intent);
+        });
     }
     private void initializeDataUI(){
         nowPlaying.setText("Now playing");
@@ -127,7 +174,7 @@ public class HomeFragment extends Fragment implements ItemTouchHelperAdapter {
         trendingMovieAdapter= new ListMovieAdapter(listTrendingMovie,requireContext(), R.layout.single_movie_card,this);
         upcomingAdapter= new SecondListMovieAdapter(listUpcomingMovie,requireContext(), R.layout.a_movie_card,this);
         topRatedAdapter= new SecondListMovieAdapter(listTopRatedMovie,requireContext(), R.layout.a_movie_card,this);
-        trendingPersonAdapter=new ListPersonAdapter(listTrendingPeople,requireContext(),R.layout.single_person_card);
+        trendingPersonAdapter=new ListPersonAdapter(listTrendingPeople,requireContext(),R.layout.single_person_card,this);
     }
 
     private void initializeRecyclerView(){
@@ -139,7 +186,7 @@ public class HomeFragment extends Fragment implements ItemTouchHelperAdapter {
         upcomingRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
 
         // decoration
-        SpacingItemDecorator itemDecorator = new SpacingItemDecorator(10,10);
+        SpacingItemDecorator itemDecorator = new SpacingItemDecorator(10,25);
         //
         playingNowRecyclerView.addItemDecoration(itemDecorator);
         popularMovieRecyclerView.addItemDecoration(itemDecorator);
@@ -187,7 +234,7 @@ public class HomeFragment extends Fragment implements ItemTouchHelperAdapter {
         trendingMovieRecyclerView.setAdapter(trendingMovieAdapter);
     }
     private void updateTrendingPeople(){
-        trendingPersonAdapter=new ListPersonAdapter(listTrendingPeople,requireContext(),R.layout.single_person_card);
+        trendingPersonAdapter=new ListPersonAdapter(listTrendingPeople,requireContext(),R.layout.single_person_card,this);
         trendingPeopleRecyclerView.setAdapter(trendingPersonAdapter);
     }
     private void updateTopRated(){
@@ -346,7 +393,7 @@ public class HomeFragment extends Fragment implements ItemTouchHelperAdapter {
     public void onMovieClick(Movie movie) {
         selectedMovie=movie;
         Intent intent=new Intent(getActivity(), MovieDetailActivity.class);
-        intent.putExtra(StringConstants.movieDetailDataKey,selectedMovie.getID());
+        intent.putExtra(StringConstants.movieDetailPageDataKey,selectedMovie.getID());
         startActivity(intent);
     }
 

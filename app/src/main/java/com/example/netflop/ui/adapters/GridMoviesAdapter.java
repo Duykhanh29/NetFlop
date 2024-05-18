@@ -59,7 +59,7 @@ public class GridMoviesAdapter extends RecyclerView.Adapter<GridMoviesAdapter.Vi
 
     @Override
     public int getItemCount() {
-        return 0;
+        return listMovie.size();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder{

@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="300dp"
-    android:layout_height="210dp"
+    android:layout_width="260dp"
+    android:layout_height="180dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/a_movie_card_view"
     app:cardCornerRadius="15dp"
     android:elevation="10dp"
+    android:background="@drawable/card_view_border"
     >
     <LinearLayout
         android:layout_width="match_parent"
@@ -13,7 +14,7 @@
         android:orientation="vertical">
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="140dp">
+            android:layout_height="130dp">
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -27,25 +28,27 @@
                 android:layout_gravity="top|start"
                 android:src="@drawable/add"
                 android:layout_margin="1dp"></ImageButton>
+            <LinearLayout
+                android:layout_gravity="top|end"
+                android:paddingHorizontal="15dp"
+                android:paddingVertical="1dp"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical|end"
+                android:orientation="horizontal">
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/star"></ImageView>
+                <TextView
+                    android:paddingLeft="15dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/voteRatedText"
+                    android:textSize="14dp"
+                    ></TextView>
+            </LinearLayout>
         </FrameLayout>
-        <LinearLayout
-            android:paddingHorizontal="15dp"
-            android:paddingVertical="1dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/star"></ImageView>
-            <TextView
-                android:paddingLeft="15dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/voteRatedText"
-                android:textSize="14dp"
-                ></TextView>
-        </LinearLayout>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -55,9 +58,9 @@
             android:textSize="16dp"
             android:textColor="@color/black"
             android:paddingHorizontal="20dp"
-            android:paddingVertical="1dp"
+            android:paddingTop="5dp"
+            android:paddingBottom="10dp"
             android:id="@+id/movieTitleText"
             ></TextView>
-
     </LinearLayout>
 </androidx.cardview.widget.CardView>

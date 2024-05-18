@@ -36,11 +36,11 @@ public class NowPlayingViewModel extends ViewModel {
         return listMovieData;
     }
     public void loadNextPage() {
-        if (!isLoading) {
-            isLoading = true;
+//        if (!isLoading) {
+//            isLoading = true;
             currentPage++;
             callAPI();
-        }
+//        }
     }
     public void callAPI(){
         APIService apiService= APIClient.getRetrofitInstance(URLConstants.baseURL).create(APIService.class);
@@ -49,16 +49,21 @@ public class NowPlayingViewModel extends ViewModel {
             @Override
             public void onResponse(Call<NowPlayingResponse> call, Response<NowPlayingResponse> response) {
                 if(response.code()==200){
-                    nowPlayingData.postValue(response.body());
-//                    if(nowPlayingData.getValue().getResults()!=null){
-//                        listMovie=nowPlayingData.getValue().getResults();
-//                        List<Movie> currentMovie=listMovieData.getValue();
-//                        if(currentMovie!=null){
-//                            currentMovie.addAll(listMovie);
-//                            listMovieData.postValue(currentMovie);
-//                            listMovie.clear();
-//                        }
-//                    }
+                    NowPlayingResponse nowPlayingResponse = response.body();
+                    if (nowPlayingResponse != null) {
+                        nowPlayingData.postValue(nowPlayingResponse);
+                        List<Movie> results = nowPlayingResponse.getResults();
+                        if (results != null) {
+                            List<Movie> currentMovies = listMovieData.getValue();
+                            if (currentMovies == null) {
+                                currentMovies = new ArrayList<>();
+                            }
+                            currentMovies.addAll(results);
+                            listMovieData.postValue(currentMovies);
+                        }
+                    } else {
+                        Log.e("TAG", "Response body is null");
+                    }
                 }else{
                     Log.e("TAG","An error has occurred "+response.code()+": "+response.errorBody());
                 }
