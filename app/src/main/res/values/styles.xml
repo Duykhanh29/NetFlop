@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
+<!--    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">-->
+<!--        &lt;!&ndash; Đảm bảo không có các tính năng không được hỗ trợ &ndash;&gt;-->
+<!--        <item name="windowActionBar">true</item>-->
+<!--        <item name="windowNoTitle">true</item>-->
+<!--        &lt;!&ndash; Các cài đặt khác &ndash;&gt;-->
+<!--    </style>-->
+
     <style name="HeadingTextStyle">
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">#FF000000</item>

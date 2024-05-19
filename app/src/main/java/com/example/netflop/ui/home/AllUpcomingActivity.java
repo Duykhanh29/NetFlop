@@ -1,6 +1,8 @@
 package com.example.netflop.ui.home;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -8,7 +10,12 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
+import android.view.MenuItem;
 
 import com.example.netflop.R;
 import com.example.netflop.constants.StringConstants;
@@ -19,6 +26,7 @@ import com.example.netflop.databinding.ActivityAllTrendingMovieBinding;
 import com.example.netflop.databinding.ActivityAllUpcomingBinding;
 import com.example.netflop.ui.adapters.GridMoviesAdapter;
 import com.example.netflop.ui.movie_detail.MovieDetailActivity;
+import com.example.netflop.utils.CustomActionBar;
 import com.example.netflop.utils.ItemTouchHelperAdapter;
 import com.example.netflop.utils.SpacingItemDecorator;
 import com.example.netflop.viewmodel.TrendingMovieViewModel;
@@ -39,6 +47,7 @@ public class AllUpcomingActivity extends AppCompatActivity implements ItemTouchH
     UpcomingViewModel upcomingViewModel;
     // UI
     RecyclerView allUpcomingMovieRecyclerView;
+    ActionBar actionBar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,6 +64,13 @@ public class AllUpcomingActivity extends AppCompatActivity implements ItemTouchH
         allUpcomingMovieRecyclerView=binding.allUpcomingMovieRecyclerView;
     }
     private void initialize(){
+        actionBar=getSupportActionBar();
+//        CustomActionBar.createActionBar(actionBar,"Upcoming movie");
+        SpannableString spannableTitle = new SpannableString("Upcoming movie");
+        spannableTitle.setSpan(new ForegroundColorSpan(Color.BLACK), 0, spannableTitle.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+        actionBar.setTitle(spannableTitle);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setHomeAsUpIndicator(R.drawable.black_arrow_back);
         upcomingViewModel=new ViewModelProvider(this).get(UpcomingViewModel.class);
         listMovie=new ArrayList<>();
         gridMoviesAdapter=new GridMoviesAdapter(listMovie,this,this);
@@ -62,6 +78,14 @@ public class AllUpcomingActivity extends AppCompatActivity implements ItemTouchH
         SpacingItemDecorator itemDecorator=new SpacingItemDecorator(30,20);
         allUpcomingMovieRecyclerView.addItemDecoration(itemDecorator);
         allUpcomingMovieRecyclerView.setAdapter(gridMoviesAdapter);
+        getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if(isEnabled()){
+                    finish();
+                }
+            }
+        });
     }
     private void callAPI(){
         upcomingViewModel.callAPI();
@@ -99,6 +123,14 @@ public class AllUpcomingActivity extends AppCompatActivity implements ItemTouchH
             }
         });
 
+    }
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int itemID=item.getItemId();
+        if(itemID==android.R.id.home){
+            finish();
+        }
+        return  true;
     }
 
     @Override

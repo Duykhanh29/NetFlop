@@ -1,5 +1,6 @@
 package com.example.netflop.ui.person_detail;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -85,6 +86,14 @@ public class PersonDetailActivity extends AppCompatActivity implements ItemMovie
         initialize();
         callAPIs();
         observeDataChange();
+        getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if(isEnabled()){
+                    finish();
+                }
+            }
+        });
     }
     private void getBinding(){
         castRecyclerView=binding.castMovieRecyclerView;
@@ -175,6 +184,11 @@ public class PersonDetailActivity extends AppCompatActivity implements ItemMovie
         }
         birthdayTV.setText(personDetailData.getBirthday());
         popularityTV.setText(personDetailData.getPopularity()+"");
+        if(personDetailData.getHomepage()!=null){
+            //            personDetailData.setAutoLinkMask(Linkify.WEB_URLS);   // enable autoLink
+        }else{
+            homePagePersonTV.setAutoLinkMask(0); // disable autoLink
+        }
         homePagePersonTV.setText(personDetailData.getHomepage()!=null ?personDetailData.getHomepage():"null" );
         biographyTV.setText(personDetailData.getBiography());
         placeOfBirthTV.setText(personDetailData.getPlaceOfBirth());

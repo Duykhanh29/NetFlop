@@ -1,5 +1,6 @@
 package com.example.netflop.ui.movie_detail;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -11,6 +12,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.text.SpannableString;
+import android.text.util.Linkify;
 import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.View;
@@ -115,6 +117,14 @@ public class MovieDetailActivity extends AppCompatActivity implements ItemTouchH
         initialize();
         callAPIs();
         observerDataChanged();
+        getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if(isEnabled()){
+                    finish();
+                }
+            }
+        });
     }
     private void binding(){
         imageSlider=binding.imageSliderMovieDetail;
@@ -288,7 +298,12 @@ public class MovieDetailActivity extends AppCompatActivity implements ItemTouchH
         popularityTextView.setText(movieDetailData.getPopularity()+"");
         tagLineTextView.setText(movieDetailData.getTagline());
         budgetTextView.setText(movieDetailData.getBudget()+"");
-        homePageTextView.setText(movieDetailData.getHomepage());
+        if(movieDetailData.getHomepage()==null){
+            homePageTextView.setAutoLinkMask(0); // disable autoLink
+        }else{
+//            homePageTextView.setAutoLinkMask(Linkify.WEB_URLS);   // enable autoLink
+        }
+        homePageTextView.setText(movieDetailData.getHomepage()!=null ?movieDetailData.getHomepage() :"null");
         revenueTextView.setText(movieDetailData.getRevenue()+"");
 
         for (Genre genre:movieDetailData.getGenres()) {

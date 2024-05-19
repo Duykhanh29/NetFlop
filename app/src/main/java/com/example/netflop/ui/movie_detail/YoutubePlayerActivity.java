@@ -1,5 +1,6 @@
 package com.example.netflop.ui.movie_detail;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -32,6 +33,14 @@ public class YoutubePlayerActivity extends AppCompatActivity {
             public void onReady(@NonNull YouTubePlayer youTubePlayer) {
                 super.onReady(youTubePlayer);
                 youTubePlayer.loadVideo(videoID,0);
+            }
+        });
+        getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if(isEnabled()){
+                    finish();
+                }
             }
         });
     }

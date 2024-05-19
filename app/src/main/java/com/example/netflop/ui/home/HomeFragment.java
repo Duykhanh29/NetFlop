@@ -389,6 +389,7 @@ public class HomeFragment extends Fragment implements ItemTouchHelperAdapter {
         binding = null;
     }
 
+
     @Override
     public void onMovieClick(Movie movie) {
         selectedMovie=movie;

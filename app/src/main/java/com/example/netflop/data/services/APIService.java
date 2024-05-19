@@ -16,6 +16,7 @@ import com.example.netflop.data.responses.PopularResponse;
 import com.example.netflop.data.responses.RecommendationMovieResponse;
 import com.example.netflop.data.responses.ReviewResponse;
 import com.example.netflop.data.responses.SearchMovieResponse;
+import com.example.netflop.data.responses.SearchMultiResponse;
 import com.example.netflop.data.responses.SearchPersonResponse;
 import com.example.netflop.data.responses.TopRatedResponse;
 import com.example.netflop.data.responses.TrendingMovieResponse;
@@ -103,6 +104,14 @@ public interface APIService {
                                                @Query("include_adult") boolean includeAdult,
 //                                               @Query("language") String language,
                                                @Query("page") int page);
+
+    @GET("search/multi")
+    Call<SearchMultiResponse> getSearchMultiSource(
+            @Query("query") String query,
+            @Query("include_adult") boolean includeAdult,
+//                                               @Query("language") String language,
+            @Query("page") int page
+    );
 
     @GET("trending/movie/day")
     Call<TrendingMovieResponse> getTrendingMovies();

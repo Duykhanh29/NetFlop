@@ -1,5 +1,6 @@
 package com.example.netflop.ui.movie_detail;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -33,6 +34,14 @@ public class AllTrailersActivity extends AppCompatActivity  {
         setBinding();
         initialize();
         getData();
+        getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if(isEnabled()){
+                    finish();
+                }
+            }
+        });
 
     }
     private void getData(){
