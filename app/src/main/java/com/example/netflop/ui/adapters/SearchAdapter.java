@@ -31,6 +31,12 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
         this.context = context;
         this.searchItemOnClickListener = searchItemOnClickListener;
     }
+    public void clearData() {
+        if (listSearch != null) {
+            listSearch.clear();
+            notifyDataSetChanged();
+        }
+    }
 
     @NonNull
     @Override
@@ -45,10 +51,18 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
         holder.typeTV.setText(searchMultiModel.getMediaType());
         String imageURL= URLConstants.imageURL;
         if(searchMultiModel.getMediaType()=="movie"){
-            holder.nameTV.setText(searchMultiModel.getTitle());
+            if(searchMultiModel.getTitle()!=null&&searchMultiModel.getTitle()!=""){
+                holder.nameTV.setText(searchMultiModel.getTitle());
+            }else{
+                holder.nameTV.setText(searchMultiModel.getOriginalTitle());
+            }
             imageURL+=searchMultiModel.getPosterPath();
         }else if(searchMultiModel.getMediaType()=="person"){
-            holder.nameTV.setText(searchMultiModel.getName());
+            if(searchMultiModel.getName()!=null&&searchMultiModel.getName()!=""){
+                holder.nameTV.setText(searchMultiModel.getName());
+            }else{
+                holder.nameTV.setText(searchMultiModel.getOriginalName());
+            }
             imageURL+=searchMultiModel.getProfilePath();
         }else{
             holder.nameTV.setText(searchMultiModel.getName());
@@ -58,11 +72,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(searchMultiModel.getMediaType()=="movie"){
-                }else if(searchMultiModel.getMediaType()=="person"){
-                }else{
-
-                }
+              searchItemOnClickListener.onClick(searchMultiModel);
             }
         });
     }

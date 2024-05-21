@@ -16,6 +16,11 @@
         android:theme="@style/Theme.NetFlop"
         tools:targetApi="31">
         <activity
+            android:name=".ui.search.FilterActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
+            />
+        <activity
             android:name=".ui.home.AllPlayingNowActivity"
             android:exported="false" />
         <activity
@@ -36,8 +41,7 @@
         <activity
             android:name=".ui.person_detail.PersonDetailActivity"
             android:exported="false"
-            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
-            />
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar" />
         <activity
             android:name=".ui.movie_detail.YoutubePlayerActivity"
             android:exported="false" />
@@ -47,8 +51,7 @@
         <activity
             android:name=".ui.movie_detail.MovieDetailActivity"
             android:exported="false"
-            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
-            />
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar" />
         <activity
             android:name=".MainActivity"
             android:exported="true"

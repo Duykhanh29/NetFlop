@@ -56,9 +56,12 @@ public class SearchMultiViewModel extends ViewModel {
                         searchMultiData.postValue(searchMultiResponse);
                         List<SearchMultiModel> results = searchMultiResponse.getResults();
                         if (results != null) {
-                            List<SearchMultiModel> currentMovies = listSearchMulti.getValue();
-                            if (currentMovies == null) {
-                                currentMovies = new ArrayList<>();
+                            List<SearchMultiModel> currentMovies =new ArrayList<>();
+                            if(currentPage!=1){
+                                currentMovies= listSearchMulti.getValue();
+                                if (currentMovies == null) {
+                                    currentMovies = new ArrayList<>();
+                                }
                             }
                             currentMovies.addAll(results);
                             listSearchMulti.postValue(currentMovies);
@@ -77,5 +80,11 @@ public class SearchMultiViewModel extends ViewModel {
                 listSearchMulti.postValue(null);
             }
         });
+    }
+    public void resetData() {
+        list.clear();
+        listSearchMulti.postValue(new ArrayList<>());
+        searchMultiData.postValue(null);
+        currentPage = 1;
     }
 }
