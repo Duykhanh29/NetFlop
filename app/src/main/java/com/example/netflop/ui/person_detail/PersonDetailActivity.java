@@ -43,6 +43,7 @@ import com.example.netflop.viewmodel.PersonViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class PersonDetailActivity extends AppCompatActivity implements ItemMovieCastListener {
     ActivityPersonDetailBinding binding;
@@ -264,7 +265,7 @@ public class PersonDetailActivity extends AppCompatActivity implements ItemMovie
     public void onMovieCastClick(MovieCast movieCast) {
         selectedMovieCast=movieCast;
         // do sth
-        if(selectedMovieCast.getMediaType()=="movie"){
+        if(Objects.equals(selectedMovieCast.getMediaType(), "movie")){
             Intent intent=new Intent(this, MovieDetailActivity.class);
             intent.putExtra(StringConstants.movieDetailPageDataKey,selectedMovieCast.getId());
             startActivity(intent);

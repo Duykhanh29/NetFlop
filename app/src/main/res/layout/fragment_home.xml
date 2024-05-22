@@ -50,6 +50,16 @@
             android:id="@+id/recyclerViewPlayingNow"
             android:orientation="horizontal"
             ></androidx.recyclerview.widget.RecyclerView>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/recyclerViewPlayingNowShimmer"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            ></androidx.recyclerview.widget.RecyclerView>
+
+
 <!--      TopRated  -->
         <LinearLayout
             android:layout_width="match_parent"
@@ -83,6 +93,13 @@
             android:orientation="horizontal"
             ></androidx.recyclerview.widget.RecyclerView>
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/recyclerViewTopRatedMovieShimmer"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            ></androidx.recyclerview.widget.RecyclerView>
 
         <!--      Trending movie  -->
 
@@ -117,6 +134,13 @@
             android:orientation="horizontal"
             ></androidx.recyclerview.widget.RecyclerView>
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/recyclerViewTrendingMovieShimmer"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            ></androidx.recyclerview.widget.RecyclerView>
 
 <!--        popular movie-->
 
@@ -152,6 +176,13 @@
             android:orientation="horizontal"
             ></androidx.recyclerview.widget.RecyclerView>
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/recyclerViewPopularMovieShimmer"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            ></androidx.recyclerview.widget.RecyclerView>
 
         <!--        upcoming-->
 
@@ -187,6 +218,14 @@
             android:orientation="horizontal"
             ></androidx.recyclerview.widget.RecyclerView>
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/recyclerViewUpcomingMovieShimmer"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            ></androidx.recyclerview.widget.RecyclerView>
+
 <!--        trending people-->
 
         <LinearLayout
@@ -219,6 +258,14 @@
             android:layout_height="wrap_content"
             android:id="@+id/recyclerViewTrendingPeople"
             android:orientation="horizontal"
+            ></androidx.recyclerview.widget.RecyclerView>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/recyclerViewTrendingPeopleShimmer"
+            android:orientation="horizontal"
+            android:visibility="gone"
             ></androidx.recyclerview.widget.RecyclerView>
     </LinearLayout>
 </ScrollView>

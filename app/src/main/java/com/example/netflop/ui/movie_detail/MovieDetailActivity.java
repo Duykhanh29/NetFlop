@@ -125,6 +125,7 @@ public class MovieDetailActivity extends AppCompatActivity implements ItemTouchH
                 }
             }
         });
+        onBackHandle();
     }
     private void binding(){
         imageSlider=binding.imageSliderMovieDetail;
@@ -405,6 +406,14 @@ public class MovieDetailActivity extends AppCompatActivity implements ItemTouchH
                     creditData=credit;
                     updateCredit();
                 }
+            }
+        });
+    }
+    private void onBackHandle(){
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
             }
         });
     }

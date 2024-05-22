@@ -59,6 +59,7 @@ import com.google.android.material.navigation.NavigationView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class SearchFragment extends Fragment implements SearchItemOnClickListener, ItemTouchHelperAdapter {
 
@@ -282,9 +283,27 @@ public class SearchFragment extends Fragment implements SearchItemOnClickListene
                 }else{
                     if(isCheckAll){
                         callAPIs(query);
+                        typeOfSearchingTV.setText("Any");
+                        if(isAdult){
+                            isAdultTV.setText("Adult");
+                        }else{
+                            isAdultTV.setText("Any");
+                        }
                     }else if(isMovie){
+                        typeOfSearchingTV.setText("Search: Movies");
+                        if(isAdult){
+                            isAdultTV.setText("Adult");
+                        }else{
+                            isAdultTV.setText("Any");
+                        }
                         callMovieAPI(query);
                     }else if(isPerson){
+                        typeOfSearchingTV.setText("Search: People");
+                        if(isAdult){
+                            isAdultTV.setText("Adult");
+                        }else{
+                            isAdultTV.setText("Any");
+                        }
                         callPersonAPI(query);
                     }else{
                         callAPIs(query);
@@ -319,12 +338,7 @@ public class SearchFragment extends Fragment implements SearchItemOnClickListene
         searchMultiViewModel.getListSearchMulti().observe(getViewLifecycleOwner(), new Observer<List<SearchMultiModel>>() {
             @Override
             public void onChanged(List<SearchMultiModel> searchMultiModels) {
-                typeOfSearchingTV.setText("Any");
-                if(isAdult){
-                    isAdultTV.setText("Adult");
-                }else{
-                    isAdultTV.setText("Any");
-                }
+
                 if(searchMultiModels!=null&&!searchMultiModels.isEmpty()){
                     searchMultiList.clear();  // Clear the list to ensure no duplicates if needed
                     searchMultiList.addAll(searchMultiModels);
@@ -337,12 +351,7 @@ public class SearchFragment extends Fragment implements SearchItemOnClickListene
         searchMovieViewModel.getListMovieData().observe(getViewLifecycleOwner(), new Observer<List<Movie>>() {
             @Override
             public void onChanged(List<Movie> movies) {
-                typeOfSearchingTV.setText("Search: Movies");
-                if(isAdult){
-                    isAdultTV.setText("Adult");
-                }else{
-                    isAdultTV.setText("Any");
-                }
+
                 if(movies!=null&&!movies.isEmpty()){
                     listMovie.clear();
                     listMovie.addAll(movies);
@@ -356,12 +365,7 @@ public class SearchFragment extends Fragment implements SearchItemOnClickListene
         searchPeopleViewModel.getListPeopleData().observe(getViewLifecycleOwner(), new Observer<List<Person>>() {
             @Override
             public void onChanged(List<Person> people) {
-                typeOfSearchingTV.setText("Search: People");
-                if(isAdult){
-                    isAdultTV.setText("Adult");
-                }else{
-                    isAdultTV.setText("Any");
-                }
+
                 if(people!=null&&!people.isEmpty()){
                     listPerson.clear();
                     listPerson.addAll(people);
@@ -484,11 +488,11 @@ public class SearchFragment extends Fragment implements SearchItemOnClickListene
     @Override
     public void onClick(SearchMultiModel searchMultiModel) {
         selectedSearchMultiModel=searchMultiModel;
-        if(searchMultiModel.getMediaType()=="movie"){
+        if(Objects.equals(searchMultiModel.getMediaType(), "movie")){
             Intent intent=new Intent(getActivity(), MovieDetailActivity.class);
             intent.putExtra(StringConstants.movieDetailPageDataKey,searchMultiModel.getId());
             startActivity(intent);
-        }else if(searchMultiModel.getMediaType()=="person"){
+        }else if(searchMultiModel.getMediaType().equals("person")){
             Intent intent=new Intent(getActivity(), PersonDetailActivity.class);
             intent.putExtra(StringConstants.personDetailDataKey,searchMultiModel.getId());
             startActivity(intent);

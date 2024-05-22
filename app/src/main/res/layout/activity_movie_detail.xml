@@ -17,19 +17,12 @@
         <FrameLayout
             android:id="@+id/frameLayoutDetailMovie"
             android:layout_width="match_parent"
-            android:layout_height="300dp"
+            android:layout_height="340dp"
             android:paddingHorizontal="5dp"
             android:paddingVertical="5dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
-
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:cardCornerRadius="20dp"
-                app:cardElevation="15dp">
-
                 <com.denzcoskun.imageslider.ImageSlider
                     android:id="@+id/imageSliderMovieDetail"
                     android:layout_width="match_parent"
@@ -39,15 +32,13 @@
                     app:iss_corner_radius="20"
                     app:iss_delay="1000"
                     app:iss_period="1000"></com.denzcoskun.imageslider.ImageSlider>
-            </androidx.cardview.widget.CardView>
-
             <ImageButton
                 android:id="@+id/backImageButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="top|start"
                 android:layout_margin="16dp"
-                android:background="@color/teal_200"
+                android:background="@android:color/transparent"
                 android:src="@drawable/black_arrow_back"></ImageButton>
         </FrameLayout>
 
@@ -495,5 +486,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:visibility="invisible"></TextView>
+
+
+
+
     </LinearLayout>
 </ScrollView>
