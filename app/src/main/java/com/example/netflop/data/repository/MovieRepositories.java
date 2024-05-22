@@ -1,17 +1,10 @@
 package com.example.netflop.data.repository;
 
-import com.example.netflop.constants.URLConstants;
-import com.example.netflop.data.responses.TrendingMovieResponse;
-import com.example.netflop.data.services.APIClient;
-import com.example.netflop.data.services.APIService;
+import com.example.netflop.data.data_source.remote_data_source.APIService;
 import com.example.netflop.utils.AppExecutors;
 
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class MovieRepositories {
     AppExecutors appExecutors;

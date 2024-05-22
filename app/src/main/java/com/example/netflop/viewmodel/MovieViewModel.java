@@ -15,7 +15,7 @@ import com.example.netflop.data.models.MovieVideos;
 import com.example.netflop.data.responses.RecommendationMovieResponse;
 import com.example.netflop.data.responses.ReviewResponse;
 import com.example.netflop.data.services.APIClient;
-import com.example.netflop.data.services.APIService;
+import com.example.netflop.data.data_source.remote_data_source.APIService;
 
 import java.util.List;
 

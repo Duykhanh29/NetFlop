@@ -16,10 +16,18 @@
         android:theme="@style/Theme.NetFlop"
         tools:targetApi="31">
         <activity
+            android:name=".ui.home.AllTopRatedTVActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.home.AllPopularTVActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.home.AllPopularPeopleActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.search.FilterActivity"
             android:exported="false"
-            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
-            />
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar" />
         <activity
             android:name=".ui.home.AllPlayingNowActivity"
             android:exported="false" />

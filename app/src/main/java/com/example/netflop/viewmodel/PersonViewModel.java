@@ -7,14 +7,11 @@ import androidx.lifecycle.ViewModel;
 
 import com.example.netflop.constants.URLConstants;
 import com.example.netflop.data.models.CombinedCredit;
-import com.example.netflop.data.models.Credit;
 import com.example.netflop.data.models.Person;
 import com.example.netflop.data.models.PersonDetail;
 import com.example.netflop.data.models.PersonImages;
 import com.example.netflop.data.services.APIClient;
-import com.example.netflop.data.services.APIService;
-
-import java.util.List;
+import com.example.netflop.data.data_source.remote_data_source.APIService;
 
 import retrofit2.Call;
 import retrofit2.Callback;

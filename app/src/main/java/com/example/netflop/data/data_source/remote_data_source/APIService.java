@@ -1,4 +1,4 @@
-package com.example.netflop.data.services;
+package com.example.netflop.data.data_source.remote_data_source;
 
 import com.example.netflop.constants.URLConstants;
 import com.example.netflop.data.models.CombinedCredit;
@@ -10,6 +10,12 @@ import com.example.netflop.data.models.MovieImages;
 import com.example.netflop.data.models.MovieVideos;
 import com.example.netflop.data.models.PersonDetail;
 import com.example.netflop.data.models.PersonImages;
+import com.example.netflop.data.models.TVs.TVEpisodeCredit;
+import com.example.netflop.data.models.TVs.TVEpisodeDetail;
+import com.example.netflop.data.models.TVs.TVEpisodeImage;
+import com.example.netflop.data.models.TVs.TVEpisodeVideo;
+import com.example.netflop.data.models.TVs.TVSeasonsDetail;
+import com.example.netflop.data.models.TVs.TVSeriesDetail;
 import com.example.netflop.data.responses.NowPlayingResponse;
 import com.example.netflop.data.responses.PopularPeopleResponse;
 import com.example.netflop.data.responses.PopularResponse;
@@ -18,6 +24,10 @@ import com.example.netflop.data.responses.ReviewResponse;
 import com.example.netflop.data.responses.SearchMovieResponse;
 import com.example.netflop.data.responses.SearchMultiResponse;
 import com.example.netflop.data.responses.SearchPersonResponse;
+import com.example.netflop.data.responses.TVs.AiringTodayResponse;
+import com.example.netflop.data.responses.TVs.OnTheAirResponse;
+import com.example.netflop.data.responses.TVs.PopularTVResponse;
+import com.example.netflop.data.responses.TVs.TopRatedTVResponse;
 import com.example.netflop.data.responses.TopRatedResponse;
 import com.example.netflop.data.responses.TrendingMovieResponse;
 import com.example.netflop.data.responses.TrendingPeopleResponse;
@@ -79,7 +89,7 @@ public interface APIService {
     Call<PopularPeopleResponse> getPopularPeople();
 
     @GET("person/popular")
-    Call<PopularPeopleResponse> getPopularPeople(@Path("movie_id") int id);
+    Call<PopularPeopleResponse> getPopularPeople(@Query("page") int page);
 
     @GET("person/{person_id}")
     Call<PersonDetail> getPersonDetail(@Path("person_id") int id);
@@ -131,4 +141,39 @@ public interface APIService {
     @GET("genre/tv/list")
     Call<List<Genre>> getGenreTVList();
 
+
+    // TV
+    @GET("tv/airing_today")
+    Call<AiringTodayResponse> getAiringToDay(@Query("page") int page);
+
+    @GET("tv/on_the_air")
+    Call<OnTheAirResponse> getOnTheAir(@Query("page") int page);
+
+    @GET("tv/popular")
+    Call<PopularTVResponse> getPopularTV(@Query("page") int page);
+
+    @GET("tv/top_rated")
+    Call<TopRatedTVResponse> getTopRatedTV(@Query("page") int page);
+
+    // TV Series
+    @GET("tv/{series_id}")
+    Call<TVSeriesDetail> getTVSeriesDetail(@Path("series_id") int id);
+
+    // TV Season
+    @GET("tv/{series_id}/season/{season_number}")
+    Call<TVSeasonsDetail> getTVSeasonsDetail(@Path("series_id") int id,@Path("season_number") int number);
+
+    // TV Episode
+
+    @GET("tv/{series_id}/season/{season_number}/episode/{episode_number}")
+    Call<TVEpisodeDetail> getTVEpisodeDetail(@Path("series_id") int id, @Path("season_number") int seasonNumber, @Path("episode_number") int episodeNumber);
+
+    @GET("tv/{series_id}/season/{season_number}/episode/{episode_number}/images")
+    Call<TVEpisodeImage> getTVEpisodeImages(@Path("series_id") int id, @Path("season_number") int seasonNumber, @Path("episode_number") int episodeNumber);
+
+    @GET("tv/{series_id}/season/{season_number}/episode/{episode_number}/videos")
+    Call<TVEpisodeVideo> getTVEpisodeVideos(@Path("series_id") int id, @Path("season_number") int seasonNumber, @Path("episode_number") int episodeNumber);
+
+    @GET("tv/{series_id}/season/{season_number}/episode/{episode_number}/credits")
+    Call<TVEpisodeCredit> getTVEpisodeCredits(@Path("series_id") int id, @Path("season_number") int seasonNumber, @Path("episode_number") int episodeNumber);
 }

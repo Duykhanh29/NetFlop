@@ -22,39 +22,35 @@ import com.example.netflop.constants.StringConstants;
 import com.example.netflop.data.models.Cast;
 import com.example.netflop.data.models.Movie;
 import com.example.netflop.data.models.Person;
+import com.example.netflop.databinding.ActivityAllPopularPeopleBinding;
 import com.example.netflop.databinding.ActivityAllTrendingPeopleBinding;
-import com.example.netflop.databinding.ActivityAllUpcomingBinding;
-import com.example.netflop.ui.adapters.GridMoviesAdapter;
 import com.example.netflop.ui.adapters.GridPeopleAdapter;
-import com.example.netflop.ui.movie_detail.MovieDetailActivity;
 import com.example.netflop.ui.person_detail.PersonDetailActivity;
-import com.example.netflop.utils.CustomActionBar;
 import com.example.netflop.utils.ItemTouchHelperAdapter;
 import com.example.netflop.utils.SpacingItemDecorator;
+import com.example.netflop.viewmodel.PopularPeopleViewModel;
 import com.example.netflop.viewmodel.TrendingPeopleViewModel;
-import com.example.netflop.viewmodel.UpcomingViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class AllTrendingPeopleActivity extends AppCompatActivity implements ItemTouchHelperAdapter {
-    ActivityAllTrendingPeopleBinding binding;
+public class AllPopularPeopleActivity extends AppCompatActivity implements ItemTouchHelperAdapter {
+    ActivityAllPopularPeopleBinding binding;
 
-    //
     Person selectedPerson;
     GridPeopleAdapter gridPeopleAdapter;
     List<Person> listPeople;
 
     // view model
-    TrendingPeopleViewModel trendingPeopleViewModel;
+    PopularPeopleViewModel popularPeopleViewModel;
     // UI
-    RecyclerView allTrendingPeopleRecyclerView;
+    RecyclerView allPopularPeopleRecyclerView;
     ActionBar actionBar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//       setContentView(R.layout.activity_all_trending_people);
-        binding=ActivityAllTrendingPeopleBinding.inflate(getLayoutInflater());
+//        setContentView(R.layout.activity_all_popular_people);
+        binding= ActivityAllPopularPeopleBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         getBinding();
         initialize();
@@ -63,23 +59,23 @@ public class AllTrendingPeopleActivity extends AppCompatActivity implements Item
         scrollListener();
     }
     private void getBinding(){
-        allTrendingPeopleRecyclerView=binding.allTrendingPeopleRecyclerView;
+        allPopularPeopleRecyclerView=binding.allPopularPeopleRecyclerView;
     }
     private void initialize(){
         actionBar=getSupportActionBar();
 //        CustomActionBar.createActionBar(actionBar,"All people movie");
-        SpannableString spannableTitle = new SpannableString("All trending people");
+        SpannableString spannableTitle = new SpannableString("All popular people");
         spannableTitle.setSpan(new ForegroundColorSpan(Color.BLACK), 0, spannableTitle.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
         actionBar.setTitle(spannableTitle);
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeAsUpIndicator(R.drawable.black_arrow_back);
-        trendingPeopleViewModel=new ViewModelProvider(this).get(TrendingPeopleViewModel.class);
+        popularPeopleViewModel=new ViewModelProvider(this).get(PopularPeopleViewModel.class);
         listPeople=new ArrayList<>();
         gridPeopleAdapter=new GridPeopleAdapter(listPeople,this,this);
-        allTrendingPeopleRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
+        allPopularPeopleRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
         SpacingItemDecorator itemDecorator=new SpacingItemDecorator(30,20);
-        allTrendingPeopleRecyclerView.addItemDecoration(itemDecorator);
-        allTrendingPeopleRecyclerView.setAdapter(gridPeopleAdapter);
+        allPopularPeopleRecyclerView.addItemDecoration(itemDecorator);
+        allPopularPeopleRecyclerView.setAdapter(gridPeopleAdapter);
 //        allUpcomingMovieRecyclerView.setAdapter(gridMoviesAdapter);
         getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
             @Override
@@ -91,10 +87,10 @@ public class AllTrendingPeopleActivity extends AppCompatActivity implements Item
         });
     }
     private void callAPI(){
-        trendingPeopleViewModel.callAPI();
+        popularPeopleViewModel.callAPI();
     }
     private void observeDataChange(){
-        trendingPeopleViewModel.getListPeopleData().observe(this, new Observer<List<Person>>() {
+        popularPeopleViewModel.getListPeopleData().observe(this, new Observer<List<Person>>() {
             @Override
             public void onChanged(List<Person> people) {
                 if(people!=null&&!people.isEmpty()){
@@ -106,7 +102,7 @@ public class AllTrendingPeopleActivity extends AppCompatActivity implements Item
         });
     }
     private void scrollListener(){
-        allTrendingPeopleRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        allPopularPeopleRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
@@ -118,7 +114,7 @@ public class AllTrendingPeopleActivity extends AppCompatActivity implements Item
                 GridLayoutManager gridLayoutManager = (GridLayoutManager) recyclerView.getLayoutManager();
                 if (gridLayoutManager != null && gridLayoutManager.findLastCompletelyVisibleItemPosition() == gridPeopleAdapter.getItemCount() - 1) {
                     // Gọi phương thức để tải trang tiếp theo
-                    trendingPeopleViewModel.loadNextPage();
+                    popularPeopleViewModel.loadNextPage();
 //                    observeDataChange();
                 }
             }

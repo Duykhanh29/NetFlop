@@ -9,7 +9,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Spannable;
@@ -18,43 +17,36 @@ import android.text.style.ForegroundColorSpan;
 import android.view.MenuItem;
 
 import com.example.netflop.R;
-import com.example.netflop.constants.StringConstants;
-import com.example.netflop.data.models.Cast;
-import com.example.netflop.data.models.Movie;
 import com.example.netflop.data.models.Person;
-import com.example.netflop.databinding.ActivityAllTrendingPeopleBinding;
-import com.example.netflop.databinding.ActivityAllUpcomingBinding;
-import com.example.netflop.ui.adapters.GridMoviesAdapter;
+import com.example.netflop.data.models.TVs.AiringTodayModel;
+import com.example.netflop.databinding.ActivityAllPopularPeopleBinding;
+import com.example.netflop.databinding.ActivityAllPopularTvactivityBinding;
 import com.example.netflop.ui.adapters.GridPeopleAdapter;
-import com.example.netflop.ui.movie_detail.MovieDetailActivity;
-import com.example.netflop.ui.person_detail.PersonDetailActivity;
-import com.example.netflop.utils.CustomActionBar;
-import com.example.netflop.utils.ItemTouchHelperAdapter;
+import com.example.netflop.ui.adapters.GridTVAdapter;
+import com.example.netflop.utils.ItemTVOnClickListener;
 import com.example.netflop.utils.SpacingItemDecorator;
-import com.example.netflop.viewmodel.TrendingPeopleViewModel;
-import com.example.netflop.viewmodel.UpcomingViewModel;
+import com.example.netflop.viewmodel.PopularPeopleViewModel;
+import com.example.netflop.viewmodel.PopularTVViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class AllTrendingPeopleActivity extends AppCompatActivity implements ItemTouchHelperAdapter {
-    ActivityAllTrendingPeopleBinding binding;
-
-    //
-    Person selectedPerson;
-    GridPeopleAdapter gridPeopleAdapter;
-    List<Person> listPeople;
+public class AllPopularTVActivity extends AppCompatActivity implements ItemTVOnClickListener {
+    ActivityAllPopularTvactivityBinding binding;
+    AiringTodayModel selectedTV;
+    GridTVAdapter gridTVAdapter;
+    List<AiringTodayModel> todayModelList;
 
     // view model
-    TrendingPeopleViewModel trendingPeopleViewModel;
+    PopularTVViewModel popularTVViewModel;
     // UI
-    RecyclerView allTrendingPeopleRecyclerView;
+    RecyclerView allPopularTVRecyclerView;
     ActionBar actionBar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//       setContentView(R.layout.activity_all_trending_people);
-        binding=ActivityAllTrendingPeopleBinding.inflate(getLayoutInflater());
+//        setContentView(R.layout.activity_all_popular_tvactivity);
+        binding= ActivityAllPopularTvactivityBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         getBinding();
         initialize();
@@ -63,23 +55,23 @@ public class AllTrendingPeopleActivity extends AppCompatActivity implements Item
         scrollListener();
     }
     private void getBinding(){
-        allTrendingPeopleRecyclerView=binding.allTrendingPeopleRecyclerView;
+        allPopularTVRecyclerView=binding.allPopularTVRecyclerView;
     }
     private void initialize(){
         actionBar=getSupportActionBar();
 //        CustomActionBar.createActionBar(actionBar,"All people movie");
-        SpannableString spannableTitle = new SpannableString("All trending people");
+        SpannableString spannableTitle = new SpannableString("All popular TV series");
         spannableTitle.setSpan(new ForegroundColorSpan(Color.BLACK), 0, spannableTitle.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
         actionBar.setTitle(spannableTitle);
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeAsUpIndicator(R.drawable.black_arrow_back);
-        trendingPeopleViewModel=new ViewModelProvider(this).get(TrendingPeopleViewModel.class);
-        listPeople=new ArrayList<>();
-        gridPeopleAdapter=new GridPeopleAdapter(listPeople,this,this);
-        allTrendingPeopleRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
+        popularTVViewModel=new ViewModelProvider(this).get(PopularTVViewModel.class);
+        todayModelList=new ArrayList<>();
+        gridTVAdapter=new GridTVAdapter(todayModelList,this,this);
+        allPopularTVRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
         SpacingItemDecorator itemDecorator=new SpacingItemDecorator(30,20);
-        allTrendingPeopleRecyclerView.addItemDecoration(itemDecorator);
-        allTrendingPeopleRecyclerView.setAdapter(gridPeopleAdapter);
+        allPopularTVRecyclerView.addItemDecoration(itemDecorator);
+        allPopularTVRecyclerView.setAdapter(gridTVAdapter);
 //        allUpcomingMovieRecyclerView.setAdapter(gridMoviesAdapter);
         getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
             @Override
@@ -91,22 +83,22 @@ public class AllTrendingPeopleActivity extends AppCompatActivity implements Item
         });
     }
     private void callAPI(){
-        trendingPeopleViewModel.callAPI();
+        popularTVViewModel.callAPI();
     }
     private void observeDataChange(){
-        trendingPeopleViewModel.getListPeopleData().observe(this, new Observer<List<Person>>() {
+        popularTVViewModel.getListPopularTV().observe(this, new Observer<List<AiringTodayModel>>() {
             @Override
-            public void onChanged(List<Person> people) {
-                if(people!=null&&!people.isEmpty()){
-                    listPeople.clear();
-                    listPeople.addAll(people);
-                    gridPeopleAdapter.notifyDataSetChanged();
+            public void onChanged(List<AiringTodayModel> airingTodayModels) {
+                if(airingTodayModels!=null&&!airingTodayModels.isEmpty()){
+                    todayModelList.clear();
+                    todayModelList.addAll(airingTodayModels);
+                    gridTVAdapter.notifyDataSetChanged();
                 }
             }
         });
     }
     private void scrollListener(){
-        allTrendingPeopleRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        allPopularTVRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
@@ -116,9 +108,8 @@ public class AllTrendingPeopleActivity extends AppCompatActivity implements Item
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
                 GridLayoutManager gridLayoutManager = (GridLayoutManager) recyclerView.getLayoutManager();
-                if (gridLayoutManager != null && gridLayoutManager.findLastCompletelyVisibleItemPosition() == gridPeopleAdapter.getItemCount() - 1) {
-                    // Gọi phương thức để tải trang tiếp theo
-                    trendingPeopleViewModel.loadNextPage();
+                if (gridLayoutManager != null && gridLayoutManager.findLastCompletelyVisibleItemPosition() == gridTVAdapter.getItemCount() - 1) {
+                    popularTVViewModel.loadNextPage();
 //                    observeDataChange();
                 }
             }
@@ -135,20 +126,7 @@ public class AllTrendingPeopleActivity extends AppCompatActivity implements Item
     }
 
     @Override
-    public void onMovieClick(Movie movie) {
-
-    }
-
-    @Override
-    public void onPersonClick(Person p) {
-        selectedPerson=p;
-        Intent intent=new Intent(this, PersonDetailActivity.class);
-        intent.putExtra(StringConstants.personDetailDataKey,selectedPerson.getID());
-        startActivity(intent);
-    }
-
-    @Override
-    public void onCastClick(Cast cast) {
-
+    public void onTVCLick(AiringTodayModel airingTodayModel) {
+        selectedTV=airingTodayModel;
     }
 }

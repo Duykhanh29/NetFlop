@@ -7,10 +7,9 @@ import androidx.lifecycle.ViewModel;
 
 import com.example.netflop.constants.URLConstants;
 import com.example.netflop.data.models.Movie;
-import com.example.netflop.data.responses.NowPlayingResponse;
 import com.example.netflop.data.responses.UpcomingResponse;
 import com.example.netflop.data.services.APIClient;
-import com.example.netflop.data.services.APIService;
+import com.example.netflop.data.data_source.remote_data_source.APIService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +41,7 @@ public class UpcomingViewModel extends ViewModel {
     }
     public void callAPI(){
         APIService apiService= APIClient.getRetrofitInstance(URLConstants.baseURL).create(APIService.class);
-        Call<UpcomingResponse> call=apiService.getUpcoming();
+        Call<UpcomingResponse> call=apiService.getUpcoming(currentPage);
         call.enqueue(new Callback<UpcomingResponse>() {
             @Override
             public void onResponse(Call<UpcomingResponse> call, Response<UpcomingResponse> response) {

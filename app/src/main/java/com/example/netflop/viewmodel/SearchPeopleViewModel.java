@@ -8,11 +8,9 @@ import androidx.lifecycle.ViewModel;
 
 import com.example.netflop.constants.URLConstants;
 import com.example.netflop.data.models.Person;
-import com.example.netflop.data.models.SearchMultiModel;
-import com.example.netflop.data.responses.SearchMultiResponse;
 import com.example.netflop.data.responses.SearchPersonResponse;
 import com.example.netflop.data.services.APIClient;
-import com.example.netflop.data.services.APIService;
+import com.example.netflop.data.data_source.remote_data_source.APIService;
 
 
 import java.util.ArrayList;

@@ -22,9 +22,11 @@ import com.example.netflop.constants.StringConstants;
 import com.example.netflop.data.models.Cast;
 import com.example.netflop.data.models.Movie;
 import com.example.netflop.data.models.Person;
+import com.example.netflop.data.models.TVs.AiringTodayModel;
 import com.example.netflop.data.models.Video;
 import com.example.netflop.data.responses.NowPlayingResponse;
 import com.example.netflop.data.responses.PopularResponse;
+import com.example.netflop.data.responses.TVs.PopularTVResponse;
 import com.example.netflop.data.responses.TopRatedResponse;
 import com.example.netflop.data.responses.TrendingMovieResponse;
 import com.example.netflop.data.responses.TrendingPeopleResponse;
@@ -33,17 +35,22 @@ import com.example.netflop.databinding.FragmentHomeBinding;
 import com.example.netflop.ui.adapters.HorizontalShimmerAdapter;
 import com.example.netflop.ui.adapters.ListMovieAdapter;
 import com.example.netflop.ui.adapters.ListPersonAdapter;
+import com.example.netflop.ui.adapters.ListTVAdapter;
 import com.example.netflop.ui.adapters.SecondListMovieAdapter;
 import com.example.netflop.ui.adapters.VerticalShimmerAdapter;
 import com.example.netflop.ui.movie_detail.MovieDetailActivity;
 import com.example.netflop.ui.person_detail.PersonDetailActivity;
 import com.example.netflop.utils.ClickableSpanHandler;
+import com.example.netflop.utils.ItemTVOnClickListener;
 import com.example.netflop.utils.ItemTouchHelperAdapter;
 import com.example.netflop.utils.OnClickListener;
 import com.example.netflop.utils.SeeMoreOnClickListener;
 import com.example.netflop.utils.SpacingItemDecorator;
 import com.example.netflop.viewmodel.NowPlayingViewModel;
 import com.example.netflop.viewmodel.PopularMovieViewModel;
+import com.example.netflop.viewmodel.PopularPeopleViewModel;
+import com.example.netflop.viewmodel.PopularTVViewModel;
+import com.example.netflop.viewmodel.TopRatedTVViewModel;
 import com.example.netflop.viewmodel.TopRatedViewModel;
 import com.example.netflop.viewmodel.TrendingMovieViewModel;
 import com.example.netflop.viewmodel.TrendingPeopleViewModel;
@@ -52,7 +59,7 @@ import com.example.netflop.viewmodel.UpcomingViewModel;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HomeFragment extends Fragment implements ItemTouchHelperAdapter {
+public class HomeFragment extends Fragment implements ItemTouchHelperAdapter, ItemTVOnClickListener {
 
     private FragmentHomeBinding binding;
     private NowPlayingViewModel nowPlayingViewModel;
@@ -61,21 +68,29 @@ public class HomeFragment extends Fragment implements ItemTouchHelperAdapter {
     private  UpcomingViewModel upcomingViewModel;
     private TrendingMovieViewModel trendingMovieViewModel;
     private TrendingPeopleViewModel trendingPeopleViewModel;
+    private PopularPeopleViewModel popularPeopleViewModel;
+    private TopRatedTVViewModel topRatedTVViewModel;
+    private PopularTVViewModel popularTVViewModel;
     List<Movie> listNowPlaying;
     List<Movie> listPopularMovie;
     List<Movie> listTopRatedMovie;
     List<Movie> listTrendingMovie;
     List<Movie> listUpcomingMovie;
     List<Person> listTrendingPeople;
+    List<Person> listPopularPeople;
+    List<AiringTodayModel> listPopularTV,listTopRatedTV;
+
+    // adapters variables
 
     ListMovieAdapter playingNowAdapter,popularMovieAdapter,trendingMovieAdapter;
 
     SecondListMovieAdapter upcomingAdapter,topRatedAdapter;
 
-    ListPersonAdapter trendingPersonAdapter;
+    ListPersonAdapter trendingPersonAdapter,popularPeopleAdapter;
+    ListTVAdapter popularTVAdapter,topRatedTVAdapter;
 
     // shimmer variables
-    VerticalShimmerAdapter playingNowShimmerAdapter,popularMovieShimmerAdapter,trendingMovieShimmerAdapter,trendingPeopleShimmerAdapter;
+    VerticalShimmerAdapter playingNowShimmerAdapter,popularMovieShimmerAdapter,trendingMovieShimmerAdapter,trendingPeopleShimmerAdapter,popularPeopleShimmerAdapter,popularTVShimmerAdapter,topRatedTVShimmerAdapter;
     HorizontalShimmerAdapter upcomingShimmerAdapter,topRatedShimmerAdapter;
 
 
@@ -86,11 +101,11 @@ public class HomeFragment extends Fragment implements ItemTouchHelperAdapter {
 
     // ui
 
-    RecyclerView playingNowRecyclerView,popularMovieRecyclerView,topRatedRecyclerView,trendingMovieRecyclerView,trendingPeopleRecyclerView,upcomingRecyclerView;
+    RecyclerView playingNowRecyclerView,popularMovieRecyclerView,topRatedRecyclerView,trendingMovieRecyclerView,trendingPeopleRecyclerView,upcomingRecyclerView,popularPeopleRecyclerView,popularTVRecyclerView,topRatedTVRecyclerView;
 
-    RecyclerView playingNowShimmerRecyclerView,popularMovieShimmerRecyclerView,topRatedShimmerRecyclerView,trendingMovieShimmerRecyclerView,trendingPeopleShimmerRecyclerView,upcomingShimmerRecyclerView;
-    TextView topRated,upcoming,trendingMovie,trendingPeople,nowPlaying,popularMovie;
-    TextView seeMoreTrendingMovie,seeMorePopularMovie,seeMoreUpcoming,seeMoreNowPlayingMovie,seeMoreTrendingPeople,seeMoreTopRatedMovie;
+    RecyclerView playingNowShimmerRecyclerView,popularMovieShimmerRecyclerView,topRatedShimmerRecyclerView,trendingMovieShimmerRecyclerView,trendingPeopleShimmerRecyclerView,upcomingShimmerRecyclerView,popularPeopleShimmerRecyclerView,popularTVShimmerRecyclerView,topRatedTVShimmerRecyclerView;
+    TextView topRated,upcoming,trendingMovie,trendingPeople,nowPlaying,popularMovie,popularPeople,popularTVTextView,topRatedTVTextView;
+    TextView seeMoreTrendingMovie,seeMorePopularMovie,seeMoreUpcoming,seeMoreNowPlayingMovie,seeMoreTrendingPeople,seeMoreTopRatedMovie,seeMorePopularPeople,seeMorePopularTVTextView,seeMoreTopRatedTVTextView;
 
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -116,7 +131,9 @@ public class HomeFragment extends Fragment implements ItemTouchHelperAdapter {
         topRatedRecyclerView=binding.recyclerViewTopRatedMovie;
         upcomingRecyclerView=binding.recyclerViewUpcomingMovie;
         trendingPeopleRecyclerView=binding.recyclerViewTrendingPeople;
-
+        popularPeopleRecyclerView=binding.recyclerViewPopularPeople;
+        popularTVRecyclerView=binding.recyclerViewPopularTV;
+        topRatedTVRecyclerView=binding.recyclerViewTopRatedTV;
 
         nowPlaying=binding.listNowPlayingID;
         trendingMovie=binding.listTrendingMovieID;
@@ -124,6 +141,9 @@ public class HomeFragment extends Fragment implements ItemTouchHelperAdapter {
         popularMovie=binding.listPopularMovieID;
         upcoming=binding.listUpcomingID;
         trendingPeople=binding.listTrendingPeopleID;
+        popularPeople=binding.listPopularPeopleID;
+        popularTVTextView=binding.listPopularTVID;
+        topRatedTVTextView=binding.listTopRatedTVID;
 
         // see more
         seeMoreTrendingMovie=binding.seeMoreTrendingMovie;
@@ -132,6 +152,9 @@ public class HomeFragment extends Fragment implements ItemTouchHelperAdapter {
         seeMoreTopRatedMovie=binding.seeMoreTopRatedMovie;
         seeMoreTrendingPeople=binding.seeMoreTrendingPeople;
         seeMoreUpcoming=binding.seeMoreUpcomingMovie;
+        seeMorePopularPeople=binding.seeMorePopularPeople;
+        seeMorePopularTVTextView=binding.seeMorePopularTV;
+        seeMoreTopRatedTVTextView=binding.seeMoreTopRatedTV;
 
         // shimmer
         playingNowShimmerRecyclerView=binding.recyclerViewPlayingNowShimmer;
@@ -140,6 +163,9 @@ public class HomeFragment extends Fragment implements ItemTouchHelperAdapter {
         trendingMovieShimmerRecyclerView=binding.recyclerViewTrendingMovieShimmer;
         trendingPeopleShimmerRecyclerView=binding.recyclerViewTrendingPeopleShimmer;
         upcomingShimmerRecyclerView=binding.recyclerViewUpcomingMovieShimmer;
+        popularPeopleShimmerRecyclerView=binding.recyclerViewPopularPeopleShimmer;
+        popularTVShimmerRecyclerView=binding.recyclerViewPopularTVShimmer;
+        topRatedTVShimmerRecyclerView=binding.recyclerViewTopRatedTVShimmer;
     }
     private void init(){
         initializeDataUI();
@@ -179,6 +205,21 @@ public class HomeFragment extends Fragment implements ItemTouchHelperAdapter {
             Intent intent=new Intent(getActivity(), AllPlayingNowActivity.class);
             startActivity(intent);
         });
+        //popular people
+        SeeMoreOnClickListener.getSeeMoreOnClick(seeMorePopularPeople,() -> {
+            Intent intent=new Intent(getActivity(), AllPopularPeopleActivity.class);
+            startActivity(intent);
+        });
+        //popular TV
+        SeeMoreOnClickListener.getSeeMoreOnClick(seeMorePopularTVTextView,() -> {
+            Intent intent=new Intent(getActivity(), AllPopularTVActivity.class);
+            startActivity(intent);
+        });
+        // top rated TV
+        SeeMoreOnClickListener.getSeeMoreOnClick(seeMoreTopRatedTVTextView,() -> {
+            Intent intent=new Intent(getActivity(), AllTopRatedTVActivity.class);
+            startActivity(intent);
+        });
     }
     private void initializeDataUI(){
         nowPlaying.setText("Now playing");
@@ -187,6 +228,9 @@ public class HomeFragment extends Fragment implements ItemTouchHelperAdapter {
         topRated.setText("Top rated");
         popularMovie.setText("Popular movies");
         upcoming.setText("Upcoming");
+        popularPeople.setText("Popular people");
+        popularTVTextView.setText("Popular TV series");
+        topRatedTVTextView.setText("Top rated TV series");
     }
     private void initializeAdapter(){
         playingNowAdapter= new ListMovieAdapter(listNowPlaying,requireContext(), R.layout.single_movie_card,this);
@@ -195,6 +239,9 @@ public class HomeFragment extends Fragment implements ItemTouchHelperAdapter {
         upcomingAdapter= new SecondListMovieAdapter(listUpcomingMovie,requireContext(), R.layout.a_movie_card,this);
         topRatedAdapter= new SecondListMovieAdapter(listTopRatedMovie,requireContext(), R.layout.a_movie_card,this);
         trendingPersonAdapter=new ListPersonAdapter(listTrendingPeople,requireContext(),R.layout.single_person_card,this);
+        popularPeopleAdapter=new ListPersonAdapter(listPopularPeople,requireContext(),R.layout.single_person_card,this);
+        popularTVAdapter=new ListTVAdapter(listPopularTV,requireContext(),this);
+        topRatedTVAdapter=new ListTVAdapter(listTopRatedTV,requireContext(),this);
 
         playingNowShimmerAdapter=new VerticalShimmerAdapter(requireContext());
         popularMovieShimmerAdapter=new VerticalShimmerAdapter(requireContext());
@@ -202,6 +249,9 @@ public class HomeFragment extends Fragment implements ItemTouchHelperAdapter {
         trendingMovieShimmerAdapter=new VerticalShimmerAdapter(requireContext());
         trendingPeopleShimmerAdapter=new VerticalShimmerAdapter(requireContext());
         upcomingShimmerAdapter=new HorizontalShimmerAdapter(requireContext());
+        popularPeopleShimmerAdapter=new VerticalShimmerAdapter(requireContext());
+        popularTVShimmerAdapter=new VerticalShimmerAdapter(requireContext());
+        topRatedTVShimmerAdapter =new VerticalShimmerAdapter(requireContext());
     }
 
     private void initializeRecyclerView(){
@@ -213,7 +263,9 @@ public class HomeFragment extends Fragment implements ItemTouchHelperAdapter {
         trendingMovieRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
         trendingPeopleRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
         upcomingRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
-
+        popularPeopleRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
+        popularTVRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
+        topRatedTVRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
 
         playingNowShimmerRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
         popularMovieShimmerRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
@@ -221,7 +273,9 @@ public class HomeFragment extends Fragment implements ItemTouchHelperAdapter {
         trendingMovieShimmerRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
         trendingPeopleShimmerRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
         upcomingShimmerRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
-
+        popularPeopleShimmerRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
+        popularTVShimmerRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
+        topRatedTVShimmerRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
         // decoration
         SpacingItemDecorator itemDecorator = new SpacingItemDecorator(10,25);
         //
@@ -231,6 +285,9 @@ public class HomeFragment extends Fragment implements ItemTouchHelperAdapter {
         trendingMovieRecyclerView.addItemDecoration(itemDecorator);
         trendingPeopleRecyclerView.addItemDecoration(itemDecorator);
         upcomingRecyclerView.addItemDecoration(itemDecorator);
+        popularPeopleRecyclerView.addItemDecoration(itemDecorator);
+        popularTVRecyclerView.addItemDecoration(itemDecorator);
+        topRatedTVRecyclerView.addItemDecoration(itemDecorator);
 
         playingNowShimmerRecyclerView.addItemDecoration(itemDecorator);
         popularMovieShimmerRecyclerView.addItemDecoration(itemDecorator);
@@ -238,6 +295,9 @@ public class HomeFragment extends Fragment implements ItemTouchHelperAdapter {
         trendingMovieShimmerRecyclerView.addItemDecoration(itemDecorator);
         trendingPeopleShimmerRecyclerView.addItemDecoration(itemDecorator);
         upcomingShimmerRecyclerView.addItemDecoration(itemDecorator);
+        popularPeopleShimmerRecyclerView.addItemDecoration(itemDecorator);
+        popularTVShimmerRecyclerView.addItemDecoration(itemDecorator);
+        topRatedTVShimmerRecyclerView.addItemDecoration(itemDecorator);
 
         setAdapterForRecyclerView();
         setAdapterShimmerForRecyclerView();
@@ -253,6 +313,9 @@ public class HomeFragment extends Fragment implements ItemTouchHelperAdapter {
         trendingMovieShimmerRecyclerView.setVisibility(View.VISIBLE);
         trendingPeopleShimmerRecyclerView.setVisibility(View.VISIBLE);
         upcomingShimmerRecyclerView.setVisibility(View.VISIBLE);
+        popularPeopleShimmerRecyclerView.setVisibility(View.VISIBLE);
+        popularTVShimmerRecyclerView.setVisibility(View.VISIBLE);
+        topRatedTVShimmerRecyclerView.setVisibility(View.VISIBLE);
 
         playingNowShimmerRecyclerView.setAdapter(playingNowShimmerAdapter);
         popularMovieShimmerRecyclerView.setAdapter(popularMovieShimmerAdapter);
@@ -260,6 +323,9 @@ public class HomeFragment extends Fragment implements ItemTouchHelperAdapter {
         trendingMovieShimmerRecyclerView.setAdapter(trendingMovieShimmerAdapter);
         trendingPeopleShimmerRecyclerView.setAdapter(trendingPeopleShimmerAdapter);
         upcomingShimmerRecyclerView.setAdapter(upcomingShimmerAdapter);
+        popularPeopleShimmerRecyclerView.setAdapter(popularPeopleShimmerAdapter);
+        popularTVShimmerRecyclerView.setAdapter(popularTVShimmerAdapter);
+        topRatedTVShimmerRecyclerView.setAdapter(topRatedTVShimmerAdapter);
     }
     private void setAdapterForRecyclerView(){
 
@@ -270,6 +336,9 @@ public class HomeFragment extends Fragment implements ItemTouchHelperAdapter {
         popularMovieRecyclerView.setVisibility(View.GONE);
         trendingMovieRecyclerView.setVisibility(View.GONE);
         trendingPeopleRecyclerView.setVisibility(View.GONE);
+        popularPeopleRecyclerView.setVisibility(View.GONE);
+        popularTVRecyclerView.setVisibility(View.GONE);
+        topRatedTVRecyclerView.setVisibility(View.GONE);
 
 
         playingNowRecyclerView.setAdapter(playingNowAdapter);
@@ -278,6 +347,9 @@ public class HomeFragment extends Fragment implements ItemTouchHelperAdapter {
         popularMovieRecyclerView.setAdapter(popularMovieAdapter);
         trendingMovieRecyclerView.setAdapter(trendingMovieAdapter);
         trendingPeopleRecyclerView.setAdapter(trendingPersonAdapter);
+        popularPeopleRecyclerView.setAdapter(popularPeopleAdapter);
+        popularTVRecyclerView.setAdapter(popularTVAdapter);
+        topRatedTVRecyclerView.setAdapter(topRatedTVAdapter);
     }
 
     private void initializeViewModels(){
@@ -287,7 +359,9 @@ public class HomeFragment extends Fragment implements ItemTouchHelperAdapter {
         upcomingViewModel=new ViewModelProvider(this).get(UpcomingViewModel.class);
         trendingMovieViewModel=new ViewModelProvider(this).get(TrendingMovieViewModel.class);
         trendingPeopleViewModel=new ViewModelProvider(this).get(TrendingPeopleViewModel.class);
-
+        popularPeopleViewModel=new ViewModelProvider(this).get(PopularPeopleViewModel.class);
+        topRatedTVViewModel=new ViewModelProvider(this).get(TopRatedTVViewModel.class);
+        popularTVViewModel=new ViewModelProvider(this).get(PopularTVViewModel.class);
     }
     private void initializeListData(){
         listNowPlaying=new ArrayList<>();
@@ -296,6 +370,9 @@ public class HomeFragment extends Fragment implements ItemTouchHelperAdapter {
         listUpcomingMovie=new ArrayList<>();
         listTopRatedMovie=new ArrayList<>();
         listTrendingPeople=new ArrayList<>();
+        listPopularPeople=new ArrayList<>();
+        listPopularTV=new ArrayList<>();
+        listTopRatedTV=new ArrayList<>();
     }
 
     // update functions
@@ -311,6 +388,10 @@ public class HomeFragment extends Fragment implements ItemTouchHelperAdapter {
         trendingPersonAdapter=new ListPersonAdapter(listTrendingPeople,requireContext(),R.layout.single_person_card,this);
         trendingPeopleRecyclerView.setAdapter(trendingPersonAdapter);
     }
+    private void updatePopularPeople(){
+        popularPeopleAdapter=new ListPersonAdapter(listPopularPeople,requireContext(),R.layout.single_person_card,this);
+        popularPeopleRecyclerView.setAdapter(popularPeopleAdapter);
+    }
     private void updateTopRated(){
         topRatedAdapter= new SecondListMovieAdapter(listTopRatedMovie,requireContext(), R.layout.a_movie_card,this);
         topRatedRecyclerView.setAdapter(topRatedAdapter);
@@ -323,6 +404,14 @@ public class HomeFragment extends Fragment implements ItemTouchHelperAdapter {
         upcomingAdapter= new SecondListMovieAdapter(listUpcomingMovie,requireContext(), R.layout.a_movie_card,this);
         upcomingRecyclerView.setAdapter(upcomingAdapter);
     }
+    private void updatePopularTV(){
+        popularTVAdapter=new ListTVAdapter(listPopularTV,requireContext(),this);
+        popularTVRecyclerView.setAdapter(popularTVAdapter);
+    }
+    private void updateTopRatedTV(){
+        topRatedTVAdapter=new ListTVAdapter(listTopRatedTV,requireContext(),this);
+        topRatedTVRecyclerView.setAdapter(topRatedTVAdapter);
+    }
 
 
 
@@ -334,6 +423,9 @@ public class HomeFragment extends Fragment implements ItemTouchHelperAdapter {
         upcomingViewModel.callAPI();
         trendingMovieViewModel.callAPI();
         trendingPeopleViewModel.callAPI();
+        popularPeopleViewModel.callAPI();
+        popularTVViewModel.callAPI();
+        topRatedTVViewModel.callAPI();
     }
     private void observeChanges(){
         // now playing
@@ -468,6 +560,68 @@ public class HomeFragment extends Fragment implements ItemTouchHelperAdapter {
                 }
             }
         });
+
+        // popular people
+        popularPeopleViewModel.getListPeopleData().observe(getViewLifecycleOwner(), new Observer<List<Person>>() {
+            @Override
+            public void onChanged(List<Person> people) {
+                popularPeopleShimmerRecyclerView.setVisibility(View.GONE);
+                popularPeopleRecyclerView.setVisibility(View.VISIBLE);
+                if(people!=null){
+                    if(!people.isEmpty()&&people!=null){
+                        listPopularPeople=people;
+                        Log.d("listPopularPeople TAG\n","START");
+                        for (int i = 0; i < listPopularPeople.size(); i++) {
+                            Log.d("TAG",listPopularPeople.get(i).getName());
+                        }
+                        updatePopularPeople();
+                    }else{
+                        Log.d("listPopularPeople TAG\n","listPopularPeople empty");
+                    }
+                }
+            }
+        });
+        //popular TV
+        popularTVViewModel.getListPopularTV().observe(getViewLifecycleOwner(), new Observer<List<AiringTodayModel>>() {
+            @Override
+            public void onChanged(List<AiringTodayModel> airingTodayModels) {
+                popularTVShimmerRecyclerView.setVisibility(View.GONE);
+                popularTVRecyclerView.setVisibility(View.VISIBLE);
+                if(airingTodayModels!=null){
+                    if(!airingTodayModels.isEmpty()&&airingTodayModels!=null){
+                        listPopularTV=airingTodayModels;
+                        Log.d("listPopularTV TAG\n","START");
+                        for (int i = 0; i < listPopularTV.size(); i++) {
+                            Log.d("TAG",listPopularTV.get(i).getName());
+                        }
+                        updatePopularTV();
+                    }else{
+                        Log.d("listPopularTV TAG\n","listPopularTV empty");
+                    }
+                }
+            }
+        });
+
+        // top rated TV
+        topRatedTVViewModel.getListTopRatedTV().observe(getViewLifecycleOwner(), new Observer<List<AiringTodayModel>>() {
+            @Override
+            public void onChanged(List<AiringTodayModel> airingTodayModels) {
+                topRatedTVShimmerRecyclerView.setVisibility(View.GONE);
+                topRatedTVRecyclerView.setVisibility(View.VISIBLE);
+                if(airingTodayModels!=null){
+                    if(!airingTodayModels.isEmpty()&&airingTodayModels!=null){
+                        listTopRatedTV=airingTodayModels;
+                        Log.d("listTopRatedTV TAG\n","START");
+                        for (int i = 0; i < listTopRatedTV.size(); i++) {
+                            Log.d("TAG",listTopRatedTV.get(i).getName());
+                        }
+                        updateTopRatedTV();
+                    }else{
+                        Log.d("listTopRatedTV TAG\n","listTopRatedTV empty");
+                    }
+                }
+            }
+        });
     }
 
     @Override
@@ -495,6 +649,11 @@ public class HomeFragment extends Fragment implements ItemTouchHelperAdapter {
 
     @Override
     public void onCastClick(Cast cast) {
+
+    }
+
+    @Override
+    public void onTVCLick(AiringTodayModel airingTodayModel) {
 
     }
 }
