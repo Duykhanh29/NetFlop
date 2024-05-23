@@ -27,6 +27,7 @@ import com.example.netflop.data.responses.SearchPersonResponse;
 import com.example.netflop.data.responses.TVs.AiringTodayResponse;
 import com.example.netflop.data.responses.TVs.OnTheAirResponse;
 import com.example.netflop.data.responses.TVs.PopularTVResponse;
+import com.example.netflop.data.responses.TVs.SearchTVResponse;
 import com.example.netflop.data.responses.TVs.TopRatedTVResponse;
 import com.example.netflop.data.responses.TopRatedResponse;
 import com.example.netflop.data.responses.TrendingMovieResponse;
@@ -122,6 +123,13 @@ public interface APIService {
 //                                               @Query("language") String language,
             @Query("page") int page
     );
+
+
+    @GET("search/tv")
+    Call<SearchTVResponse> getSearchTV(@Query("query") String query,
+                                       @Query("include_adult") boolean includeAdult,
+//                                               @Query("language") String language,
+                                       @Query("page") int page);
 
     @GET("trending/movie/day")
     Call<TrendingMovieResponse> getTrendingMovies();

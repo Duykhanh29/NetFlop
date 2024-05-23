@@ -17,17 +17,16 @@ import com.bumptech.glide.Glide;
 import com.example.netflop.R;
 import com.example.netflop.constants.URLConstants;
 import com.example.netflop.data.models.TVs.AiringTodayModel;
-import com.example.netflop.utils.CommonMethods;
 import com.example.netflop.utils.ItemTVOnClickListener;
 
 import java.util.List;
 
-public class ListTVAdapter extends RecyclerView.Adapter<ListTVAdapter.ViewHolder> {
+public class SearchTVAdapter extends RecyclerView.Adapter<SearchTVAdapter.ViewHolder> {
     List<AiringTodayModel> listTV;
     Context context;
     ItemTVOnClickListener itemTVOnClickListener;
 
-    public ListTVAdapter(List<AiringTodayModel> listTV, Context context, ItemTVOnClickListener itemTVOnClickListener) {
+    public SearchTVAdapter(List<AiringTodayModel> listTV, Context context, ItemTVOnClickListener itemTVOnClickListener) {
         this.listTV = listTV;
         this.context = context;
         this.itemTVOnClickListener = itemTVOnClickListener;
@@ -36,7 +35,7 @@ public class ListTVAdapter extends RecyclerView.Adapter<ListTVAdapter.ViewHolder
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view= LayoutInflater.from(context).inflate(R.layout.single_tv_item,parent,false);
+        View view= LayoutInflater.from(context).inflate(R.layout.single_search_tv_view,parent,false);
         return new ViewHolder(view);
     }
 
@@ -74,12 +73,17 @@ public class ListTVAdapter extends RecyclerView.Adapter<ListTVAdapter.ViewHolder
         ImageButton addButton;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            cardView=(CardView) itemView.findViewById(R.id.singleTVCardView);
-            nameOfTVTextView=(TextView) itemView.findViewById(R.id.TVNameTextView);
-            starTextView=(TextView) itemView.findViewById(R.id.voteRatedTVTextView);
-            imageView=(ImageView) itemView.findViewById(R.id.posterTVView);
-            addButton=(ImageButton)itemView.findViewById(R.id.addTVSeriesButtonView) ;
-
+            cardView=(CardView) itemView.findViewById(R.id.search_tv_card_view);
+            nameOfTVTextView=(TextView) itemView.findViewById(R.id.nameTVSearchView);
+            starTextView=(TextView) itemView.findViewById(R.id.starSearchTvView);
+            imageView=(ImageView) itemView.findViewById(R.id.searchTVImageView);
+            addButton=(ImageButton)itemView.findViewById(R.id.searchTVSeriesButtonView) ;
+        }
+    }
+    public void clearData() {
+        if (listTV != null) {
+            listTV.clear();
+            notifyDataSetChanged();
         }
     }
 }

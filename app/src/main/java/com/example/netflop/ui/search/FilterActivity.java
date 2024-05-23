@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.RadioButton;
 import android.widget.Switch;
 
 import com.example.netflop.R;
@@ -18,7 +19,7 @@ import com.example.netflop.databinding.ActivityFilterBinding;
 
 public class FilterActivity extends AppCompatActivity {
     ActivityFilterBinding binding;
-    CheckBox allCheckBox,personCheckBox,movieCheckBox,tvCheckBox;
+    RadioButton allRadioButton,movieRadioButton,peopleRadioButton,tvRadioButton;
     Switch adultSwitch;
     Button applyBT;
     Toolbar toolbar;
@@ -32,16 +33,15 @@ public class FilterActivity extends AppCompatActivity {
         getBinding();
         getData();
         initialize();
-        handleCheckBox();
         onSwitchHandle();
         onApplyButtonHandle();
     }
     private void getBinding(){
         toolbar=binding.toolBarFilterView;
-        allCheckBox=binding.checkBoxAllFilterView;
-        personCheckBox=binding.checkBoxPersonFilterView;
-        movieCheckBox=binding.checkBoxMovieFilterView;
-        tvCheckBox=binding.checkBoxTVFilterView;
+        allRadioButton=binding.checkAllButton;
+        peopleRadioButton=binding.checkPeopleButton;
+        movieRadioButton=binding.checkMovieButton;
+        tvRadioButton=binding.checkTVButton;
         adultSwitch=binding.switchAdultFilterView;
         applyBT=binding.applyFilterButtonView;
     }
@@ -59,10 +59,10 @@ public class FilterActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent();
                 intent.putExtra(StringConstants.isAdultKey, adultSwitch.isChecked());
-                intent.putExtra(StringConstants.isCheckAllKey, allCheckBox.isChecked());
-                intent.putExtra(StringConstants.isPersonKey, personCheckBox.isChecked());
-                intent.putExtra(StringConstants.isMovieKey, movieCheckBox.isChecked());
-                intent.putExtra(StringConstants.isTVKey, tvCheckBox.isChecked());
+                intent.putExtra(StringConstants.isCheckAllKey, allRadioButton.isChecked());
+                intent.putExtra(StringConstants.isPersonKey, peopleRadioButton.isChecked());
+                intent.putExtra(StringConstants.isMovieKey, movieRadioButton.isChecked());
+                intent.putExtra(StringConstants.isTVKey, tvRadioButton.isChecked());
                 setResult(Activity.RESULT_OK, intent);
                 finish();
             }
@@ -77,77 +77,12 @@ public class FilterActivity extends AppCompatActivity {
     }
     private void initialize(){
         setSupportActionBar(toolbar);
-        allCheckBox.setChecked(isCheckAll);
-        personCheckBox.setChecked(isPerson);
-        movieCheckBox.setChecked(isMovie);
-        tvCheckBox.setChecked(isTV);
+        allRadioButton.setChecked(isCheckAll);
+        peopleRadioButton.setChecked(isPerson);
+        movieRadioButton.setChecked(isMovie);
+        tvRadioButton.setChecked(isTV);
         adultSwitch.setChecked(isAdult);
     }
-    private void handleCheckBox(){
-        allCheckBox.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(allCheckBox.isChecked()){
-                    personCheckBox.setChecked(true);
-                    movieCheckBox.setChecked(true);
-                    tvCheckBox.setChecked(true);
-                }else{
-                    personCheckBox.setChecked(false);
-                    movieCheckBox.setChecked(false);
-                    tvCheckBox.setChecked(false);
-                }
-            }
-        });
 
-        personCheckBox.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(personCheckBox.isChecked()&&movieCheckBox.isChecked()&&tvCheckBox.isChecked()){
-                    allCheckBox.setChecked(true);
-                }else if(!personCheckBox.isChecked()&&!movieCheckBox.isChecked()&&!tvCheckBox.isChecked()){
-                    allCheckBox.setChecked(false);
-                }
-                if(!personCheckBox.isChecked()){
-                    if(allCheckBox.isChecked()){
-                        allCheckBox.setChecked(false);
-                    }
-                }
-            }
-        });
-
-        movieCheckBox.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(personCheckBox.isChecked()&&movieCheckBox.isChecked()&&tvCheckBox.isChecked()){
-                    allCheckBox.setChecked(true);
-                }else if(!personCheckBox.isChecked()&&!movieCheckBox.isChecked()&&!tvCheckBox.isChecked()){
-                    allCheckBox.setChecked(false);
-                }
-                if(!movieCheckBox.isChecked()){
-                    if(allCheckBox.isChecked()){
-                        allCheckBox.setChecked(false);
-                    }
-                }
-            }
-        });
-
-
-        tvCheckBox.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(personCheckBox.isChecked()&&movieCheckBox.isChecked()&&tvCheckBox.isChecked()){
-                    allCheckBox.setChecked(true);
-                }else if(!personCheckBox.isChecked()&&!movieCheckBox.isChecked()&&!tvCheckBox.isChecked()){
-                    allCheckBox.setChecked(false);
-                }
-                if(!tvCheckBox.isChecked()){
-                    if(allCheckBox.isChecked()){
-                        allCheckBox.setChecked(false);
-                    }
-                }
-            }
-        });
-
-    }
 
 }

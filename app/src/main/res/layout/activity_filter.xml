@@ -33,38 +33,40 @@
                 android:text="Type"
                 style="@style/HeadingTextStyle"
                 ></TextView>
-            <CheckBox
-                android:layout_marginTop="10dp"
+
+            <RadioGroup
+                android:paddingTop="10dp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="All"
-                android:textSize="16dp"
-                android:id="@+id/checkBoxAllFilterView"
-                ></CheckBox>
-            <CheckBox
-                android:layout_marginTop="15dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Movies"
-                android:textSize="16dp"
-                android:id="@+id/checkBoxMovieFilterView"
-                ></CheckBox>
-            <CheckBox
-                android:layout_marginTop="15dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="People"
-                android:textSize="16dp"
-                android:id="@+id/checkBoxPersonFilterView"
-                ></CheckBox>
-            <CheckBox
-                android:layout_marginTop="15dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="TV"
-                android:textSize="16dp"
-                android:id="@+id/checkBoxTVFilterView"
-                ></CheckBox>
+                android:layout_height="wrap_content">
+                <RadioButton
+                    android:layout_marginVertical="5dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/checkAllButton"
+                    android:text="All (Movie, TV, People)"
+                    ></RadioButton>
+                <RadioButton
+                    android:layout_marginVertical="5dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/checkMovieButton"
+                    android:text="Movies"
+                    ></RadioButton>
+                <RadioButton
+                    android:layout_marginVertical="5dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/checkTVButton"
+                    android:text="TV shows"
+                    ></RadioButton>
+                <RadioButton
+                    android:layout_marginVertical="5dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/checkPeopleButton"
+                    android:text="People"
+                    ></RadioButton>
+            </RadioGroup>
 
 <!--            is Adult-->
             <LinearLayout

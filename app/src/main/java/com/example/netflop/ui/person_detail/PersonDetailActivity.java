@@ -34,6 +34,7 @@ import com.example.netflop.data.models.PersonDetail;
 import com.example.netflop.data.models.PersonImages;
 import com.example.netflop.data.models.Profile;
 import com.example.netflop.databinding.ActivityPersonDetailBinding;
+import com.example.netflop.ui.TV_Detail.TVSeriesDetailActivity;
 import com.example.netflop.ui.adapters.ListMovieCastAdapter;
 import com.example.netflop.ui.movie_detail.MovieDetailActivity;
 import com.example.netflop.utils.ItemMovieCastListener;
@@ -269,7 +270,9 @@ public class PersonDetailActivity extends AppCompatActivity implements ItemMovie
             intent.putExtra(StringConstants.movieDetailPageDataKey,selectedMovieCast.getId());
             startActivity(intent);
         }else{
-
+            Intent intent=new Intent(this, TVSeriesDetailActivity.class);
+            intent.putExtra(StringConstants.tvSeriesIDKey,selectedMovieCast.getId());
+            startActivity(intent);
         }
     }
 

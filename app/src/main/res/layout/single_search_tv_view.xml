@@ -13,11 +13,24 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         >
-        <ImageView
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="150dp"
-            android:id="@+id/searchTVImageView"
-            ></ImageView>
+            android:layout_height="150dp">
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:id="@+id/searchTVImageView"
+                android:scaleType="centerCrop"
+                ></ImageView>
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/rounded_button"
+                android:layout_gravity="top|start"
+                android:src="@drawable/add"
+                android:id="@+id/searchTVSeriesButtonView"
+                android:layout_margin="1dp"></ImageButton>
+        </FrameLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

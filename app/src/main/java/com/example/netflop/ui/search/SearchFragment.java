@@ -43,26 +43,30 @@ import com.example.netflop.data.models.Cast;
 import com.example.netflop.data.models.Movie;
 import com.example.netflop.data.models.Person;
 import com.example.netflop.data.models.SearchMultiModel;
+import com.example.netflop.data.models.TVs.AiringTodayModel;
 import com.example.netflop.databinding.FragmentSearchBinding;
 import com.example.netflop.ui.TV_Detail.TVSeriesDetailActivity;
 import com.example.netflop.ui.adapters.SearchAdapter;
 import com.example.netflop.ui.adapters.SearchMovieAdapter;
 import com.example.netflop.ui.adapters.SearchPersonAdapter;
+import com.example.netflop.ui.adapters.SearchTVAdapter;
 import com.example.netflop.ui.movie_detail.MovieDetailActivity;
 import com.example.netflop.ui.person_detail.PersonDetailActivity;
+import com.example.netflop.utils.ItemTVOnClickListener;
 import com.example.netflop.utils.ItemTouchHelperAdapter;
 import com.example.netflop.utils.SearchItemOnClickListener;
 import com.example.netflop.utils.SpacingItemDecorator;
 import com.example.netflop.viewmodel.SearchMovieViewModel;
 import com.example.netflop.viewmodel.SearchMultiViewModel;
 import com.example.netflop.viewmodel.SearchPeopleViewModel;
+import com.example.netflop.viewmodel.SearchTVViewModel;
 import com.google.android.material.navigation.NavigationView;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class SearchFragment extends Fragment implements SearchItemOnClickListener, ItemTouchHelperAdapter {
+public class SearchFragment extends Fragment implements SearchItemOnClickListener, ItemTouchHelperAdapter, ItemTVOnClickListener {
 
     private FragmentSearchBinding binding;
 
@@ -71,16 +75,19 @@ public class SearchFragment extends Fragment implements SearchItemOnClickListene
     SearchMultiViewModel searchMultiViewModel;
     SearchPeopleViewModel searchPeopleViewModel;
     SearchMovieViewModel searchMovieViewModel;
+    SearchTVViewModel searchTVViewModel;
 
     // lists
     List<SearchMultiModel> searchMultiList;
     List<Movie> listMovie;
     List<Person> listPerson;
+    List<AiringTodayModel> lisTVShow;
 
     // adapters
     SearchAdapter searchAdapter;
     SearchPersonAdapter searchPersonAdapter;
     SearchMovieAdapter searchMovieAdapter;
+    SearchTVAdapter searchTVAdapter;
     // UI
     DrawerLayout drawerLayout;
     TextView typeOfSearchingTV,isAdultTV,noSearchDataView;
@@ -90,16 +97,16 @@ public class SearchFragment extends Fragment implements SearchItemOnClickListene
     RecyclerView recyclerView;
     boolean isAdult=false;
     boolean isCheckAll=true;
-    boolean isPerson=true;
-    boolean isMovie=true;
-    boolean isTV=true;
+    boolean isPerson=false;
+    boolean isMovie=false;
+    boolean isTV=false;
 
     // backup variables for adjusting filter
     boolean isBackupAdult=false;
     boolean isBackupCheckAll=true;
-    boolean isBackupPerson=true;
-    boolean isBackupMovie=true;
-    boolean isBackupTV=true;
+    boolean isBackupPerson=false;
+    boolean isBackupMovie=false;
+    boolean isBackupTV=false;
 
 
     String queryText;
@@ -109,6 +116,7 @@ public class SearchFragment extends Fragment implements SearchItemOnClickListene
     SearchMultiModel selectedSearchMultiModel;
     Movie selectedMovie;
     Person selectedPerson;
+    AiringTodayModel selectedTV;
 
     private ActivityResultLauncher<Intent> launcher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -173,7 +181,8 @@ public class SearchFragment extends Fragment implements SearchItemOnClickListene
             initializeMovieRecyclerView();
             callMovieAPI(queryText);
         } else {
-            // Handle other cases as needed
+            initializeTVRecyclerView();
+            callTVAPI(queryText);
         }
     }
 //    private void onBackupHandle(){
@@ -227,13 +236,17 @@ public class SearchFragment extends Fragment implements SearchItemOnClickListene
         searchMultiList=new ArrayList<>();
         listMovie=new ArrayList<>();
         listPerson=new ArrayList<>();
+        lisTVShow=new ArrayList<>();
         searchMultiViewModel=new ViewModelProvider(this).get(SearchMultiViewModel.class);
         searchPeopleViewModel=new ViewModelProvider(this).get(SearchPeopleViewModel.class);
         searchMovieViewModel=new ViewModelProvider(this).get(SearchMovieViewModel.class);
+        searchTVViewModel=new ViewModelProvider(this).get(SearchTVViewModel.class);
 
         searchPersonAdapter=new SearchPersonAdapter(listPerson,getActivity(),this);
         searchMovieAdapter=new SearchMovieAdapter(listMovie,getActivity(),this);
         searchAdapter=new SearchAdapter(searchMultiList,getActivity(),this);
+        searchTVAdapter=new SearchTVAdapter(lisTVShow,getActivity(),this);
+
         recyclerView.setLayoutManager(new GridLayoutManager(getActivity(),2));
         SpacingItemDecorator itemDecorator=new SpacingItemDecorator(20,20);
         recyclerView.addItemDecoration(itemDecorator);
@@ -243,6 +256,7 @@ public class SearchFragment extends Fragment implements SearchItemOnClickListene
         clearCurrentAdapterData();
         listMovie=new ArrayList<>();
         listPerson=new ArrayList<>();
+        lisTVShow=new ArrayList<>();
         searchAdapter=new SearchAdapter(searchMultiList,getActivity(),this);
         recyclerView.setAdapter(searchAdapter);
     }
@@ -250,6 +264,7 @@ public class SearchFragment extends Fragment implements SearchItemOnClickListene
         clearCurrentAdapterData();
         searchMultiList=new ArrayList<>();
         listMovie=new ArrayList<>();
+        lisTVShow=new ArrayList<>();
         searchPersonAdapter=new SearchPersonAdapter(listPerson,getActivity(),this);
         recyclerView.setAdapter(searchPersonAdapter);
     }
@@ -257,9 +272,19 @@ public class SearchFragment extends Fragment implements SearchItemOnClickListene
         clearCurrentAdapterData();
         searchMultiList=new ArrayList<>();
         listPerson=new ArrayList<>();
+        lisTVShow=new ArrayList<>();
         searchMovieAdapter=new SearchMovieAdapter(listMovie,getActivity(),this);
         recyclerView.setAdapter(searchMovieAdapter);
     }
+    private void initializeTVRecyclerView(){
+        clearCurrentAdapterData();
+        searchMultiList=new ArrayList<>();
+        listPerson=new ArrayList<>();
+        listMovie=new ArrayList<>();
+        searchTVAdapter=new SearchTVAdapter(lisTVShow,getActivity(),this);
+        recyclerView.setAdapter(searchTVAdapter);
+    }
+
     private void clearCurrentAdapterData(){
         RecyclerView.Adapter currentAdapter = recyclerView.getAdapter();
         if (currentAdapter instanceof SearchMovieAdapter) {
@@ -268,6 +293,8 @@ public class SearchFragment extends Fragment implements SearchItemOnClickListene
             ((SearchPersonAdapter) currentAdapter).clearData();
         }else if(currentAdapter instanceof SearchAdapter){
             ((SearchAdapter) currentAdapter).clearData();
+        }else{
+            ((SearchTVAdapter) currentAdapter).clearData();
         }
     }
 
@@ -307,7 +334,13 @@ public class SearchFragment extends Fragment implements SearchItemOnClickListene
                         }
                         callPersonAPI(query);
                     }else{
-                        callAPIs(query);
+                        typeOfSearchingTV.setText("Search: TV");
+                        if(isAdult){
+                            isAdultTV.setText("Adult");
+                        }else{
+                            isAdultTV.setText("Any");
+                        }
+                        callTVAPI(query);
                     }
                     searchView.clearFocus();
                 }
@@ -334,6 +367,9 @@ public class SearchFragment extends Fragment implements SearchItemOnClickListene
     }
     private void callMovieAPI(String searchKey){
         searchMovieViewModel.callAPI(searchKey,isAdult);
+    }
+    private void callTVAPI(String searchKey){
+        searchTVViewModel.callAPI(searchKey,isAdult);
     }
     private void observeDataChanged(){
         searchMultiViewModel.getListSearchMulti().observe(getViewLifecycleOwner(), new Observer<List<SearchMultiModel>>() {
@@ -377,6 +413,18 @@ public class SearchFragment extends Fragment implements SearchItemOnClickListene
                 }
             }
         });
+        searchTVViewModel.getListAiringTodayModelData().observe(getViewLifecycleOwner(), new Observer<List<AiringTodayModel>>() {
+            @Override
+            public void onChanged(List<AiringTodayModel> airingTodayModels) {
+                if(airingTodayModels!=null&&!airingTodayModels.isEmpty()){
+                    lisTVShow.clear();
+                    lisTVShow.addAll(airingTodayModels);
+                    searchTVAdapter.notifyDataSetChanged();
+                }else{
+                    searchTVAdapter.notifyDataSetChanged();
+                }
+            }
+        });
     }
     private void getOnBackPressed(){
         requireActivity().getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
@@ -413,6 +461,12 @@ public class SearchFragment extends Fragment implements SearchItemOnClickListene
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
+
+            }
+
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
                 GridLayoutManager gridLayoutManager = (GridLayoutManager) recyclerView.getLayoutManager();
                 if(isCheckAll){
                     if (gridLayoutManager != null && gridLayoutManager.findLastCompletelyVisibleItemPosition() == searchAdapter.getItemCount() - 1) {
@@ -427,16 +481,11 @@ public class SearchFragment extends Fragment implements SearchItemOnClickListene
                         searchPeopleViewModel.loadNextPage(queryText,isAdult);
                     }
                 }else{
-                    if (gridLayoutManager != null && gridLayoutManager.findLastCompletelyVisibleItemPosition() == searchAdapter.getItemCount() - 1) {
-
+                    if (gridLayoutManager != null && gridLayoutManager.findLastCompletelyVisibleItemPosition() == searchTVAdapter.getItemCount() - 1) {
+                        searchTVViewModel.loadNextPage(queryText,isAdult);
                     }
                 }
 
-            }
-
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
             }
         });
     }
@@ -523,5 +572,13 @@ public class SearchFragment extends Fragment implements SearchItemOnClickListene
     @Override
     public void onCastClick(Cast cast) {
 
+    }
+
+    @Override
+    public void onTVCLick(AiringTodayModel airingTodayModel) {
+        selectedTV=airingTodayModel;
+        Intent intent=new Intent(getActivity(), TVSeriesDetailActivity.class);
+        intent.putExtra(StringConstants.tvSeriesIDKey,selectedTV.getId());
+        startActivity(intent);
     }
 }

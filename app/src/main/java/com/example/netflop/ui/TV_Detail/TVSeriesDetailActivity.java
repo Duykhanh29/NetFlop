@@ -3,6 +3,7 @@ package com.example.netflop.ui.TV_Detail;
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.text.util.Linkify;
 import android.util.Log;
 import android.view.ContextThemeWrapper;
 import androidx.appcompat.widget.Toolbar;
@@ -75,7 +76,7 @@ public class TVSeriesDetailActivity extends AppCompatActivity implements OnTVCli
     Toolbar toolbar;
     ImageSlider imageSlider;
 
-    TextView isAdultTVSeriesTextView,votedRateTextView,popularityTextView,statusTextView,typeOfTVSeriesTextView,runTimeTextView,overviewTextView,tagLineTextView,numberOfSeasonTextView,numberOfEpisodeTextView,firstDateTextView;
+    TextView isAdultTVSeriesTextView,votedRateTextView,popularityTextView,statusTextView,typeOfTVSeriesTextView,runTimeTextView,overviewTextView,tagLineTextView,numberOfSeasonTextView,numberOfEpisodeTextView,firstDateTextView,homepageTextView;
     FlexboxLayout flexboxCountry,flexboxCompany,flexboxGenre;
     RecyclerView createdByRecyclerView,seasonsTVSeriesRecyclerView;
     CardView latestTVEpisodeCardView,nextTVEpisodeCardView;
@@ -119,6 +120,7 @@ public class TVSeriesDetailActivity extends AppCompatActivity implements OnTVCli
         numberOfSeasonTextView=binding.numberOfSeasonTVSeriesView;
         numberOfEpisodeTextView=binding.numberOfEpisodeTVSeriesView;
         firstDateTextView=binding.firstDateTVSeriesView;
+        homepageTextView=binding.homepageTVSeriesView;
 
         flexboxCountry=binding.flexboxCountryTVSeries;
         flexboxCompany=binding.flexboxCompanyTVSeries;
@@ -208,6 +210,12 @@ public class TVSeriesDetailActivity extends AppCompatActivity implements OnTVCli
         if(tvSeriesDetail.getEpisodeRunTime()!=null&&!tvSeriesDetail.getEpisodeRunTime().isEmpty()){
             runTimeTextView.setText(tvSeriesDetail.getEpisodeRunTime().get(0)+" minutes");
         }
+        if(tvSeriesDetail.getHomepage()!=null){
+            homepageTextView.setAutoLinkMask(Linkify.WEB_URLS);
+        }else{
+//            homepageTextView.setAutoLinkMask(0);
+        }
+        homepageTextView.setText(tvSeriesDetail.getHomepage()!=null ?tvSeriesDetail.getHomepage():"null" );
         tagLineTextView.setText(tvSeriesDetail.getTagline());
         numberOfSeasonTextView.setText(tvSeriesDetail.getNumberOfSeasons()+"");
         numberOfEpisodeTextView.setText(tvSeriesDetail.getNumberOfEpisodes()+"");
