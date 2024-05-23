@@ -5,22 +5,22 @@ import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
 public class TVSeasonsDetail {
-    private String id;
+    private int id;
     @SerializedName("air_date")
     private String airDate;
     private List<Episode> episodes;
     private String name;
     private String overview;
     @SerializedName("_id")
-    private int tvSeasonsDetailID;
+    private String tvSeasonsDetailID;
     @SerializedName("poster_path")
     private String posterPath;
     @SerializedName("season_number")
     private int seasonNumber;
     @SerializedName("vote_average")
-    private int voteAverage;
+    private Double voteAverage;
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
@@ -40,7 +40,7 @@ public class TVSeasonsDetail {
         return overview;
     }
 
-    public int getTvSeasonsDetailID() {
+    public String getTvSeasonsDetailID() {
         return tvSeasonsDetailID;
     }
 
@@ -52,7 +52,7 @@ public class TVSeasonsDetail {
         return seasonNumber;
     }
 
-    public int getVoteAverage() {
+    public Double getVoteAverage() {
         return voteAverage;
     }
 }
