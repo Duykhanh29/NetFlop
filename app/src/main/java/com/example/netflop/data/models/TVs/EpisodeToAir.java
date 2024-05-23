@@ -7,7 +7,7 @@ public class EpisodeToAir {
     private String overview;
     private String name;
     @SerializedName("vote_average")
-    private int voteAverage;
+    private double voteAverage;
     @SerializedName("vote_count")
     private int voteCount;
     @SerializedName("air_date")
@@ -38,7 +38,7 @@ public class EpisodeToAir {
         return name;
     }
 
-    public int getVoteAverage() {
+    public double getVoteAverage() {
         return voteAverage;
     }
 

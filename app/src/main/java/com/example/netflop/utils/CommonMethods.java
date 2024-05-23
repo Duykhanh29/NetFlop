@@ -5,8 +5,12 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
 
+import com.example.netflop.data.models.ProductionCompany;
+import com.example.netflop.data.models.ProductionCountry;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -47,5 +51,19 @@ public class CommonMethods {
     public static String getYearByReleaseDate(String releaseDate){
         List<String> elements= Arrays.asList(releaseDate.split("-"));
         return elements.get(0);
+    }
+    public static List<String> getListStringByListCompanyModel(List<ProductionCompany> list){
+        List<String> result=new ArrayList<>();
+        for (int i = 0; i < list.size(); i++) {
+            result.add(list.get(i).getName());
+        }
+        return  result;
+    }
+    public static List<String> getListStringByListCountryModel(List<ProductionCountry> list){
+        List<String> result=new ArrayList<>();
+        for (int i = 0; i < list.size(); i++) {
+            result.add(list.get(i).getName());
+        }
+        return  result;
     }
 }

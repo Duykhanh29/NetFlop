@@ -14,7 +14,7 @@
         android:elevation="4dp"
         app:titleTextColor="@color/black"
         android:background="@color/teal_100"
-        app:menu="@menu/person_detail_menu"
+        app:menu="@menu/detail_menu"
         android:gravity="center_vertical"
         >
         >

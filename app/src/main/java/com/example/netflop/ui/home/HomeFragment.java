@@ -32,6 +32,7 @@ import com.example.netflop.data.responses.TrendingMovieResponse;
 import com.example.netflop.data.responses.TrendingPeopleResponse;
 import com.example.netflop.data.responses.UpcomingResponse;
 import com.example.netflop.databinding.FragmentHomeBinding;
+import com.example.netflop.ui.TV_Detail.TVSeriesDetailActivity;
 import com.example.netflop.ui.adapters.HorizontalShimmerAdapter;
 import com.example.netflop.ui.adapters.ListMovieAdapter;
 import com.example.netflop.ui.adapters.ListPersonAdapter;
@@ -654,6 +655,8 @@ public class HomeFragment extends Fragment implements ItemTouchHelperAdapter, It
 
     @Override
     public void onTVCLick(AiringTodayModel airingTodayModel) {
-
+        Intent intent=new Intent(getActivity(), TVSeriesDetailActivity.class);
+        intent.putExtra(StringConstants.tvSeriesIDKey,airingTodayModel.getId());
+        startActivity(intent);
     }
 }

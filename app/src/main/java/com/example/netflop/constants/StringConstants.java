@@ -14,4 +14,9 @@ public class StringConstants {
     public static final String isPersonKey="isPerson";
     public static final String isMovieKey="isMovie";
     public static final String isTVKey="isTV";
+
+    // TVs key
+    public static final String tvSeriesIDKey="tvSeriesID";
+    public static final String seasonNumberKey="seasonNumber";
+    public static final String episodeNumberKey="episodeNumber";
 }

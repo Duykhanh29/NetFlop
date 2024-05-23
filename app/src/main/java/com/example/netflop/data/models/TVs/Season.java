@@ -15,7 +15,39 @@ public class Season {
     @SerializedName("season_number")
     private int seasonNumber;
     @SerializedName("vote_average")
-    private int voteAverage;
+    private double voteAverage;
+
+    public String getAirDate() {
+        return airDate;
+    }
+
+    public int getEpisodeCount() {
+        return episodeCount;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getOverview() {
+        return overview;
+    }
+
+    public String getPosterPath() {
+        return posterPath;
+    }
+
+    public int getSeasonNumber() {
+        return seasonNumber;
+    }
+
+    public double getVoteAverage() {
+        return voteAverage;
+    }
 
     public void setAirDate(String airDate) {
         this.airDate = airDate;

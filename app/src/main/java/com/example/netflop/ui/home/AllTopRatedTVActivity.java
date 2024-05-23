@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Spannable;
@@ -17,9 +18,11 @@ import android.text.style.ForegroundColorSpan;
 import android.view.MenuItem;
 
 import com.example.netflop.R;
+import com.example.netflop.constants.StringConstants;
 import com.example.netflop.data.models.TVs.AiringTodayModel;
 import com.example.netflop.databinding.ActivityAllPopularTvactivityBinding;
 import com.example.netflop.databinding.ActivityAllTopRatedTvactivityBinding;
+import com.example.netflop.ui.TV_Detail.TVSeriesDetailActivity;
 import com.example.netflop.ui.adapters.GridTVAdapter;
 import com.example.netflop.utils.ItemTVOnClickListener;
 import com.example.netflop.utils.SpacingItemDecorator;
@@ -127,5 +130,8 @@ public class AllTopRatedTVActivity extends AppCompatActivity implements ItemTVOn
     @Override
     public void onTVCLick(AiringTodayModel airingTodayModel) {
         selectedTV=airingTodayModel;
+        Intent intent=new Intent(this, TVSeriesDetailActivity.class);
+        intent.putExtra(StringConstants.tvSeriesIDKey,selectedTV.getId());
+        startActivity(intent);
     }
 }

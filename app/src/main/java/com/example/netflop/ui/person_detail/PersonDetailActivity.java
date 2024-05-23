@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -80,7 +79,7 @@ public class PersonDetailActivity extends AppCompatActivity implements ItemMovie
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding=ActivityPersonDetailBinding.inflate(getLayoutInflater());
+        binding= ActivityPersonDetailBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         getBinding();
         getData();
@@ -274,10 +273,11 @@ public class PersonDetailActivity extends AppCompatActivity implements ItemMovie
         }
     }
 
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.person_detail_menu, menu);
+        menuInflater.inflate(R.menu.detail_menu, menu);
         return true;
     }
 

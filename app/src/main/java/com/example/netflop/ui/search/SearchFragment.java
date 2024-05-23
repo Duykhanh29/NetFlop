@@ -44,6 +44,7 @@ import com.example.netflop.data.models.Movie;
 import com.example.netflop.data.models.Person;
 import com.example.netflop.data.models.SearchMultiModel;
 import com.example.netflop.databinding.FragmentSearchBinding;
+import com.example.netflop.ui.TV_Detail.TVSeriesDetailActivity;
 import com.example.netflop.ui.adapters.SearchAdapter;
 import com.example.netflop.ui.adapters.SearchMovieAdapter;
 import com.example.netflop.ui.adapters.SearchPersonAdapter;
@@ -497,7 +498,9 @@ public class SearchFragment extends Fragment implements SearchItemOnClickListene
             intent.putExtra(StringConstants.personDetailDataKey,searchMultiModel.getId());
             startActivity(intent);
         }else{
-
+            Intent intent=new Intent(getActivity(), TVSeriesDetailActivity.class);
+            intent.putExtra(StringConstants.tvSeriesIDKey,searchMultiModel.getId());
+            startActivity(intent);
         }
     }
 
