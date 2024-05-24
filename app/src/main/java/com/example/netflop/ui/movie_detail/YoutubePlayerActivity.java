@@ -3,9 +3,11 @@ package com.example.netflop.ui.movie_detail;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 
 import com.example.netflop.R;
 import com.example.netflop.constants.StringConstants;
@@ -20,6 +22,8 @@ public class YoutubePlayerActivity extends AppCompatActivity {
     YouTubePlayerView youTubePlayerView;
     String youtubeURL= "";
     String videoID="";
+    String title="";
+    Toolbar toolbar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,6 +31,7 @@ public class YoutubePlayerActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         getBinding();
         getData();
+        initializeToolBar();
         getLifecycle().addObserver(youTubePlayerView);
         youTubePlayerView.addYouTubePlayerListener(new AbstractYouTubePlayerListener() {
             @Override
@@ -48,8 +53,22 @@ public class YoutubePlayerActivity extends AppCompatActivity {
         Intent intent=getIntent();
         videoID=intent.getStringExtra(StringConstants.youtubeURLKey);
         youtubeURL=URLConstants.youtubeBaseURL+videoID;
+        title=intent.getStringExtra(StringConstants.youtubeTitleKey);
     }
     private void getBinding(){
         youTubePlayerView=binding.youtubePlayerView;
+        toolbar=binding.toolBarYoutubeView;
+    }
+    private void initializeToolBar(){
+        setSupportActionBar(toolbar);
+        toolbar.setNavigationIcon(R.drawable.black_arrow_back);
+        toolbar.setNavigationContentDescription("Back");
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+        getSupportActionBar().setTitle(title!=null?title:"Trailer");
     }
 }

@@ -104,6 +104,7 @@ public class MovieDetailActivity extends AppCompatActivity implements ItemTouchH
 
     Cast selectedCast;
     Video selectedTrailer;
+    Movie selectedMovie;
 
 
 
@@ -420,7 +421,10 @@ public class MovieDetailActivity extends AppCompatActivity implements ItemTouchH
 
     @Override
     public void onMovieClick(Movie movie) {
-
+        selectedMovie=movie;
+        Intent intent=new Intent(this, MovieDetailActivity.class);
+        intent.putExtra(StringConstants.movieDetailPageDataKey,movie.getID());
+        startActivity(intent);
     }
 
     @Override
@@ -441,6 +445,7 @@ public class MovieDetailActivity extends AppCompatActivity implements ItemTouchH
         selectedTrailer=video;
         Intent intent=new Intent(MovieDetailActivity.this, YoutubePlayerActivity.class);
         intent.putExtra(StringConstants.youtubeURLKey,selectedTrailer.getKey());
+        intent.putExtra(StringConstants.youtubeTitleKey,selectedTrailer.getName());
         startActivity(intent);
     }
     private void navToAllTrailerActivity(List<Video> listVideo){

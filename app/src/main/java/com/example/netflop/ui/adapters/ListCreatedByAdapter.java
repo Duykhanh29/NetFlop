@@ -42,7 +42,7 @@ public class ListCreatedByAdapter extends RecyclerView.Adapter<ListCreatedByAdap
 
         String imageURL= URLConstants.imageURL+createdBy.getProfilePath();
         Log.d("TAG","URL is"+imageURL);
-        Glide.with(context).load(imageURL).placeholder(R.drawable.place_holder).into(holder.imageView);
+        Glide.with(context).load(imageURL).placeholder(R.drawable.circel_avatar).into(holder.imageView);
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

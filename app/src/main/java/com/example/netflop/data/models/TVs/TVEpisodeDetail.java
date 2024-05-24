@@ -23,7 +23,7 @@ public class TVEpisodeDetail {
     @SerializedName("still_path")
     private String stillPath;
     @SerializedName("vote_average")
-    private int voteAverage;
+    private Double voteAverage;
     @SerializedName("vote_count")
     private int voteCount;
 
@@ -71,7 +71,7 @@ public class TVEpisodeDetail {
         return stillPath;
     }
 
-    public int getVoteAverage() {
+    public Double getVoteAverage() {
         return voteAverage;
     }
 

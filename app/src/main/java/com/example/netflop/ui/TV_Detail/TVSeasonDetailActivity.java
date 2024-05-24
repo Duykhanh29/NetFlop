@@ -145,8 +145,10 @@ public class TVSeasonDetailActivity extends AppCompatActivity implements OnTVCli
 
     @Override
     public void onClick(int number) {
-//        Intent intent=new Intent(this, TVSeasonDetailActivity.class);
-//        intent.putExtra(StringConstants.seasonNumberKey,number);
-//        startActivity(intent);
+        Intent intent=new Intent(this, TVEpisodeDetailActivity.class);
+        intent.putExtra(StringConstants.tvSeriesIDKey,tvSeriesID);
+        intent.putExtra(StringConstants.seasonNumberKey,seasonNumber);
+        intent.putExtra(StringConstants.episodeNumberKey,number);
+        startActivity(intent);
     }
 }

@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.TV_Detail.TVEpisodeDetailActivity">
+    <androidx.appcompat.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:layout_constraintTop_toTopOf="parent"
+        android:id="@+id/toolBarTVEpisodeView"
+        android:elevation="4dp"
+        app:titleTextColor="@color/black"
+        android:background="@color/teal_100"
+        app:menu="@menu/detail_menu"
+        android:gravity="center_vertical"
+        ></androidx.appcompat.widget.Toolbar>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolBarTVEpisodeView"
+        android:layout_marginTop="?attr/actionBarSize"
+        android:paddingVertical="5dp"
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="340dp"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="15dp">
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/place_holder"
+                    android:id="@+id/tvEpisodeImageView"></ImageView>
+            </androidx.cardview.widget.CardView>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingVertical="5dp"
+                android:layout_marginTop="20dp"
+                android:paddingHorizontal="20dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                >
+                <TextView
+                    android:id="@+id/tvEpisodeRuntimeView"
+                    style="@style/NormalTextStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="15dp"></TextView>
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"></View>
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/star"></ImageView>
+
+                <TextView
+                    android:id="@+id/voteRatedTVEpisodeDetailTV"
+                    style="@style/NormalTextStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="15dp"></TextView>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingVertical="5dp"
+                android:layout_marginTop="20dp"
+                android:paddingHorizontal="20dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                >
+                <TextView
+                    android:id="@+id/tvEpisodeNumberView"
+                    style="@style/NormalTextStyle"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:gravity="start|center_vertical"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="15dp"></TextView>
+                <TextView
+                    android:id="@+id/tvSeasonNumberInEpisodeView"
+                    style="@style/NormalTextStyle"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:gravity="end|center_vertical"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="15dp"></TextView>
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="20dp"
+                android:layout_marginTop="10dp"
+                android:orientation="vertical">
+                <TextView
+                    style="@style/HeadingTextStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Overview"></TextView>
+                <TextView
+                    android:layout_marginTop="10dp"
+                    style="@style/NormalTextStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="20dp"
+                    android:id="@+id/overviewTVEpisodeView"
+                    android:background="@drawable/round_border"
+                    ></TextView>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="20dp"
+                android:paddingVertical="5dp">
+
+                <TextView
+                    style="@style/HeadingTextStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Date:"></TextView>
+
+                <TextView
+                    android:id="@+id/dateTVEpisodeView"
+                    style="@style/NormalTextStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="marquee"
+                    android:maxLines="4"
+                    android:paddingLeft="20dp"></TextView>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                android:orientation="vertical"
+                android:paddingHorizontal="20dp"
+                android:paddingVertical="5dp">
+
+                <TextView
+                    style="@style/HeadingTextStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Guest"></TextView>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:layout_marginVertical="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/guestTVEpisodeView"
+                    android:orientation="horizontal"
+                    ></androidx.recyclerview.widget.RecyclerView>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:gravity="center"
+                    android:visibility="gone"
+                    android:text="No data"
+                    android:id="@+id/isHavingGuestEpisodeView"
+                    ></TextView>
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                android:orientation="vertical"
+                android:paddingHorizontal="20dp"
+                android:paddingVertical="5dp">
+
+                <TextView
+                    style="@style/HeadingTextStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Cast"></TextView>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:layout_marginVertical="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/castTVEpisodeView"
+                    android:orientation="horizontal"
+                    ></androidx.recyclerview.widget.RecyclerView>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:gravity="center"
+                    android:visibility="gone"
+                    android:text="No data"
+                    android:id="@+id/isHavingCastEpisodeView"
+                    ></TextView>
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                android:orientation="vertical"
+                android:paddingHorizontal="20dp"
+                android:paddingVertical="5dp">
+
+                <TextView
+                    style="@style/HeadingTextStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Crew"></TextView>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:layout_marginVertical="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/crewTVEpisodeView"
+                    android:orientation="horizontal"
+                    ></androidx.recyclerview.widget.RecyclerView>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:gravity="center"
+                    android:visibility="gone"
+                    android:text="No data"
+                    android:id="@+id/isHavingCrewEpisodeView"
+                    ></TextView>
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

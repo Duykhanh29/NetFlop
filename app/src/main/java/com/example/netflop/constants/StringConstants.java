@@ -5,6 +5,7 @@ public class StringConstants {
     public static final String movieIDDataKey="movieID";
     public static final String personDetailDataKey="personDetail";
     public static final String youtubeURLKey="youtubeURL";
+    public static final String youtubeTitleKey="youtubeTitle";
     public static final String listVideoKey="listVideo";
 
 
@@ -19,4 +20,10 @@ public class StringConstants {
     public static final String tvSeriesIDKey="tvSeriesID";
     public static final String seasonNumberKey="seasonNumber";
     public static final String episodeNumberKey="episodeNumber";
+
+
+    //type
+    public static final String movieType="movie";
+    public static final String tvType="tv";
+    public static final String personType="person";
 }

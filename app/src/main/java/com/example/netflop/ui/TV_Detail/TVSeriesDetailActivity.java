@@ -256,6 +256,16 @@ public class TVSeriesDetailActivity extends AppCompatActivity implements OnTVCli
             latestNumberOfTVEpisodeTextView.setText(tvSeriesDetail.getNumberOfEpisodes()+"");
             String url= URLConstants.imageURL+tvSeriesDetail.getLastEpisodeToAir().getStillPath();
             Glide.with(this).load(url).placeholder(R.drawable.place_holder).into(latestTVEpisodeImageView);
+            latestTVEpisodeCardView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent=new Intent(TVSeriesDetailActivity.this, TVEpisodeDetailActivity.class);
+                    intent.putExtra(StringConstants.tvSeriesIDKey,tvSeriesID);
+                    intent.putExtra(StringConstants.seasonNumberKey,tvSeriesDetail.getLastEpisodeToAir().getSeasonNumber());
+                    intent.putExtra(StringConstants.episodeNumberKey,tvSeriesDetail.getLastEpisodeToAir().getEpisodeNumber());
+                    startActivity(intent);
+                }
+            });
         }else{
             isHavingLatestEpisodeView.setVisibility(View.VISIBLE);
             latestTVEpisodeCardView.setVisibility(View.GONE);
@@ -266,6 +276,16 @@ public class TVSeriesDetailActivity extends AppCompatActivity implements OnTVCli
             nextNumberOfTVEpisodeTextView.setText(tvSeriesDetail.getNextEpisodeToAir().getEpisodeNumber()+"");
             String url= URLConstants.imageURL+tvSeriesDetail.getNextEpisodeToAir().getStillPath();
             Glide.with(this).load(url).placeholder(R.drawable.place_holder).into(nextTVEpisodeImageView);
+            nextTVEpisodeCardView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent=new Intent(TVSeriesDetailActivity.this, TVEpisodeDetailActivity.class);
+                    intent.putExtra(StringConstants.tvSeriesIDKey,tvSeriesID);
+                    intent.putExtra(StringConstants.seasonNumberKey,tvSeriesDetail.getNextEpisodeToAir().getSeasonNumber());
+                    intent.putExtra(StringConstants.episodeNumberKey,tvSeriesDetail.getNextEpisodeToAir().getEpisodeNumber());
+                    startActivity(intent);
+                }
+            });
         }else{
             isHavingNextEpisodeView.setVisibility(View.VISIBLE);
             nextTVEpisodeCardView.setVisibility(View.GONE);

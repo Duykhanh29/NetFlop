@@ -2,13 +2,16 @@ package com.example.netflop.ui.movie_detail;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.view.View;
 
+import com.example.netflop.R;
 import com.example.netflop.constants.StringConstants;
 import com.example.netflop.data.models.Video;
 import com.example.netflop.databinding.ActivityAllTrailersBinding;
@@ -25,7 +28,7 @@ public class AllTrailersActivity extends AppCompatActivity  {
 
     // ui
     RecyclerView allTrailerRecyclerView;
-
+    Toolbar toolbar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,6 +36,7 @@ public class AllTrailersActivity extends AppCompatActivity  {
         setContentView(binding.getRoot());
         setBinding();
         initialize();
+        initializeToolBar();
         getData();
         getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
             @Override
@@ -61,6 +65,7 @@ public class AllTrailersActivity extends AppCompatActivity  {
     }
     private void setBinding(){
         allTrailerRecyclerView=binding.allTrailerRecyclerView;
+        toolbar=binding.toolBarAllTrailerView;
     }
     private void initialize(){
         listVideo=new ArrayList<>();
@@ -70,6 +75,17 @@ public class AllTrailersActivity extends AppCompatActivity  {
         allTrailerRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         allTrailerRecyclerView.setAdapter(listTrailerAdapter);
     }
-
+    private void initializeToolBar(){
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("All trailer");
+        toolbar.setNavigationIcon(R.drawable.black_arrow_back);
+        toolbar.setNavigationContentDescription("Back");
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+    }
 
 }
