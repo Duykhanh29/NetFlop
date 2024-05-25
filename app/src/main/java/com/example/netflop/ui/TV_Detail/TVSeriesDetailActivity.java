@@ -42,7 +42,9 @@ import com.example.netflop.ui.adapters.ListMovieCastAdapter;
 import com.example.netflop.ui.adapters.ListSeasonAdapter;
 import com.example.netflop.utils.CommonMethods;
 import com.example.netflop.utils.OnTVClickListener;
+import com.example.netflop.utils.RecyclerViewUtils;
 import com.example.netflop.utils.SpacingItemDecorator;
+import com.example.netflop.utils.ToolBarUtils;
 import com.example.netflop.viewmodel.PersonViewModel;
 import com.example.netflop.viewmodel.TVDetailViewModel;
 import com.google.android.flexbox.FlexboxLayout;
@@ -153,14 +155,7 @@ public class TVSeriesDetailActivity extends AppCompatActivity implements OnTVCli
     }
     private void initialize(){
         setSupportActionBar(toolbar);
-        toolbar.setNavigationIcon(R.drawable.black_arrow_back);
-        toolbar.setNavigationContentDescription("Back");
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-            }
-        });
+        ToolBarUtils.setupBasicToolbar(toolbar,() -> finish());
 
 
         tvDetailViewModel= new ViewModelProvider(this).get(TVDetailViewModel.class);
@@ -173,17 +168,19 @@ public class TVSeriesDetailActivity extends AppCompatActivity implements OnTVCli
         listCreatedBy=new ArrayList<>();
         listCreatedByAdapter=new ListCreatedByAdapter(listCreatedBy,this);
         listSeasonAdapter=new ListSeasonAdapter(listSeason,this,this);
+        RecyclerViewUtils.setupHorizontalRecyclerView(this,createdByRecyclerView,listCreatedByAdapter,LinearLayoutManager.HORIZONTAL,false);
+        RecyclerViewUtils.setupHorizontalRecyclerView(this,seasonsTVSeriesRecyclerView,listSeasonAdapter,LinearLayoutManager.HORIZONTAL,false);
 
-        createdByRecyclerView.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false));
-        seasonsTVSeriesRecyclerView.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false));
-        SpacingItemDecorator itemDecorator=new SpacingItemDecorator(0,20);
-        createdByRecyclerView.addItemDecoration(itemDecorator);
-        seasonsTVSeriesRecyclerView.addItemDecoration(itemDecorator);
-        createdByRecyclerView.setAdapter(listCreatedByAdapter);
-        seasonsTVSeriesRecyclerView.setAdapter(listSeasonAdapter);
+//        createdByRecyclerView.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false));
+//        seasonsTVSeriesRecyclerView.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false));
+//        SpacingItemDecorator itemDecorator=new SpacingItemDecorator(0,20);
+//        createdByRecyclerView.addItemDecoration(itemDecorator);
+//        seasonsTVSeriesRecyclerView.addItemDecoration(itemDecorator);
+//        createdByRecyclerView.setAdapter(listCreatedByAdapter);
+//        seasonsTVSeriesRecyclerView.setAdapter(listSeasonAdapter);
     }
     private void callAPIs(){
-        tvDetailViewModel.callTVSeriesDetail(tvSeriesID);
+        tvDetailViewModel.loadTVSeriesDetail(tvSeriesID,this);
     }
     private void observeDataChange(){
         tvDetailViewModel.getTvSeriesDetailData().observe(this, new Observer<TVSeriesDetail>() {

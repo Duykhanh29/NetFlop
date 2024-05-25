@@ -28,6 +28,7 @@ import com.example.netflop.ui.adapters.GridMoviesAdapter;
 import com.example.netflop.ui.movie_detail.MovieDetailActivity;
 import com.example.netflop.utils.CustomActionBar;
 import com.example.netflop.utils.ItemTouchHelperAdapter;
+import com.example.netflop.utils.RecyclerViewUtils;
 import com.example.netflop.utils.SpacingItemDecorator;
 import com.example.netflop.viewmodel.TopRatedViewModel;
 import com.example.netflop.viewmodel.TrendingMovieViewModel;
@@ -74,10 +75,13 @@ public class AllTrendingMovieActivity extends AppCompatActivity implements ItemT
         trendingMovieViewModel=new ViewModelProvider(this).get(TrendingMovieViewModel.class);
         listMovie=new ArrayList<>();
         gridMoviesAdapter=new GridMoviesAdapter(listMovie,this,this);
-        allTrendingMovieRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
-        SpacingItemDecorator itemDecorator=new SpacingItemDecorator(30,20);
-        allTrendingMovieRecyclerView.addItemDecoration(itemDecorator);
-        allTrendingMovieRecyclerView.setAdapter(gridMoviesAdapter);
+
+        RecyclerViewUtils.setupGridRecyclerView(this,allTrendingMovieRecyclerView,gridMoviesAdapter,2);
+
+//        allTrendingMovieRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+//        SpacingItemDecorator itemDecorator=new SpacingItemDecorator(30,20);
+//        allTrendingMovieRecyclerView.addItemDecoration(itemDecorator);
+//        allTrendingMovieRecyclerView.setAdapter(gridMoviesAdapter);
         getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
@@ -88,7 +92,7 @@ public class AllTrendingMovieActivity extends AppCompatActivity implements ItemT
         });
     }
     private void callAPI(){
-        trendingMovieViewModel.callAPI();
+        trendingMovieViewModel.fetchTrendingMovie(this);
     }
     private void observeDataChange(){
         trendingMovieViewModel.getListMovieData().observe(this, new Observer<List<Movie>>() {
@@ -117,7 +121,7 @@ public class AllTrendingMovieActivity extends AppCompatActivity implements ItemT
                 GridLayoutManager gridLayoutManager = (GridLayoutManager) recyclerView.getLayoutManager();
                 if (gridLayoutManager != null && gridLayoutManager.findLastCompletelyVisibleItemPosition() == gridMoviesAdapter.getItemCount() - 1) {
                     // Gọi phương thức để tải trang tiếp theo
-                    trendingMovieViewModel.loadNextPage();
+                    trendingMovieViewModel.loadNextPage(AllTrendingMovieActivity.this);
 //                    observeDataChange();
                 }
             }

@@ -2,7 +2,9 @@ package com.example.netflop.viewmodel;
 
 import android.util.Log;
 
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
 import com.example.netflop.constants.URLConstants;
@@ -12,6 +14,7 @@ import com.example.netflop.data.models.Movie;
 import com.example.netflop.data.models.MovieDetail;
 import com.example.netflop.data.models.MovieImages;
 import com.example.netflop.data.models.MovieVideos;
+import com.example.netflop.data.repository.MovieRepositories;
 import com.example.netflop.data.responses.RecommendationMovieResponse;
 import com.example.netflop.data.responses.ReviewResponse;
 import com.example.netflop.data.services.APIClient;
@@ -32,6 +35,7 @@ public class MovieViewModel extends ViewModel {
     private MutableLiveData<ReviewResponse> reviewData;
     private MutableLiveData<RecommendationMovieResponse> recommendationMovieData;
     private  MutableLiveData<Credit> creditData;
+    MovieRepositories movieRepositories;
     public MovieViewModel(){
         movieData=new MutableLiveData<>();
         movieDetailData=new MutableLiveData<>();
@@ -41,6 +45,7 @@ public class MovieViewModel extends ViewModel {
         reviewData=new MutableLiveData<>();
         recommendationMovieData=new MutableLiveData<>();
         creditData=new MutableLiveData<>();
+        movieRepositories=new MovieRepositories();
     }
     public MutableLiveData<Credit> getCreditData(){
         return  creditData;
@@ -67,164 +72,217 @@ public class MovieViewModel extends ViewModel {
     public MutableLiveData<RecommendationMovieResponse> getRecommendationMovieData(){
         return  recommendationMovieData;
     }
-    public void callAPIMovieDetailByID(int movieID){
-        APIService apiService= APIClient.getRetrofitInstance(URLConstants.baseURL).create(APIService.class);
-        Call<MovieDetail> call=apiService.getMovieByID(movieID);
-        call.enqueue(new Callback<MovieDetail>() {
+    public void loadMovieDetail(int movieID,LifecycleOwner lifecycleOwner){
+        movieRepositories.getMovieDetailByID(movieID).observe(lifecycleOwner, new Observer<MovieDetail>() {
             @Override
-            public void onResponse(Call<MovieDetail> call, Response<MovieDetail> response) {
-                if(response.code()==200){
-                    movieDetailData.postValue(response.body());
-                }else{
-                    Log.e("TAG","An error has occurred "+response.code()+": "+response.message());
-                }
-
-            }
-
-            @Override
-            public void onFailure(Call<MovieDetail> call, Throwable t) {
-                movieDetailData.postValue(null);
-            }
-        });
-    }
-    public void callAPIMovieImageByID(int movieID){
-        APIService apiService= APIClient.getRetrofitInstance(URLConstants.baseURL).create(APIService.class);
-        Call<MovieImages> call=apiService.getMovieImages(movieID);
-        call.enqueue(new Callback<MovieImages>() {
-            @Override
-            public void onResponse(Call<MovieImages> call, Response<MovieImages> response) {
-                if(response.code()==200){
-                    movieImageData.postValue(response.body());
-                }else{
-                    Log.e("TAG","An error has occurred "+response.code()+": "+response.message());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<MovieImages> call, Throwable t) {
-                movieImageData.postValue(null);
-            }
-        });
-    }
-    public void callAPIMovieVideoByID(int movieID){
-        APIService apiService= APIClient.getRetrofitInstance(URLConstants.baseURL).create(APIService.class);
-        Call<MovieVideos> call=apiService.getMovieVideos(movieID);
-        call.enqueue(new Callback<MovieVideos>() {
-            @Override
-            public void onResponse(Call<MovieVideos> call, Response<MovieVideos> response) {
-
-                if(response.code()==200){
-                    movieVideoData.postValue(response.body());
-                }else{
-                    Log.e("TAG","An error has occurred "+response.code()+": "+response.message());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<MovieVideos> call, Throwable t) {
-                movieVideoData.postValue(null);
-            }
-        });
-    }
-    public void callAPIGenreMovieListData(int movieID){
-        APIService apiService= APIClient.getRetrofitInstance(URLConstants.baseURL).create(APIService.class);
-        Call<List<Genre>> call=apiService.getGenreMovieList();
-        call.enqueue(new Callback<List<Genre>>() {
-            @Override
-            public void onResponse(Call<List<Genre>> call, Response<List<Genre>> response) {
-
-                if(response.code()==200){
-                    genreListData.postValue(response.body());
-                }else{
-                    Log.e("TAG","An error has occurred "+response.code()+": "+response.message());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<Genre>> call, Throwable t) {
-                genreListData.postValue(null);
+            public void onChanged(MovieDetail movieDetail) {
+                movieDetailData.postValue(movieDetail);
             }
         });
     }
 
-    public void callAPIGenreTVListData(int movieID){
-        APIService apiService= APIClient.getRetrofitInstance(URLConstants.baseURL).create(APIService.class);
-        Call<List<Genre>> call=apiService.getGenreTVList();
-        call.enqueue(new Callback<List<Genre>>() {
+    public void loadMovieImages(int movieID,LifecycleOwner lifecycleOwner){
+        movieRepositories.getMovieImagesByID(movieID).observe(lifecycleOwner, new Observer<MovieImages>() {
             @Override
-            public void onResponse(Call<List<Genre>> call, Response<List<Genre>> response) {
-
-                if(response.code()==200){
-                    genreListData.postValue(response.body());
-                }else{
-                    Log.e("TAG","An error has occurred "+response.code()+": "+response.message());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<Genre>> call, Throwable t) {
-                genreListData.postValue(null);
+            public void onChanged(MovieImages movieImages) {
+                movieImageData.postValue(movieImages);
             }
         });
     }
-    public void callAPIReviewResponseByMovieID(int movieID){
-        APIService apiService= APIClient.getRetrofitInstance(URLConstants.baseURL).create(APIService.class);
-        Call<ReviewResponse> call=apiService.getReviewOfAMovie(movieID);
-        call.enqueue(new Callback<ReviewResponse>() {
-            @Override
-            public void onResponse(Call<ReviewResponse> call, Response<ReviewResponse> response) {
 
-                if(response.code()==200){
-                    reviewData.postValue(response.body());
-                }else{
-                    Log.e("TAG","An error has occurred "+response.code()+": "+response.message());
-                }
-            }
-
+    public void loadMovieVideos(int movieID,LifecycleOwner lifecycleOwner){
+        movieRepositories.getMovieVideosByID(movieID).observe(lifecycleOwner, new Observer<MovieVideos>() {
+                    @Override
+                    public void onChanged(MovieVideos movieVideos) {
+                        movieVideoData.postValue(movieVideos);
+                    }
+                });
+    }
+    public void loadMovieReview(int movieID,LifecycleOwner lifecycleOwner){
+        movieRepositories.getReviewByID(movieID).observe(lifecycleOwner, new Observer<ReviewResponse>() {
             @Override
-            public void onFailure(Call<ReviewResponse> call, Throwable t) {
-                reviewData.postValue(null);
+            public void onChanged(ReviewResponse reviewResponse) {
+                reviewData.postValue(reviewResponse);
             }
         });
     }
-    public void callAPIRecommendationByMovieID(int movieID){
-        APIService apiService= APIClient.getRetrofitInstance(URLConstants.baseURL).create(APIService.class);
-        Call<RecommendationMovieResponse> call=apiService.getRecommendationMovie(movieID);
-        call.enqueue(new Callback<RecommendationMovieResponse>() {
+    public void loadMovieCredit(int movieID,LifecycleOwner lifecycleOwner){
+        movieRepositories.getCreditByID(movieID).observe(lifecycleOwner, new Observer<Credit>() {
             @Override
-            public void onResponse(Call<RecommendationMovieResponse> call, Response<RecommendationMovieResponse> response) {
-
-                if(response.code()==200){
-                    recommendationMovieData.postValue(response.body());
-                }else{
-                    Log.e("TAG","An error has occurred "+response.code()+": "+response.message());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<RecommendationMovieResponse> call, Throwable t) {
-                recommendationMovieData.postValue(null);
+            public void onChanged(Credit credit) {
+                creditData.postValue(credit);
             }
         });
     }
-    public void callAPICreditByMovieID(int movieID){
-        APIService apiService= APIClient.getRetrofitInstance(URLConstants.baseURL).create(APIService.class);
-        Call<Credit> call=apiService.getMovieCredit(movieID);
-        call.enqueue(new Callback<Credit>() {
+    public void loadRecommendation(int movieID,LifecycleOwner lifecycleOwner){
+        movieRepositories.getRecommendationByID(movieID).observe(lifecycleOwner, new Observer<RecommendationMovieResponse>() {
             @Override
-            public void onResponse(Call<Credit> call, Response<Credit> response) {
-                if(response.code()==200){
-                   creditData.postValue(response.body());
-                }else{
-                    Log.e("TAG","An error has occurred "+response.code()+": "+response.message());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Credit> call, Throwable t) {
-                creditData.postValue(null);
+            public void onChanged(RecommendationMovieResponse recommendationMovieResponse) {
+                recommendationMovieData.postValue(recommendationMovieResponse);
             }
         });
     }
+
+
+
+//    public void callAPIMovieDetailByID(int movieID){
+//        APIService apiService= APIClient.getRetrofitInstance(URLConstants.baseURL).create(APIService.class);
+//        Call<MovieDetail> call=apiService.getMovieByID(movieID);
+//        call.enqueue(new Callback<MovieDetail>() {
+//            @Override
+//            public void onResponse(Call<MovieDetail> call, Response<MovieDetail> response) {
+//                if(response.code()==200){
+//                    movieDetailData.postValue(response.body());
+//                }else{
+//                    Log.e("TAG","An error has occurred "+response.code()+": "+response.message());
+//                }
+//
+//            }
+//
+//            @Override
+//            public void onFailure(Call<MovieDetail> call, Throwable t) {
+//                movieDetailData.postValue(null);
+//            }
+//        });
+//    }
+//    public void callAPIMovieImageByID(int movieID){
+//        APIService apiService= APIClient.getRetrofitInstance(URLConstants.baseURL).create(APIService.class);
+//        Call<MovieImages> call=apiService.getMovieImages(movieID);
+//        call.enqueue(new Callback<MovieImages>() {
+//            @Override
+//            public void onResponse(Call<MovieImages> call, Response<MovieImages> response) {
+//                if(response.code()==200){
+//                    movieImageData.postValue(response.body());
+//                }else{
+//                    Log.e("TAG","An error has occurred "+response.code()+": "+response.message());
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<MovieImages> call, Throwable t) {
+//                movieImageData.postValue(null);
+//            }
+//        });
+//    }
+//    public void callAPIMovieVideoByID(int movieID){
+//        APIService apiService= APIClient.getRetrofitInstance(URLConstants.baseURL).create(APIService.class);
+//        Call<MovieVideos> call=apiService.getMovieVideos(movieID);
+//        call.enqueue(new Callback<MovieVideos>() {
+//            @Override
+//            public void onResponse(Call<MovieVideos> call, Response<MovieVideos> response) {
+//
+//                if(response.code()==200){
+//                    movieVideoData.postValue(response.body());
+//                }else{
+//                    Log.e("TAG","An error has occurred "+response.code()+": "+response.message());
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<MovieVideos> call, Throwable t) {
+//                movieVideoData.postValue(null);
+//            }
+//        });
+//    }
+//    public void callAPIGenreMovieListData(int movieID){
+//        APIService apiService= APIClient.getRetrofitInstance(URLConstants.baseURL).create(APIService.class);
+//        Call<List<Genre>> call=apiService.getGenreMovieList();
+//        call.enqueue(new Callback<List<Genre>>() {
+//            @Override
+//            public void onResponse(Call<List<Genre>> call, Response<List<Genre>> response) {
+//
+//                if(response.code()==200){
+//                    genreListData.postValue(response.body());
+//                }else{
+//                    Log.e("TAG","An error has occurred "+response.code()+": "+response.message());
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<List<Genre>> call, Throwable t) {
+//                genreListData.postValue(null);
+//            }
+//        });
+//    }
+//
+//    public void callAPIGenreTVListData(int movieID){
+//        APIService apiService= APIClient.getRetrofitInstance(URLConstants.baseURL).create(APIService.class);
+//        Call<List<Genre>> call=apiService.getGenreTVList();
+//        call.enqueue(new Callback<List<Genre>>() {
+//            @Override
+//            public void onResponse(Call<List<Genre>> call, Response<List<Genre>> response) {
+//
+//                if(response.code()==200){
+//                    genreListData.postValue(response.body());
+//                }else{
+//                    Log.e("TAG","An error has occurred "+response.code()+": "+response.message());
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<List<Genre>> call, Throwable t) {
+//                genreListData.postValue(null);
+//            }
+//        });
+//    }
+//    public void callAPIReviewResponseByMovieID(int movieID){
+//        APIService apiService= APIClient.getRetrofitInstance(URLConstants.baseURL).create(APIService.class);
+//        Call<ReviewResponse> call=apiService.getReviewOfAMovie(movieID);
+//        call.enqueue(new Callback<ReviewResponse>() {
+//            @Override
+//            public void onResponse(Call<ReviewResponse> call, Response<ReviewResponse> response) {
+//
+//                if(response.code()==200){
+//                    reviewData.postValue(response.body());
+//                }else{
+//                    Log.e("TAG","An error has occurred "+response.code()+": "+response.message());
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<ReviewResponse> call, Throwable t) {
+//                reviewData.postValue(null);
+//            }
+//        });
+//    }
+//    public void callAPIRecommendationByMovieID(int movieID){
+//        APIService apiService= APIClient.getRetrofitInstance(URLConstants.baseURL).create(APIService.class);
+//        Call<RecommendationMovieResponse> call=apiService.getRecommendationMovie(movieID);
+//        call.enqueue(new Callback<RecommendationMovieResponse>() {
+//            @Override
+//            public void onResponse(Call<RecommendationMovieResponse> call, Response<RecommendationMovieResponse> response) {
+//
+//                if(response.code()==200){
+//                    recommendationMovieData.postValue(response.body());
+//                }else{
+//                    Log.e("TAG","An error has occurred "+response.code()+": "+response.message());
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<RecommendationMovieResponse> call, Throwable t) {
+//                recommendationMovieData.postValue(null);
+//            }
+//        });
+//    }
+//    public void callAPICreditByMovieID(int movieID){
+//        APIService apiService= APIClient.getRetrofitInstance(URLConstants.baseURL).create(APIService.class);
+//        Call<Credit> call=apiService.getMovieCredit(movieID);
+//        call.enqueue(new Callback<Credit>() {
+//            @Override
+//            public void onResponse(Call<Credit> call, Response<Credit> response) {
+//                if(response.code()==200){
+//                   creditData.postValue(response.body());
+//                }else{
+//                    Log.e("TAG","An error has occurred "+response.code()+": "+response.message());
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<Credit> call, Throwable t) {
+//                creditData.postValue(null);
+//            }
+//        });
+//    }
 
 }

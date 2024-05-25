@@ -28,7 +28,9 @@ import com.example.netflop.ui.adapters.GridEpisodeAdapter;
 import com.example.netflop.ui.adapters.ListCrewTVAdapter;
 import com.example.netflop.ui.adapters.ListGuestStarAdapter;
 import com.example.netflop.utils.OnClickIDListener;
+import com.example.netflop.utils.RecyclerViewUtils;
 import com.example.netflop.utils.SpacingItemDecorator;
+import com.example.netflop.utils.ToolBarUtils;
 import com.example.netflop.viewmodel.TVDetailViewModel;
 
 import java.util.ArrayList;
@@ -98,14 +100,7 @@ public class TVEpisodeDetailActivity extends AppCompatActivity implements OnClic
     }
     private void initialize(){
         setSupportActionBar(toolbar);
-        toolbar.setNavigationIcon(R.drawable.black_arrow_back);
-        toolbar.setNavigationContentDescription("Back");
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-            }
-        });
+        ToolBarUtils.setupBasicToolbar(toolbar,() -> finish());
         tvDetailViewModel= new ViewModelProvider(this).get(TVDetailViewModel.class);
         listGuest=new ArrayList<>();
         listCast=new ArrayList<>();
@@ -116,22 +111,26 @@ public class TVEpisodeDetailActivity extends AppCompatActivity implements OnClic
         listGuestStarAdapter=new ListGuestStarAdapter(listGuest,this,this);
 
 
-        guestTVEpisodeRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        crewTVEpisodeRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        castTVEpisodeRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+//        guestTVEpisodeRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+//        crewTVEpisodeRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+//        castTVEpisodeRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 
-        SpacingItemDecorator itemDecorator=new SpacingItemDecorator(0,20);
-        guestTVEpisodeRecyclerView.addItemDecoration(itemDecorator);
-        crewTVEpisodeRecyclerView.addItemDecoration(itemDecorator);
-        castTVEpisodeRecyclerView.addItemDecoration(itemDecorator);
+        RecyclerViewUtils.setupHorizontalRecyclerView(this,guestTVEpisodeRecyclerView,listGuestStarAdapter, LinearLayoutManager.HORIZONTAL, false);
+        RecyclerViewUtils.setupHorizontalRecyclerView(this,crewTVEpisodeRecyclerView,listCrewTVAdapter, LinearLayoutManager.HORIZONTAL, false);
+        RecyclerViewUtils.setupHorizontalRecyclerView(this,castTVEpisodeRecyclerView,listCastAdapter, LinearLayoutManager.HORIZONTAL, false);
 
-        guestTVEpisodeRecyclerView.setAdapter(listGuestStarAdapter);
-        castTVEpisodeRecyclerView.setAdapter(listCastAdapter);
-        crewTVEpisodeRecyclerView.setAdapter(listCrewTVAdapter);
+//        SpacingItemDecorator itemDecorator=new SpacingItemDecorator(0,20);
+//        guestTVEpisodeRecyclerView.addItemDecoration(itemDecorator);
+//        crewTVEpisodeRecyclerView.addItemDecoration(itemDecorator);
+//        castTVEpisodeRecyclerView.addItemDecoration(itemDecorator);
+//
+////        guestTVEpisodeRecyclerView.setAdapter(listGuestStarAdapter);
+//        castTVEpisodeRecyclerView.setAdapter(listCastAdapter);
+//        crewTVEpisodeRecyclerView.setAdapter(listCrewTVAdapter);
     }
     private void callAPIs(){
-        tvDetailViewModel.callTVEpisodeDetail(tvSeriesID,seasonNumber,episodeNumber);
-        tvDetailViewModel.callTVEpisodeCredit(tvSeriesID,seasonNumber,episodeNumber);
+        tvDetailViewModel.loadTVEpisodeDetail(tvSeriesID,seasonNumber,episodeNumber,this);
+        tvDetailViewModel.loadTVEpisodeCredit(tvSeriesID,seasonNumber,episodeNumber,this);
     }
     private void observeDataChange(){
         tvDetailViewModel.getTvEpisodeDetailData().observe(this, new Observer<TVEpisodeDetail>() {

@@ -27,6 +27,7 @@ import com.example.netflop.ui.adapters.GridMoviesAdapter;
 import com.example.netflop.ui.movie_detail.MovieDetailActivity;
 import com.example.netflop.utils.CustomActionBar;
 import com.example.netflop.utils.ItemTouchHelperAdapter;
+import com.example.netflop.utils.RecyclerViewUtils;
 import com.example.netflop.utils.SpacingItemDecorator;
 import com.example.netflop.viewmodel.NowPlayingViewModel;
 import com.example.netflop.viewmodel.PopularMovieViewModel;
@@ -81,13 +82,16 @@ public class AllPopularMovieActivity extends AppCompatActivity implements ItemTo
         popularMovieViewModel=new ViewModelProvider(this).get(PopularMovieViewModel.class);
         listMovie=new ArrayList<>();
         gridMoviesAdapter=new GridMoviesAdapter(listMovie,this,this);
-        allPopularMovieRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
-        SpacingItemDecorator itemDecorator=new SpacingItemDecorator(30,20);
-        allPopularMovieRecyclerView.addItemDecoration(itemDecorator);
-        allPopularMovieRecyclerView.setAdapter(gridMoviesAdapter);
+
+        RecyclerViewUtils.setupGridRecyclerView(this,allPopularMovieRecyclerView,gridMoviesAdapter,2);
+//
+//        allPopularMovieRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+//        SpacingItemDecorator itemDecorator=new SpacingItemDecorator(30,20);
+//        allPopularMovieRecyclerView.addItemDecoration(itemDecorator);
+//        allPopularMovieRecyclerView.setAdapter(gridMoviesAdapter);
     }
     private void callAPI(){
-        popularMovieViewModel.callAPI();
+        popularMovieViewModel.fetchPopularMovie(this);
     }
     private void observeDataChange(){
         popularMovieViewModel.getListMovieData().observe(this, new Observer<List<Movie>>() {
@@ -116,7 +120,7 @@ public class AllPopularMovieActivity extends AppCompatActivity implements ItemTo
                 GridLayoutManager gridLayoutManager = (GridLayoutManager) recyclerView.getLayoutManager();
                 if (gridLayoutManager != null && gridLayoutManager.findLastCompletelyVisibleItemPosition() == gridMoviesAdapter.getItemCount() - 1) {
                     // Gọi phương thức để tải trang tiếp theo
-                    popularMovieViewModel.loadNextPage();
+                    popularMovieViewModel.loadNextPage(AllPopularMovieActivity.this);
 //                    observeDataChange();
                 }
             }

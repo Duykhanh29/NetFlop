@@ -28,6 +28,7 @@ import com.example.netflop.ui.adapters.GridMoviesAdapter;
 import com.example.netflop.ui.movie_detail.MovieDetailActivity;
 import com.example.netflop.utils.CustomActionBar;
 import com.example.netflop.utils.ItemTouchHelperAdapter;
+import com.example.netflop.utils.RecyclerViewUtils;
 import com.example.netflop.utils.SpacingItemDecorator;
 import com.example.netflop.viewmodel.PopularMovieViewModel;
 import com.example.netflop.viewmodel.TopRatedViewModel;
@@ -74,6 +75,9 @@ public class AllTopRatedMovieActivity extends AppCompatActivity implements ItemT
         topRatedViewModel=new ViewModelProvider(this).get(TopRatedViewModel.class);
         listMovie=new ArrayList<>();
         gridMoviesAdapter=new GridMoviesAdapter(listMovie,this,this);
+
+        RecyclerViewUtils.setupGridRecyclerView(this,allTopRatedMovieRecyclerView,gridMoviesAdapter,2);
+
         allTopRatedMovieRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
         SpacingItemDecorator itemDecorator=new SpacingItemDecorator(30,20);
         allTopRatedMovieRecyclerView.addItemDecoration(itemDecorator);
@@ -88,7 +92,7 @@ public class AllTopRatedMovieActivity extends AppCompatActivity implements ItemT
         });
     }
     private void callAPI(){
-        topRatedViewModel.callAPI();
+        topRatedViewModel.fetchTopRated(this);
     }
     private void observeDataChange(){
         topRatedViewModel.getListMovieData().observe(this, new Observer<List<Movie>>() {
@@ -117,7 +121,7 @@ public class AllTopRatedMovieActivity extends AppCompatActivity implements ItemT
                 GridLayoutManager gridLayoutManager = (GridLayoutManager) recyclerView.getLayoutManager();
                 if (gridLayoutManager != null && gridLayoutManager.findLastCompletelyVisibleItemPosition() == gridMoviesAdapter.getItemCount() - 1) {
                     // Gọi phương thức để tải trang tiếp theo
-                    topRatedViewModel.loadNextPage();
+                    topRatedViewModel.loadNextPage(AllTopRatedMovieActivity.this);
 //                    observeDataChange();
                 }
             }

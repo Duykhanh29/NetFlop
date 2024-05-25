@@ -25,6 +25,7 @@ import com.example.netflop.databinding.ActivityAllTopRatedTvactivityBinding;
 import com.example.netflop.ui.TV_Detail.TVSeriesDetailActivity;
 import com.example.netflop.ui.adapters.GridTVAdapter;
 import com.example.netflop.utils.ItemTVOnClickListener;
+import com.example.netflop.utils.RecyclerViewUtils;
 import com.example.netflop.utils.SpacingItemDecorator;
 import com.example.netflop.viewmodel.PopularTVViewModel;
 import com.example.netflop.viewmodel.TopRatedTVViewModel;
@@ -69,10 +70,13 @@ public class AllTopRatedTVActivity extends AppCompatActivity implements ItemTVOn
         topRatedTVViewModel=new ViewModelProvider(this).get(TopRatedTVViewModel.class);
         todayModelList=new ArrayList<>();
         gridTVAdapter=new GridTVAdapter(todayModelList,this,this);
-        allTopRatedTVRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
-        SpacingItemDecorator itemDecorator=new SpacingItemDecorator(30,20);
-        allTopRatedTVRecyclerView.addItemDecoration(itemDecorator);
-        allTopRatedTVRecyclerView.setAdapter(gridTVAdapter);
+
+        RecyclerViewUtils.setupGridRecyclerView(this,allTopRatedTVRecyclerView,gridTVAdapter,2);
+
+//        allTopRatedTVRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+//        SpacingItemDecorator itemDecorator=new SpacingItemDecorator(30,20);
+//        allTopRatedTVRecyclerView.addItemDecoration(itemDecorator);
+//        allTopRatedTVRecyclerView.setAdapter(gridTVAdapter);
 //        allUpcomingMovieRecyclerView.setAdapter(gridMoviesAdapter);
         getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
             @Override
@@ -84,7 +88,7 @@ public class AllTopRatedTVActivity extends AppCompatActivity implements ItemTVOn
         });
     }
     private void callAPI(){
-        topRatedTVViewModel.callAPI();
+        topRatedTVViewModel.fetchTopRatedTV(this);
     }
     private void observeDataChange(){
 
@@ -111,7 +115,7 @@ public class AllTopRatedTVActivity extends AppCompatActivity implements ItemTVOn
                 super.onScrolled(recyclerView, dx, dy);
                 GridLayoutManager gridLayoutManager = (GridLayoutManager) recyclerView.getLayoutManager();
                 if (gridLayoutManager != null && gridLayoutManager.findLastCompletelyVisibleItemPosition() == gridTVAdapter.getItemCount() - 1) {
-                    topRatedTVViewModel.loadNextPage();
+                    topRatedTVViewModel.loadNextPage(AllTopRatedTVActivity.this);
 //                    observeDataChange();
                 }
             }

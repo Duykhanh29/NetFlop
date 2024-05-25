@@ -27,7 +27,9 @@ import com.example.netflop.ui.adapters.GridEpisodeAdapter;
 import com.example.netflop.ui.adapters.ListCreatedByAdapter;
 import com.example.netflop.ui.adapters.ListSeasonAdapter;
 import com.example.netflop.utils.OnTVClickListener;
+import com.example.netflop.utils.RecyclerViewUtils;
 import com.example.netflop.utils.SpacingItemDecorator;
+import com.example.netflop.utils.ToolBarUtils;
 import com.example.netflop.viewmodel.TVDetailViewModel;
 
 import java.util.ArrayList;
@@ -87,31 +89,25 @@ public class TVSeasonDetailActivity extends AppCompatActivity implements OnTVCli
     }
     private void initialize(){
         setSupportActionBar(toolbar);
-        toolbar.setNavigationIcon(R.drawable.black_arrow_back);
-        toolbar.setNavigationContentDescription("Back");
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-            }
-        });
+        ToolBarUtils.setupBasicToolbar(toolbar,() -> finish());
         tvDetailViewModel= new ViewModelProvider(this).get(TVDetailViewModel.class);
         listEpisode=new ArrayList<>();
         episodeAdapter=new GridEpisodeAdapter(listEpisode,this,this);
 //
-        GridLayoutManager gridLayoutManager=new GridLayoutManager(this,2){
-            @Override
-            public boolean canScrollVertically() {
-                return true;
-            }
-        };
-        episodeRecyclerView.setLayoutManager(gridLayoutManager);
-        SpacingItemDecorator itemDecorator=new SpacingItemDecorator(20,20);
-        episodeRecyclerView.addItemDecoration(itemDecorator);
-        episodeRecyclerView.setAdapter(episodeAdapter);
+//        GridLayoutManager gridLayoutManager=new GridLayoutManager(this,2){
+//            @Override
+//            public boolean canScrollVertically() {
+//                return true;
+//            }
+//        };
+        RecyclerViewUtils.setupGridRecyclerView(this,episodeRecyclerView,episodeAdapter,2);
+//        episodeRecyclerView.setLayoutManager(gridLayoutManager);
+//        SpacingItemDecorator itemDecorator=new SpacingItemDecorator(20,20);
+//        episodeRecyclerView.addItemDecoration(itemDecorator);
+//        episodeRecyclerView.setAdapter(episodeAdapter);
     }
     private void callAPIs(){
-        tvDetailViewModel.callTVSeasonDetail(tvSeriesID,seasonNumber);
+        tvDetailViewModel.loadTVSeasonDetail(tvSeriesID,seasonNumber,this);
     }
     private void observeDataChange(){
         tvDetailViewModel.getTvSeasonDetailData().observe(this, new Observer<TVSeasonsDetail>() {

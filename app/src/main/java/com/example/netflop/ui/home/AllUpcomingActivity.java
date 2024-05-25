@@ -28,6 +28,7 @@ import com.example.netflop.ui.adapters.GridMoviesAdapter;
 import com.example.netflop.ui.movie_detail.MovieDetailActivity;
 import com.example.netflop.utils.CustomActionBar;
 import com.example.netflop.utils.ItemTouchHelperAdapter;
+import com.example.netflop.utils.RecyclerViewUtils;
 import com.example.netflop.utils.SpacingItemDecorator;
 import com.example.netflop.viewmodel.TrendingMovieViewModel;
 import com.example.netflop.viewmodel.UpcomingViewModel;
@@ -74,10 +75,13 @@ public class AllUpcomingActivity extends AppCompatActivity implements ItemTouchH
         upcomingViewModel=new ViewModelProvider(this).get(UpcomingViewModel.class);
         listMovie=new ArrayList<>();
         gridMoviesAdapter=new GridMoviesAdapter(listMovie,this,this);
-        allUpcomingMovieRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
-        SpacingItemDecorator itemDecorator=new SpacingItemDecorator(30,20);
-        allUpcomingMovieRecyclerView.addItemDecoration(itemDecorator);
-        allUpcomingMovieRecyclerView.setAdapter(gridMoviesAdapter);
+
+        RecyclerViewUtils.setupGridRecyclerView(this,allUpcomingMovieRecyclerView,gridMoviesAdapter,2);
+
+//        allUpcomingMovieRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+//        SpacingItemDecorator itemDecorator=new SpacingItemDecorator(30,20);
+//        allUpcomingMovieRecyclerView.addItemDecoration(itemDecorator);
+//        allUpcomingMovieRecyclerView.setAdapter(gridMoviesAdapter);
         getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
@@ -88,7 +92,7 @@ public class AllUpcomingActivity extends AppCompatActivity implements ItemTouchH
         });
     }
     private void callAPI(){
-        upcomingViewModel.callAPI();
+        upcomingViewModel.fetchUpcomingMovie(this);
     }
     private void observeDataChange(){
         upcomingViewModel.getListMovieData().observe(this, new Observer<List<Movie>>() {
@@ -117,7 +121,7 @@ public class AllUpcomingActivity extends AppCompatActivity implements ItemTouchH
                 GridLayoutManager gridLayoutManager = (GridLayoutManager) recyclerView.getLayoutManager();
                 if (gridLayoutManager != null && gridLayoutManager.findLastCompletelyVisibleItemPosition() == gridMoviesAdapter.getItemCount() - 1) {
                     // Gọi phương thức để tải trang tiếp theo
-                    upcomingViewModel.loadNextPage();
+                    upcomingViewModel.loadNextPage(AllUpcomingActivity.this);
 //                    observeDataChange();
                 }
             }

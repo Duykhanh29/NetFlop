@@ -16,6 +16,7 @@ import com.example.netflop.constants.StringConstants;
 import com.example.netflop.data.models.Video;
 import com.example.netflop.databinding.ActivityAllTrailersBinding;
 import com.example.netflop.ui.adapters.SecondListTrailerAdapter;
+import com.example.netflop.utils.RecyclerViewUtils;
 import com.example.netflop.utils.SpacingItemDecorator;
 
 import java.util.ArrayList;
@@ -70,10 +71,12 @@ public class AllTrailersActivity extends AppCompatActivity  {
     private void initialize(){
         listVideo=new ArrayList<>();
         listTrailerAdapter=new SecondListTrailerAdapter(listVideo,this,getLifecycle());
-        SpacingItemDecorator itemDecorator=new SpacingItemDecorator(20,0);
-        allTrailerRecyclerView.addItemDecoration(itemDecorator);
-        allTrailerRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        allTrailerRecyclerView.setAdapter(listTrailerAdapter);
+        RecyclerViewUtils.setupHorizontalRecyclerView(this,allTrailerRecyclerView,listTrailerAdapter,LinearLayoutManager.VERTICAL,false);
+
+//        SpacingItemDecorator itemDecorator=new SpacingItemDecorator(20,0);
+//        allTrailerRecyclerView.addItemDecoration(itemDecorator);
+//        allTrailerRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+//        allTrailerRecyclerView.setAdapter(listTrailerAdapter);
     }
     private void initializeToolBar(){
         setSupportActionBar(toolbar);

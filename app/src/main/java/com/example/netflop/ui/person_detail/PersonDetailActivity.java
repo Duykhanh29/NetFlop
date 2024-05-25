@@ -38,6 +38,7 @@ import com.example.netflop.ui.TV_Detail.TVSeriesDetailActivity;
 import com.example.netflop.ui.adapters.ListMovieCastAdapter;
 import com.example.netflop.ui.movie_detail.MovieDetailActivity;
 import com.example.netflop.utils.ItemMovieCastListener;
+import com.example.netflop.utils.RecyclerViewUtils;
 import com.example.netflop.utils.SpacingItemDecorator;
 import com.example.netflop.viewmodel.PersonViewModel;
 
@@ -140,19 +141,23 @@ public class PersonDetailActivity extends AppCompatActivity implements ItemMovie
                 android.R.layout.simple_list_item_1,
                 asKnownAsList
         );
-        castRecyclerView.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false));
-        crewRecyclerView.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false));
-        SpacingItemDecorator itemDecorator=new SpacingItemDecorator(0,20);
-        castRecyclerView.addItemDecoration(itemDecorator);
-        crewRecyclerView.addItemDecoration(itemDecorator);
+
+        RecyclerViewUtils.setupHorizontalRecyclerView(this,castRecyclerView,castAdapter,LinearLayoutManager.HORIZONTAL,false);
+        RecyclerViewUtils.setupHorizontalRecyclerView(this,crewRecyclerView,crewAdapter,LinearLayoutManager.HORIZONTAL,false);
+
+//        castRecyclerView.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false));
+//        crewRecyclerView.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false));
+//        SpacingItemDecorator itemDecorator=new SpacingItemDecorator(0,20);
+//        castRecyclerView.addItemDecoration(itemDecorator);
+//        crewRecyclerView.addItemDecoration(itemDecorator);
         asKnownAsListView.setAdapter(adapter);
-        castRecyclerView.setAdapter(castAdapter);
-        crewRecyclerView.setAdapter(crewAdapter);
+//        castRecyclerView.setAdapter(castAdapter);
+//        crewRecyclerView.setAdapter(crewAdapter);
     }
     private void callAPIs(){
-        personViewModel.callAPIPersonDetailByPersonID(personID);
-        personViewModel.callAPIPersonImageByPersonID(personID);
-        personViewModel.callAPICombinedCreditByPersonID(personID);
+        personViewModel.loadPersonDetailByPersonID(personID,this);
+        personViewModel.loadPersonImagesByPersonID(personID,this);
+        personViewModel.loadCombinedCreditByPersonID(personID,this);
     }
     private void observeDataChange(){
         personViewModel.getPersonDetailData().observe(this, new Observer<PersonDetail>() {

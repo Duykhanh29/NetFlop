@@ -27,6 +27,7 @@ import com.example.netflop.ui.adapters.GridMoviesAdapter;
 import com.example.netflop.ui.movie_detail.MovieDetailActivity;
 import com.example.netflop.utils.CustomActionBar;
 import com.example.netflop.utils.ItemTouchHelperAdapter;
+import com.example.netflop.utils.RecyclerViewUtils;
 import com.example.netflop.utils.SpacingItemDecorator;
 import com.example.netflop.viewmodel.NowPlayingViewModel;
 
@@ -69,13 +70,16 @@ public class AllPlayingNowActivity extends AppCompatActivity implements ItemTouc
 
         listMovie=new ArrayList<>();
         gridMoviesAdapter=new GridMoviesAdapter(listMovie,this,this);
-        allPlayingNowRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
-        SpacingItemDecorator itemDecorator=new SpacingItemDecorator(30,20);
-        allPlayingNowRecyclerView.addItemDecoration(itemDecorator);
-        allPlayingNowRecyclerView.setAdapter(gridMoviesAdapter);
+
+        RecyclerViewUtils.setupGridRecyclerView(this,allPlayingNowRecyclerView,gridMoviesAdapter,2);
+
+//        allPlayingNowRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+//        SpacingItemDecorator itemDecorator=new SpacingItemDecorator(30,20);
+//        allPlayingNowRecyclerView.addItemDecoration(itemDecorator);
+//        allPlayingNowRecyclerView.setAdapter(gridMoviesAdapter);
     }
     private void callAPI(){
-        nowPlayingViewModel.callAPI();
+        nowPlayingViewModel.fetchNowPlaying(this);
     }
     private void scrollListener(){
         allPlayingNowRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -90,7 +94,7 @@ public class AllPlayingNowActivity extends AppCompatActivity implements ItemTouc
                 GridLayoutManager gridLayoutManager = (GridLayoutManager) recyclerView.getLayoutManager();
                 if (gridLayoutManager != null && gridLayoutManager.findLastCompletelyVisibleItemPosition() == gridMoviesAdapter.getItemCount() - 1) {
                     // Gọi phương thức để tải trang tiếp theo
-                    nowPlayingViewModel.loadNextPage();
+                    nowPlayingViewModel.loadNextPage(AllPlayingNowActivity.this);
 //                    observeDataChange();
                 }
             }

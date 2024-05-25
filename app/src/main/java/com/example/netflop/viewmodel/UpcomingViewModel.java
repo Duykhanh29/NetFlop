@@ -2,11 +2,16 @@ package com.example.netflop.viewmodel;
 
 import android.util.Log;
 
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
 import com.example.netflop.constants.URLConstants;
 import com.example.netflop.data.models.Movie;
+import com.example.netflop.data.repository.UpcomingRepository;
+import com.example.netflop.data.responses.TrendingMovieResponse;
 import com.example.netflop.data.responses.UpcomingResponse;
 import com.example.netflop.data.services.APIClient;
 import com.example.netflop.data.data_source.remote_data_source.APIService;
@@ -24,10 +29,12 @@ public class UpcomingViewModel extends ViewModel {
     private boolean isLoading = false;
     private MutableLiveData<List<Movie>> listMovieData;
     List<Movie> listMovie;
+    UpcomingRepository upcomingRepository;
     public UpcomingViewModel(){
         upcomingData=new MutableLiveData<>();
         listMovieData=new MutableLiveData<>();
         listMovie=new ArrayList<>();
+        upcomingRepository=new UpcomingRepository();
     }
     public MutableLiveData<UpcomingResponse> getUpcomingData(){
         return  upcomingData;
@@ -35,42 +42,63 @@ public class UpcomingViewModel extends ViewModel {
     public MutableLiveData<List<Movie>> getListMovieData(){
         return listMovieData;
     }
-    public void loadNextPage() {
+    public void loadNextPage(LifecycleOwner lifecycleOwner) {
         currentPage++;
-        callAPI();
+//        callAPI();
+        fetchUpcomingMovie(lifecycleOwner);
     }
-    public void callAPI(){
-        APIService apiService= APIClient.getRetrofitInstance(URLConstants.baseURL).create(APIService.class);
-        Call<UpcomingResponse> call=apiService.getUpcoming(currentPage);
-        call.enqueue(new Callback<UpcomingResponse>() {
+    public void fetchUpcomingMovie(LifecycleOwner lifecycleOwner) {
+        LiveData<UpcomingResponse> liveData = upcomingRepository.getUpcomingMovie(currentPage);
+        liveData.observe(lifecycleOwner, new Observer<UpcomingResponse>() {
             @Override
-            public void onResponse(Call<UpcomingResponse> call, Response<UpcomingResponse> response) {
-                if(response.code()==200){
-                    UpcomingResponse upcomingResponse = response.body();
-                    if (upcomingResponse != null) {
-                        upcomingData.postValue(upcomingResponse);
-                        List<Movie> results = upcomingResponse.getResults();
-                        if (results != null) {
-                            List<Movie> currentMovies = listMovieData.getValue();
-                            if (currentMovies == null) {
-                                currentMovies = new ArrayList<>();
-                            }
-                            currentMovies.addAll(results);
-                            listMovieData.postValue(currentMovies);
-                        }
-                    } else {
-                        Log.e("TAG", "Response body is null");
+            public void onChanged(UpcomingResponse upcomingResponse) {
+                if (upcomingResponse!= null && upcomingResponse.getResults()!= null) {
+                    upcomingData.postValue(upcomingResponse);
+                    List<Movie> currentMovies = listMovieData.getValue();
+                    if (currentMovies == null) {
+                        currentMovies = new ArrayList<>();
                     }
-                }else{
-                    Log.e("TAG","An error has occurred "+response.code()+": "+response.message());
+                    currentMovies.addAll(upcomingResponse.getResults());
+                    listMovieData.postValue(currentMovies);
+                } else {
+                    Log.e("TAG", "Response body is null");
                 }
             }
-
-            @Override
-            public void onFailure(Call<UpcomingResponse> call, Throwable t) {
-                upcomingData.postValue(null);
-                listMovieData.postValue(null);
-            }
         });
+
     }
+//    public void callAPI(){
+//        APIService apiService= APIClient.getRetrofitInstance(URLConstants.baseURL).create(APIService.class);
+//        Call<UpcomingResponse> call=apiService.getUpcoming(currentPage);
+//        call.enqueue(new Callback<UpcomingResponse>() {
+//            @Override
+//            public void onResponse(Call<UpcomingResponse> call, Response<UpcomingResponse> response) {
+//                if(response.code()==200){
+//                    UpcomingResponse upcomingResponse = response.body();
+//                    if (upcomingResponse != null) {
+//                        upcomingData.postValue(upcomingResponse);
+//                        List<Movie> results = upcomingResponse.getResults();
+//                        if (results != null) {
+//                            List<Movie> currentMovies = listMovieData.getValue();
+//                            if (currentMovies == null) {
+//                                currentMovies = new ArrayList<>();
+//                            }
+//                            currentMovies.addAll(results);
+//                            listMovieData.postValue(currentMovies);
+//                        }
+//                    } else {
+//                        Log.e("TAG", "Response body is null");
+//                    }
+//                }else{
+//                    Log.e("TAG","An error has occurred "+response.code()+": "+response.message());
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<UpcomingResponse> call, Throwable t) {
+//                upcomingData.postValue(null);
+//                listMovieData.postValue(null);
+//            }
+//        });
+//    }
 }

@@ -27,6 +27,7 @@ import com.example.netflop.ui.TV_Detail.TVSeriesDetailActivity;
 import com.example.netflop.ui.adapters.GridPeopleAdapter;
 import com.example.netflop.ui.adapters.GridTVAdapter;
 import com.example.netflop.utils.ItemTVOnClickListener;
+import com.example.netflop.utils.RecyclerViewUtils;
 import com.example.netflop.utils.SpacingItemDecorator;
 import com.example.netflop.viewmodel.PopularPeopleViewModel;
 import com.example.netflop.viewmodel.PopularTVViewModel;
@@ -71,10 +72,13 @@ public class AllPopularTVActivity extends AppCompatActivity implements ItemTVOnC
         popularTVViewModel=new ViewModelProvider(this).get(PopularTVViewModel.class);
         todayModelList=new ArrayList<>();
         gridTVAdapter=new GridTVAdapter(todayModelList,this,this);
-        allPopularTVRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
-        SpacingItemDecorator itemDecorator=new SpacingItemDecorator(30,20);
-        allPopularTVRecyclerView.addItemDecoration(itemDecorator);
-        allPopularTVRecyclerView.setAdapter(gridTVAdapter);
+
+        RecyclerViewUtils.setupGridRecyclerView(this,allPopularTVRecyclerView,gridTVAdapter,2);
+
+//        allPopularTVRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+//        SpacingItemDecorator itemDecorator=new SpacingItemDecorator(30,20);
+//        allPopularTVRecyclerView.addItemDecoration(itemDecorator);
+//        allPopularTVRecyclerView.setAdapter(gridTVAdapter);
 //        allUpcomingMovieRecyclerView.setAdapter(gridMoviesAdapter);
         getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
             @Override
@@ -86,7 +90,7 @@ public class AllPopularTVActivity extends AppCompatActivity implements ItemTVOnC
         });
     }
     private void callAPI(){
-        popularTVViewModel.callAPI();
+        popularTVViewModel.fetchPopularTV(this);
     }
     private void observeDataChange(){
         popularTVViewModel.getListPopularTV().observe(this, new Observer<List<AiringTodayModel>>() {
@@ -112,7 +116,7 @@ public class AllPopularTVActivity extends AppCompatActivity implements ItemTVOnC
                 super.onScrolled(recyclerView, dx, dy);
                 GridLayoutManager gridLayoutManager = (GridLayoutManager) recyclerView.getLayoutManager();
                 if (gridLayoutManager != null && gridLayoutManager.findLastCompletelyVisibleItemPosition() == gridTVAdapter.getItemCount() - 1) {
-                    popularTVViewModel.loadNextPage();
+                    popularTVViewModel.loadNextPage(AllPopularTVActivity.this);
 //                    observeDataChange();
                 }
             }

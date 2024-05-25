@@ -417,16 +417,15 @@ public class HomeFragment extends Fragment implements ItemTouchHelperAdapter, It
 
 
     private void callAPIs(){
-
-        nowPlayingViewModel.callAPI();
-        popularMovieViewModel.callAPI();
-        topRatedViewModel.callAPI();
-        upcomingViewModel.callAPI();
-        trendingMovieViewModel.callAPI();
-        trendingPeopleViewModel.callAPI();
-        popularPeopleViewModel.callAPI();
-        popularTVViewModel.callAPI();
-        topRatedTVViewModel.callAPI();
+        nowPlayingViewModel.fetchNowPlaying(getViewLifecycleOwner());
+        popularMovieViewModel.fetchPopularMovie(getViewLifecycleOwner());
+        topRatedViewModel.fetchTopRated(getViewLifecycleOwner());
+        upcomingViewModel.fetchUpcomingMovie(getViewLifecycleOwner());
+        trendingMovieViewModel.fetchTrendingMovie(getViewLifecycleOwner());
+        trendingPeopleViewModel.fetchTrendingPeople(getViewLifecycleOwner());
+        popularPeopleViewModel.fetchPopularPeople(getViewLifecycleOwner());
+        popularTVViewModel.fetchPopularTV(getViewLifecycleOwner());
+        topRatedTVViewModel.fetchTopRatedTV(getViewLifecycleOwner());
     }
     private void observeChanges(){
         // now playing

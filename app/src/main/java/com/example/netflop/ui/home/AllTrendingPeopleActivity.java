@@ -91,7 +91,7 @@ public class AllTrendingPeopleActivity extends AppCompatActivity implements Item
         });
     }
     private void callAPI(){
-        trendingPeopleViewModel.callAPI();
+        trendingPeopleViewModel.fetchTrendingPeople(this);
     }
     private void observeDataChange(){
         trendingPeopleViewModel.getListPeopleData().observe(this, new Observer<List<Person>>() {
@@ -118,7 +118,7 @@ public class AllTrendingPeopleActivity extends AppCompatActivity implements Item
                 GridLayoutManager gridLayoutManager = (GridLayoutManager) recyclerView.getLayoutManager();
                 if (gridLayoutManager != null && gridLayoutManager.findLastCompletelyVisibleItemPosition() == gridPeopleAdapter.getItemCount() - 1) {
                     // Gọi phương thức để tải trang tiếp theo
-                    trendingPeopleViewModel.loadNextPage();
+                    trendingPeopleViewModel.loadNextPage(AllTrendingPeopleActivity.this);
 //                    observeDataChange();
                 }
             }

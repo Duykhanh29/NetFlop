@@ -2,12 +2,17 @@ package com.example.netflop.viewmodel;
 
 import android.util.Log;
 
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
 import com.example.netflop.constants.URLConstants;
 import com.example.netflop.data.models.Movie;
+import com.example.netflop.data.models.SearchMultiModel;
+import com.example.netflop.data.repository.SearchRepository;
 import com.example.netflop.data.responses.SearchMovieResponse;
+import com.example.netflop.data.responses.SearchMultiResponse;
 import com.example.netflop.data.services.APIClient;
 import com.example.netflop.data.data_source.remote_data_source.APIService;
 
@@ -23,11 +28,13 @@ public class SearchMovieViewModel extends ViewModel {
     private MutableLiveData<List<Movie>> listMovieData;
     List<Movie> list;
     int currentPage=1;
+    SearchRepository searchRepository;
 
     public SearchMovieViewModel(){
         this.searchMovieData = new MutableLiveData<>();
         this.listMovieData=new MutableLiveData<>();
         this.list=new ArrayList<>();
+        searchRepository=new SearchRepository();
     }
 
     public MutableLiveData<List<Movie>> getListMovieData(){
@@ -37,52 +44,81 @@ public class SearchMovieViewModel extends ViewModel {
     public MutableLiveData<SearchMovieResponse> getSearchMovieData() {
         return searchMovieData;
     }
-    public void loadNextPage(String query,boolean includeAdult) {
+    public void loadNextPage(String query,boolean includeAdult,LifecycleOwner lifecycleOwner) {
         currentPage++;
-        callAPI(query,includeAdult);
+//        callAPI(query,includeAdult);
+        searchMovie(query,includeAdult,lifecycleOwner);
     }
-    public void callAPI(String query,boolean includeAdult){
-        APIService apiService= APIClient.getRetrofitInstance(URLConstants.baseURL).create(APIService.class);
-        Call<SearchMovieResponse> call=apiService.getSearchMovies(query,includeAdult,currentPage);
-        call.enqueue(new Callback<SearchMovieResponse>() {
+    public void searchMovie(String query, boolean includeAdult, LifecycleOwner lifecycleOwner){
+
+        searchRepository.searchMovies(query,includeAdult,currentPage).observe(lifecycleOwner, new Observer<SearchMovieResponse>() {
             @Override
-            public void onResponse(Call<SearchMovieResponse> call, Response<SearchMovieResponse> response) {
-
-                if(response.code()==200){
-
-
-                    SearchMovieResponse searchMovieResponse = response.body();
-                    if (searchMovieResponse != null) {
-                        searchMovieData.postValue(searchMovieResponse);
-                        List<Movie> results = searchMovieResponse.getResults();
-                        if (results != null) {
-                            List<Movie> currentMovies = new ArrayList<>();
-                            if(currentPage!=1){
-                                currentMovies= listMovieData.getValue();
-                                if (currentMovies == null) {
-                                    currentMovies = new ArrayList<>();
-                                }
+            public void onChanged(SearchMovieResponse searchMovieResponse) {
+                if (searchMovieResponse!= null && searchMovieResponse.getResults()!= null) {
+                    searchMovieData.postValue(searchMovieResponse);
+                    List<Movie> results = searchMovieResponse.getResults();
+                    if(results!=null){
+                        List<Movie> currentList = new ArrayList<>();
+                        if(currentPage!=1){
+                            currentList= listMovieData.getValue();
+                            if (currentList == null) {
+                                currentList = new ArrayList<>();
                             }
-                            currentMovies.addAll(results);
-                            listMovieData.postValue(currentMovies);
                         }
-                    } else {
-                        Log.e("TAG", "Response body is null");
+                        currentList.addAll(results);
+                        listMovieData.postValue(currentList);
                     }
-                }else{
-                    Log.e("TAG","An error has occurred "+response.code()+": "+response.message());
+                } else {
                     searchMovieData.postValue(null);
                     listMovieData.postValue(null);
+                    Log.e("TAG", "Response body is null");
                 }
             }
-
-            @Override
-            public void onFailure(Call<SearchMovieResponse> call, Throwable t) {
-                searchMovieData.postValue(null);
-                listMovieData.postValue(null);
-            }
         });
+
     }
+//    public void callAPI(String query,boolean includeAdult){
+//        APIService apiService= APIClient.getRetrofitInstance(URLConstants.baseURL).create(APIService.class);
+//        Call<SearchMovieResponse> call=apiService.getSearchMovies(query,includeAdult,currentPage);
+//        call.enqueue(new Callback<SearchMovieResponse>() {
+//            @Override
+//            public void onResponse(Call<SearchMovieResponse> call, Response<SearchMovieResponse> response) {
+//
+//                if(response.code()==200){
+//
+//
+//                    SearchMovieResponse searchMovieResponse = response.body();
+//                    if (searchMovieResponse != null) {
+//                        searchMovieData.postValue(searchMovieResponse);
+//                        List<Movie> results = searchMovieResponse.getResults();
+//                        if (results != null) {
+//                            List<Movie> currentMovies = new ArrayList<>();
+//                            if(currentPage!=1){
+//                                currentMovies= listMovieData.getValue();
+//                                if (currentMovies == null) {
+//                                    currentMovies = new ArrayList<>();
+//                                }
+//                            }
+//                            currentMovies.addAll(results);
+//                            listMovieData.postValue(currentMovies);
+//                        }
+//                    } else {
+//                        Log.e("TAG", "Response body is null");
+//                    }
+//                }else{
+//                    Log.e("TAG","An error has occurred "+response.code()+": "+response.message());
+//                    searchMovieData.postValue(null);
+//                    listMovieData.postValue(null);
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<SearchMovieResponse> call, Throwable t) {
+//                searchMovieData.postValue(null);
+//                listMovieData.postValue(null);
+//            }
+//        });
+//    }
     public void resetData() {
         list.clear();
         listMovieData.postValue(new ArrayList<>());

@@ -54,6 +54,7 @@ import com.example.netflop.ui.movie_detail.MovieDetailActivity;
 import com.example.netflop.ui.person_detail.PersonDetailActivity;
 import com.example.netflop.utils.ItemTVOnClickListener;
 import com.example.netflop.utils.ItemTouchHelperAdapter;
+import com.example.netflop.utils.RecyclerViewUtils;
 import com.example.netflop.utils.SearchItemOnClickListener;
 import com.example.netflop.utils.SpacingItemDecorator;
 import com.example.netflop.viewmodel.SearchMovieViewModel;
@@ -247,10 +248,11 @@ public class SearchFragment extends Fragment implements SearchItemOnClickListene
         searchAdapter=new SearchAdapter(searchMultiList,getActivity(),this);
         searchTVAdapter=new SearchTVAdapter(lisTVShow,getActivity(),this);
 
+        RecyclerViewUtils.setupGridRecyclerView(getActivity(),recyclerView,searchAdapter,2);
         recyclerView.setLayoutManager(new GridLayoutManager(getActivity(),2));
-        SpacingItemDecorator itemDecorator=new SpacingItemDecorator(20,20);
-        recyclerView.addItemDecoration(itemDecorator);
-        recyclerView.setAdapter(searchAdapter);
+//        SpacingItemDecorator itemDecorator=new SpacingItemDecorator(20,20);
+//        recyclerView.addItemDecoration(itemDecorator);
+//        recyclerView.setAdapter(searchAdapter);
     }
     private void initializeMultipleRecyclerView(){
         clearCurrentAdapterData();
@@ -360,16 +362,16 @@ public class SearchFragment extends Fragment implements SearchItemOnClickListene
         imm.hideSoftInputFromWindow(searchView.getWindowToken(), 0);
     }
     private void callAPIs(String searchKey){
-        searchMultiViewModel.callAPI(searchKey,isAdult);
+        searchMultiViewModel.searchMultiple(searchKey,isAdult,getViewLifecycleOwner());
     }
     private void callPersonAPI(String searchKey){
-        searchPeopleViewModel.callAPI(searchKey,isAdult);
+        searchPeopleViewModel.searchPeople(searchKey,isAdult,getViewLifecycleOwner());
     }
     private void callMovieAPI(String searchKey){
-        searchMovieViewModel.callAPI(searchKey,isAdult);
+        searchMovieViewModel.searchMovie(searchKey,isAdult,getViewLifecycleOwner());
     }
     private void callTVAPI(String searchKey){
-        searchTVViewModel.callAPI(searchKey,isAdult);
+        searchTVViewModel.searchTVShows(searchKey,isAdult,getViewLifecycleOwner());
     }
     private void observeDataChanged(){
         searchMultiViewModel.getListSearchMulti().observe(getViewLifecycleOwner(), new Observer<List<SearchMultiModel>>() {
@@ -470,19 +472,19 @@ public class SearchFragment extends Fragment implements SearchItemOnClickListene
                 GridLayoutManager gridLayoutManager = (GridLayoutManager) recyclerView.getLayoutManager();
                 if(isCheckAll){
                     if (gridLayoutManager != null && gridLayoutManager.findLastCompletelyVisibleItemPosition() == searchAdapter.getItemCount() - 1) {
-                        searchMultiViewModel.loadNextPage(queryText,isAdult);
+                        searchMultiViewModel.loadNextPage(queryText,isAdult,getViewLifecycleOwner());
                     }
                 }else if(isMovie){
                     if (gridLayoutManager != null && gridLayoutManager.findLastCompletelyVisibleItemPosition() == searchMovieAdapter.getItemCount() - 1) {
-                        searchMovieViewModel.loadNextPage(queryText,isAdult);
+                        searchMovieViewModel.loadNextPage(queryText,isAdult,getViewLifecycleOwner());
                     }
                 }else if(isPerson){
                     if (gridLayoutManager != null && gridLayoutManager.findLastCompletelyVisibleItemPosition() == searchPersonAdapter.getItemCount() - 1) {
-                        searchPeopleViewModel.loadNextPage(queryText,isAdult);
+                        searchPeopleViewModel.loadNextPage(queryText,isAdult,getViewLifecycleOwner());
                     }
                 }else{
                     if (gridLayoutManager != null && gridLayoutManager.findLastCompletelyVisibleItemPosition() == searchTVAdapter.getItemCount() - 1) {
-                        searchTVViewModel.loadNextPage(queryText,isAdult);
+                        searchTVViewModel.loadNextPage(queryText,isAdult,getViewLifecycleOwner());
                     }
                 }
 
@@ -511,6 +513,7 @@ public class SearchFragment extends Fragment implements SearchItemOnClickListene
             searchMultiViewModel.resetData();
             searchMovieViewModel.resetData();
             searchPeopleViewModel.resetData();
+            searchTVViewModel.resetData();
             typeOfSearchingTV.setText("");
             isAdultTV.setText("");
         }

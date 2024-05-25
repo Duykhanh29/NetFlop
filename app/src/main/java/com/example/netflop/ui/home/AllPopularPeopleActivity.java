@@ -27,6 +27,7 @@ import com.example.netflop.databinding.ActivityAllTrendingPeopleBinding;
 import com.example.netflop.ui.adapters.GridPeopleAdapter;
 import com.example.netflop.ui.person_detail.PersonDetailActivity;
 import com.example.netflop.utils.ItemTouchHelperAdapter;
+import com.example.netflop.utils.RecyclerViewUtils;
 import com.example.netflop.utils.SpacingItemDecorator;
 import com.example.netflop.viewmodel.PopularPeopleViewModel;
 import com.example.netflop.viewmodel.TrendingPeopleViewModel;
@@ -72,10 +73,13 @@ public class AllPopularPeopleActivity extends AppCompatActivity implements ItemT
         popularPeopleViewModel=new ViewModelProvider(this).get(PopularPeopleViewModel.class);
         listPeople=new ArrayList<>();
         gridPeopleAdapter=new GridPeopleAdapter(listPeople,this,this);
-        allPopularPeopleRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
-        SpacingItemDecorator itemDecorator=new SpacingItemDecorator(30,20);
-        allPopularPeopleRecyclerView.addItemDecoration(itemDecorator);
-        allPopularPeopleRecyclerView.setAdapter(gridPeopleAdapter);
+
+
+        RecyclerViewUtils.setupGridRecyclerView(this,allPopularPeopleRecyclerView,gridPeopleAdapter,3);
+//        allPopularPeopleRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
+//        SpacingItemDecorator itemDecorator=new SpacingItemDecorator(30,20);
+//        allPopularPeopleRecyclerView.addItemDecoration(itemDecorator);
+//        allPopularPeopleRecyclerView.setAdapter(gridPeopleAdapter);
 //        allUpcomingMovieRecyclerView.setAdapter(gridMoviesAdapter);
         getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
             @Override
@@ -87,7 +91,7 @@ public class AllPopularPeopleActivity extends AppCompatActivity implements ItemT
         });
     }
     private void callAPI(){
-        popularPeopleViewModel.callAPI();
+        popularPeopleViewModel.fetchPopularPeople(this);
     }
     private void observeDataChange(){
         popularPeopleViewModel.getListPeopleData().observe(this, new Observer<List<Person>>() {
@@ -114,7 +118,7 @@ public class AllPopularPeopleActivity extends AppCompatActivity implements ItemT
                 GridLayoutManager gridLayoutManager = (GridLayoutManager) recyclerView.getLayoutManager();
                 if (gridLayoutManager != null && gridLayoutManager.findLastCompletelyVisibleItemPosition() == gridPeopleAdapter.getItemCount() - 1) {
                     // Gọi phương thức để tải trang tiếp theo
-                    popularPeopleViewModel.loadNextPage();
+                    popularPeopleViewModel.loadNextPage(AllPopularPeopleActivity.this);
 //                    observeDataChange();
                 }
             }

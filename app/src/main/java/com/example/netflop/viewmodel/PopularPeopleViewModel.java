@@ -2,13 +2,19 @@ package com.example.netflop.viewmodel;
 
 import android.util.Log;
 
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
 import com.example.netflop.constants.URLConstants;
 import com.example.netflop.data.data_source.remote_data_source.APIService;
+import com.example.netflop.data.models.Movie;
 import com.example.netflop.data.models.Person;
+import com.example.netflop.data.repository.PopularPeopleRepository;
 import com.example.netflop.data.responses.PopularPeopleResponse;
+import com.example.netflop.data.responses.PopularResponse;
 import com.example.netflop.data.responses.TrendingPeopleResponse;
 import com.example.netflop.data.services.APIClient;
 
@@ -25,10 +31,12 @@ public class PopularPeopleViewModel extends ViewModel {
     private boolean isLoading = false;
     private MutableLiveData<List<Person>> listPeopleData;
     List<Person> listPeople;
+    PopularPeopleRepository popularPeopleRepository;
     public PopularPeopleViewModel(){
         popularPeopleData=new MutableLiveData<>();
         listPeopleData=new MutableLiveData<>();
         listPeople=new ArrayList<>();
+        popularPeopleRepository=new PopularPeopleRepository();
     }
     public MutableLiveData<PopularPeopleResponse> getPopularPeopleData(){
         return  popularPeopleData;
@@ -36,42 +44,62 @@ public class PopularPeopleViewModel extends ViewModel {
     public MutableLiveData<List<Person>> getListPeopleData(){
         return listPeopleData;
     }
-    public void loadNextPage() {
+    public void loadNextPage(LifecycleOwner lifecycleOwner) {
         currentPage++;
-        callAPI();
+//        callAPI();
+        fetchPopularPeople(lifecycleOwner);
     }
-    public void callAPI(){
-        APIService apiService= APIClient.getRetrofitInstance(URLConstants.baseURL).create(APIService.class);
-        Call<PopularPeopleResponse> call=apiService.getPopularPeople(currentPage);
-        call.enqueue(new Callback<PopularPeopleResponse>() {
+    public void fetchPopularPeople(LifecycleOwner lifecycleOwner) {
+        LiveData<PopularPeopleResponse> liveData = popularPeopleRepository.getPopularPeople(currentPage);
+        liveData.observe(lifecycleOwner, new Observer<PopularPeopleResponse>() {
             @Override
-            public void onResponse(Call<PopularPeopleResponse> call, Response<PopularPeopleResponse> response) {
-                if(response.code()==200){
-                    PopularPeopleResponse popularPeopleResponse = response.body();
-                    if (popularPeopleResponse != null) {
-                        popularPeopleData.postValue(popularPeopleResponse);
-                        List<Person> results = popularPeopleResponse.getResults();
-                        if (results != null) {
-                            List<Person> currentMovies = listPeopleData.getValue();
-                            if (currentMovies == null) {
-                                currentMovies = new ArrayList<>();
-                            }
-                            currentMovies.addAll(results);
-                            listPeopleData.postValue(currentMovies);
-                        }
-                    } else {
-                        Log.e("TAG", "Response body is null");
+            public void onChanged(PopularPeopleResponse popularPeopleResponse) {
+                if (popularPeopleResponse!= null && popularPeopleResponse.getResults()!= null) {
+                    popularPeopleData.postValue(popularPeopleResponse);
+                    List<Person> currentPeople = listPeopleData.getValue();
+                    if (currentPeople == null) {
+                        currentPeople = new ArrayList<>();
                     }
-                }else{
-                    Log.e("TAG","An error has occurred "+response.code()+": "+response.message());
+                    currentPeople.addAll(popularPeopleResponse.getResults());
+                    listPeopleData.postValue(currentPeople);
+                } else {
+                    Log.e("TAG", "Response body is null");
                 }
-            }
-
-            @Override
-            public void onFailure(Call<PopularPeopleResponse> call, Throwable t) {
-                popularPeopleData.postValue(null);
-                listPeopleData.postValue(null);
             }
         });
     }
+//    public void callAPI(){
+//        APIService apiService= APIClient.getRetrofitInstance(URLConstants.baseURL).create(APIService.class);
+//        Call<PopularPeopleResponse> call=apiService.getPopularPeople(currentPage);
+//        call.enqueue(new Callback<PopularPeopleResponse>() {
+//            @Override
+//            public void onResponse(Call<PopularPeopleResponse> call, Response<PopularPeopleResponse> response) {
+//                if(response.code()==200){
+//                    PopularPeopleResponse popularPeopleResponse = response.body();
+//                    if (popularPeopleResponse != null) {
+//                        popularPeopleData.postValue(popularPeopleResponse);
+//                        List<Person> results = popularPeopleResponse.getResults();
+//                        if (results != null) {
+//                            List<Person> currentMovies = listPeopleData.getValue();
+//                            if (currentMovies == null) {
+//                                currentMovies = new ArrayList<>();
+//                            }
+//                            currentMovies.addAll(results);
+//                            listPeopleData.postValue(currentMovies);
+//                        }
+//                    } else {
+//                        Log.e("TAG", "Response body is null");
+//                    }
+//                }else{
+//                    Log.e("TAG","An error has occurred "+response.code()+": "+response.message());
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<PopularPeopleResponse> call, Throwable t) {
+//                popularPeopleData.postValue(null);
+//                listPeopleData.postValue(null);
+//            }
+//        });
+//    }
 }

@@ -51,6 +51,7 @@ import com.example.netflop.utils.ClickableSpanHandler;
 import com.example.netflop.utils.ItemTouchHelperAdapter;
 import com.example.netflop.utils.OnClickListener;
 import com.example.netflop.utils.OnTrailerClickListener;
+import com.example.netflop.utils.RecyclerViewUtils;
 import com.example.netflop.utils.SeeMoreOnClickListener;
 import com.example.netflop.utils.SpacingItemDecorator;
 import com.example.netflop.viewmodel.MovieViewModel;
@@ -184,20 +185,26 @@ public class MovieDetailActivity extends AppCompatActivity implements ItemTouchH
         listReviewAdapter=new ListReviewAdapter(listReview,this);
     }
     private void initializeRecyclerView(){
-        castRecyclerView.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false));
-        crewRecyclerView.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false));
-        recommendationRecyclerView.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false));
-        trailerRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-//        reviewRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        // decoration
-        SpacingItemDecorator itemDecorator = new SpacingItemDecorator(10,10);
-        SpacingItemDecorator itemDecorator1 = new SpacingItemDecorator(10,5);
-        //
-        castRecyclerView.addItemDecoration(itemDecorator);
-        crewRecyclerView.addItemDecoration(itemDecorator);
-        recommendationRecyclerView.addItemDecoration(itemDecorator);
-        trailerRecyclerView.addItemDecoration(itemDecorator1);
-        setAdapterForRecyclerView();
+        RecyclerViewUtils.setupHorizontalRecyclerView(this,castRecyclerView,castAdapter,LinearLayoutManager.HORIZONTAL,false);
+        RecyclerViewUtils.setupHorizontalRecyclerView(this,crewRecyclerView,crewAdapter,LinearLayoutManager.HORIZONTAL,false);
+        RecyclerViewUtils.setupHorizontalRecyclerView(this,recommendationRecyclerView,recommendationAdapter,LinearLayoutManager.HORIZONTAL,false);
+        RecyclerViewUtils.setupHorizontalRecyclerView(this,trailerRecyclerView,listTrailerAdapter,LinearLayoutManager.VERTICAL,false);
+
+
+//        castRecyclerView.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false));
+//        crewRecyclerView.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false));
+//        recommendationRecyclerView.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false));
+//        trailerRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+////        reviewRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+//        // decoration
+//        SpacingItemDecorator itemDecorator = new SpacingItemDecorator(10,10);
+//        SpacingItemDecorator itemDecorator1 = new SpacingItemDecorator(10,5);
+//        //
+//        castRecyclerView.addItemDecoration(itemDecorator);
+//        crewRecyclerView.addItemDecoration(itemDecorator);
+//        recommendationRecyclerView.addItemDecoration(itemDecorator);
+//        trailerRecyclerView.addItemDecoration(itemDecorator1);
+//        setAdapterForRecyclerView();
     }
     private void setAdapterForRecyclerView(){
         castRecyclerView.setAdapter(castAdapter);
@@ -206,12 +213,12 @@ public class MovieDetailActivity extends AppCompatActivity implements ItemTouchH
         trailerRecyclerView.setAdapter(listTrailerAdapter);
     }
     private void callAPIs(){
-        movieViewModel.callAPIMovieDetailByID(movieID);
-        movieViewModel.callAPIMovieImageByID(movieID);
-        movieViewModel.callAPIRecommendationByMovieID(movieID);
-        movieViewModel.callAPIMovieVideoByID(movieID);
-        movieViewModel.callAPIReviewResponseByMovieID(movieID);
-        movieViewModel.callAPICreditByMovieID(movieID);
+        movieViewModel.loadMovieDetail(movieID,this);
+        movieViewModel.loadMovieImages(movieID,this);
+        movieViewModel.loadMovieVideos(movieID,this);
+        movieViewModel.loadMovieCredit(movieID,this);
+        movieViewModel.loadMovieReview(movieID,this);
+        movieViewModel.loadRecommendation(movieID,this);
     }
     private void addListImage(String newData){
         listImage.add(URLConstants.imageURL+newData);
