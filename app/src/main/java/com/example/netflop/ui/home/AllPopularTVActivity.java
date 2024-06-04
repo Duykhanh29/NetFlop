@@ -18,18 +18,14 @@ import android.text.style.ForegroundColorSpan;
 import android.view.MenuItem;
 
 import com.example.netflop.R;
+import com.example.netflop.constants.IntConstants;
 import com.example.netflop.constants.StringConstants;
-import com.example.netflop.data.models.Person;
 import com.example.netflop.data.models.TVs.AiringTodayModel;
-import com.example.netflop.databinding.ActivityAllPopularPeopleBinding;
 import com.example.netflop.databinding.ActivityAllPopularTvactivityBinding;
 import com.example.netflop.ui.TV_Detail.TVSeriesDetailActivity;
-import com.example.netflop.ui.adapters.GridPeopleAdapter;
 import com.example.netflop.ui.adapters.GridTVAdapter;
-import com.example.netflop.utils.ItemTVOnClickListener;
+import com.example.netflop.utils.listeners.ItemTVOnClickListener;
 import com.example.netflop.utils.RecyclerViewUtils;
-import com.example.netflop.utils.SpacingItemDecorator;
-import com.example.netflop.viewmodel.PopularPeopleViewModel;
 import com.example.netflop.viewmodel.PopularTVViewModel;
 
 import java.util.ArrayList;
@@ -115,7 +111,7 @@ public class AllPopularTVActivity extends AppCompatActivity implements ItemTVOnC
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
                 GridLayoutManager gridLayoutManager = (GridLayoutManager) recyclerView.getLayoutManager();
-                if (gridLayoutManager != null && gridLayoutManager.findLastCompletelyVisibleItemPosition() == gridTVAdapter.getItemCount() - 1) {
+                if (gridLayoutManager != null && gridLayoutManager.findLastCompletelyVisibleItemPosition() == gridTVAdapter.getItemCount() - IntConstants.PRE_FETCH_THRESHOLD) {
                     popularTVViewModel.loadNextPage(AllPopularTVActivity.this);
 //                    observeDataChange();
                 }

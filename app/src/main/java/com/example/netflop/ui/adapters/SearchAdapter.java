@@ -14,10 +14,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.netflop.R;
 import com.example.netflop.constants.URLConstants;
-import com.example.netflop.data.models.Person;
 import com.example.netflop.data.models.SearchMultiModel;
-import com.example.netflop.utils.ItemTouchHelperAdapter;
-import com.example.netflop.utils.SearchItemOnClickListener;
+import com.example.netflop.utils.listeners.SearchItemOnClickListener;
 
 import java.util.List;
 

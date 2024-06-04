@@ -17,7 +17,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -36,16 +35,11 @@ import com.example.netflop.data.models.TVs.Season;
 import com.example.netflop.data.models.TVs.TVSeriesDetail;
 import com.example.netflop.databinding.ActivityTvseriesDetailBinding;
 import com.example.netflop.helpers.CustomTextView;
-import com.example.netflop.ui.adapters.ListCastAdapter;
 import com.example.netflop.ui.adapters.ListCreatedByAdapter;
-import com.example.netflop.ui.adapters.ListMovieCastAdapter;
 import com.example.netflop.ui.adapters.ListSeasonAdapter;
-import com.example.netflop.utils.CommonMethods;
-import com.example.netflop.utils.OnTVClickListener;
+import com.example.netflop.utils.listeners.OnTVClickListener;
 import com.example.netflop.utils.RecyclerViewUtils;
-import com.example.netflop.utils.SpacingItemDecorator;
 import com.example.netflop.utils.ToolBarUtils;
-import com.example.netflop.viewmodel.PersonViewModel;
 import com.example.netflop.viewmodel.TVDetailViewModel;
 import com.google.android.flexbox.FlexboxLayout;
 

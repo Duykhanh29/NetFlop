@@ -13,8 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.netflop.R;
 import com.example.netflop.data.models.Video;
-import com.example.netflop.utils.OnClickListener;
-import com.example.netflop.utils.OnTrailerClickListener;
+import com.example.netflop.utils.listeners.OnTrailerClickListener;
 
 import java.util.List;
 

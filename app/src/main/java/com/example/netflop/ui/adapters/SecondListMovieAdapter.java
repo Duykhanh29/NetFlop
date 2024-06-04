@@ -18,8 +18,7 @@ import com.bumptech.glide.Glide;
 import com.example.netflop.R;
 import com.example.netflop.constants.URLConstants;
 import com.example.netflop.data.models.Movie;
-import com.example.netflop.utils.CommonMethods;
-import com.example.netflop.utils.ItemTouchHelperAdapter;
+import com.example.netflop.utils.listeners.ItemTouchHelperAdapter;
 
 import java.util.List;
 

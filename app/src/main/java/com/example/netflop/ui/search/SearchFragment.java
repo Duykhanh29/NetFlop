@@ -1,34 +1,23 @@
 package com.example.netflop.ui.search;
 
-import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
@@ -36,8 +25,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.netflop.MainActivity;
-import com.example.netflop.R;
+import com.example.netflop.constants.IntConstants;
 import com.example.netflop.constants.RequestCode;
 import com.example.netflop.constants.StringConstants;
 import com.example.netflop.constants.enums.SearchType;
@@ -56,21 +44,18 @@ import com.example.netflop.ui.adapters.SearchTVAdapter;
 import com.example.netflop.ui.adapters.search_history.SearchHistoryAdapter;
 import com.example.netflop.ui.movie_detail.MovieDetailActivity;
 import com.example.netflop.ui.person_detail.PersonDetailActivity;
-import com.example.netflop.utils.ItemTVOnClickListener;
-import com.example.netflop.utils.ItemTouchHelperAdapter;
-import com.example.netflop.utils.OnSearchHistoryListener;
+import com.example.netflop.utils.listeners.ItemTVOnClickListener;
+import com.example.netflop.utils.listeners.ItemTouchHelperAdapter;
+import com.example.netflop.utils.listeners.OnSearchHistoryListener;
 import com.example.netflop.utils.RecyclerViewUtils;
-import com.example.netflop.utils.SearchItemOnClickListener;
-import com.example.netflop.utils.SpacingItemDecorator;
+import com.example.netflop.utils.listeners.SearchItemOnClickListener;
 import com.example.netflop.viewmodel.SearchHistoryViewModel;
 import com.example.netflop.viewmodel.SearchMovieViewModel;
 import com.example.netflop.viewmodel.SearchMultiViewModel;
 import com.example.netflop.viewmodel.SearchPeopleViewModel;
 import com.example.netflop.viewmodel.SearchTVViewModel;
-import com.google.android.material.navigation.NavigationView;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -520,19 +505,19 @@ public class SearchFragment extends Fragment implements SearchItemOnClickListene
                 super.onScrolled(recyclerView, dx, dy);
                 GridLayoutManager gridLayoutManager = (GridLayoutManager) recyclerView.getLayoutManager();
                 if(isCheckAll){
-                    if (gridLayoutManager != null && gridLayoutManager.findLastCompletelyVisibleItemPosition() == searchAdapter.getItemCount() - 1) {
+                    if (gridLayoutManager != null && gridLayoutManager.findLastCompletelyVisibleItemPosition() == searchAdapter.getItemCount() - IntConstants.PRE_FETCH_THRESHOLD) {
                         searchMultiViewModel.loadNextPage(queryText,isAdult,getViewLifecycleOwner());
                     }
                 }else if(isMovie){
-                    if (gridLayoutManager != null && gridLayoutManager.findLastCompletelyVisibleItemPosition() == searchMovieAdapter.getItemCount() - 1) {
+                    if (gridLayoutManager != null && gridLayoutManager.findLastCompletelyVisibleItemPosition() == searchMovieAdapter.getItemCount() - IntConstants.PRE_FETCH_THRESHOLD) {
                         searchMovieViewModel.loadNextPage(queryText,isAdult,getViewLifecycleOwner());
                     }
                 }else if(isPerson){
-                    if (gridLayoutManager != null && gridLayoutManager.findLastCompletelyVisibleItemPosition() == searchPersonAdapter.getItemCount() - 1) {
+                    if (gridLayoutManager != null && gridLayoutManager.findLastCompletelyVisibleItemPosition() == searchPersonAdapter.getItemCount() - IntConstants.PRE_FETCH_THRESHOLD) {
                         searchPeopleViewModel.loadNextPage(queryText,isAdult,getViewLifecycleOwner());
                     }
                 }else{
-                    if (gridLayoutManager != null && gridLayoutManager.findLastCompletelyVisibleItemPosition() == searchTVAdapter.getItemCount() - 1) {
+                    if (gridLayoutManager != null && gridLayoutManager.findLastCompletelyVisibleItemPosition() == searchTVAdapter.getItemCount() - IntConstants.PRE_FETCH_THRESHOLD) {
                         searchTVViewModel.loadNextPage(queryText,isAdult,getViewLifecycleOwner());
                     }
                 }

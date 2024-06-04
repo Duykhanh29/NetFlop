@@ -99,7 +99,7 @@ public class MovieViewModel extends ViewModel {
                 });
     }
     public void loadMovieReview(int movieID,LifecycleOwner lifecycleOwner){
-        movieRepositories.getReviewByID(movieID).observe(lifecycleOwner, new Observer<ReviewResponse>() {
+        movieRepositories.getReviewByID(movieID,1).observe(lifecycleOwner, new Observer<ReviewResponse>() {
             @Override
             public void onChanged(ReviewResponse reviewResponse) {
                 reviewData.postValue(reviewResponse);

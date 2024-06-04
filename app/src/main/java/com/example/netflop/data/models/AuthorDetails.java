@@ -7,7 +7,7 @@ public class AuthorDetails {
         private String username;
         @SerializedName("avatar_path")
         private Object avatarPath;
-        private Long rating;
+        private Double rating;
 
         public String getName() { return name; }
         public void setName(String value) { this.name = value; }
@@ -18,6 +18,6 @@ public class AuthorDetails {
         public Object getAvatarPath() { return avatarPath; }
         public void setAvatarPath(Object value) { this.avatarPath = value; }
 
-        public Long getRating() { return rating; }
-        public void setRating(Long value) { this.rating = value; }
+        public Double getRating() { return rating; }
+        public void setRating(Double value) { this.rating = value; }
 }

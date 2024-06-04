@@ -37,9 +37,8 @@ import com.example.netflop.databinding.ActivityPersonDetailBinding;
 import com.example.netflop.ui.TV_Detail.TVSeriesDetailActivity;
 import com.example.netflop.ui.adapters.ListMovieCastAdapter;
 import com.example.netflop.ui.movie_detail.MovieDetailActivity;
-import com.example.netflop.utils.ItemMovieCastListener;
+import com.example.netflop.utils.listeners.ItemMovieCastListener;
 import com.example.netflop.utils.RecyclerViewUtils;
-import com.example.netflop.utils.SpacingItemDecorator;
 import com.example.netflop.viewmodel.PersonViewModel;
 
 import java.util.ArrayList;

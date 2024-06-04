@@ -461,6 +461,50 @@
             android:layout_marginHorizontal="25dp"
             android:background="@color/lightGrey"
             android:layout_marginVertical="20dp" />
+<!--review-->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="23dp"
+            android:background="@drawable/round_border">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@color/lightTeal"
+                >
+                <TextView
+                    style="@style/Heading2TextStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:paddingHorizontal="2dp"
+                    android:text="Review"></TextView>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/reviewDetailRecyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"></androidx.recyclerview.widget.RecyclerView>
+
+                <TextView
+                    android:id="@+id/isReviewView"
+                    style="@style/NormalTextStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="No trailer"
+                    android:visibility="invisible"></TextView>
+                <TextView
+                    android:id="@+id/seeMoreReviewDetail"
+                    style="@style/NormalTextStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end|top"
+                    android:layout_marginBottom="10dp"
+                    android:text="See more"
+                    android:layout_marginRight="10dp"
+                    android:visibility="invisible"></TextView>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
 
 
 

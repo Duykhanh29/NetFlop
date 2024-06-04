@@ -12,11 +12,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.netflop.R;
-import com.example.netflop.data.models.Cast;
 import com.example.netflop.data.models.local.SearchHistory;
-import com.example.netflop.ui.adapters.ListCastAdapter;
-import com.example.netflop.utils.ItemTouchHelperAdapter;
-import com.example.netflop.utils.OnSearchHistoryListener;
+import com.example.netflop.utils.listeners.OnSearchHistoryListener;
 import com.example.netflop.viewmodel.SearchHistoryViewModel;
 
 import java.util.List;

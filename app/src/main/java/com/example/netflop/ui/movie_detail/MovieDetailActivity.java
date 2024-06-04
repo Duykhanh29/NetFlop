@@ -11,9 +11,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.text.SpannableString;
-import android.text.util.Linkify;
-import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.widget.ImageButton;
@@ -47,13 +44,10 @@ import com.example.netflop.ui.adapters.ListMovieAdapter;
 import com.example.netflop.ui.adapters.ListReviewAdapter;
 import com.example.netflop.ui.adapters.ListTrailerAdapter;
 import com.example.netflop.ui.person_detail.PersonDetailActivity;
-import com.example.netflop.utils.ClickableSpanHandler;
-import com.example.netflop.utils.ItemTouchHelperAdapter;
-import com.example.netflop.utils.OnClickListener;
-import com.example.netflop.utils.OnTrailerClickListener;
+import com.example.netflop.utils.listeners.ItemTouchHelperAdapter;
+import com.example.netflop.utils.listeners.OnTrailerClickListener;
 import com.example.netflop.utils.RecyclerViewUtils;
 import com.example.netflop.utils.SeeMoreOnClickListener;
-import com.example.netflop.utils.SpacingItemDecorator;
 import com.example.netflop.viewmodel.MovieViewModel;
 import com.google.android.flexbox.FlexboxLayout;
 
@@ -97,8 +91,8 @@ public class MovieDetailActivity extends AppCompatActivity implements ItemTouchH
     RecyclerView castRecyclerView,crewRecyclerView,recommendationRecyclerView,trailerRecyclerView,reviewRecyclerView;
     FlexboxLayout genresFlexBox,companyFlexBox,countryFlexBox,languageFlexBox;
 
-    TextView seeMoreTrailers;
-    TextView isHavingRecommendationTV,isTrailerTextView;
+    TextView seeMoreTrailers,seeMoreReviewView;
+    TextView isHavingRecommendationTV,isTrailerTextView,isHavingReviewTextView;
 
 
     // selected variables
@@ -148,6 +142,7 @@ public class MovieDetailActivity extends AppCompatActivity implements ItemTouchH
         crewRecyclerView=binding.crewsRecyclerView;
         recommendationRecyclerView=binding.recommendationMovieRecyclerView;
         trailerRecyclerView=binding.trailerDetailRecyclerView;
+        reviewRecyclerView=binding.reviewDetailRecyclerView;
 
         genresFlexBox=binding.flexboxGenre;
         companyFlexBox=binding.flexboxCompany;
@@ -156,8 +151,10 @@ public class MovieDetailActivity extends AppCompatActivity implements ItemTouchH
 
         isHavingRecommendationTV=binding.isRecommendationDetailHaveID;
         isTrailerTextView=binding.isTrailerView;
+        isHavingReviewTextView=binding.isReviewView;
         // see more
         seeMoreTrailers=binding.seeMoreTrailerDetail;
+        seeMoreReviewView=binding.seeMoreReviewDetail;
 
     }
     private void getData(){
@@ -188,8 +185,8 @@ public class MovieDetailActivity extends AppCompatActivity implements ItemTouchH
         RecyclerViewUtils.setupHorizontalRecyclerView(this,castRecyclerView,castAdapter,LinearLayoutManager.HORIZONTAL,false);
         RecyclerViewUtils.setupHorizontalRecyclerView(this,crewRecyclerView,crewAdapter,LinearLayoutManager.HORIZONTAL,false);
         RecyclerViewUtils.setupHorizontalRecyclerView(this,recommendationRecyclerView,recommendationAdapter,LinearLayoutManager.HORIZONTAL,false);
-        RecyclerViewUtils.setupHorizontalRecyclerView(this,trailerRecyclerView,listTrailerAdapter,LinearLayoutManager.VERTICAL,false);
-
+        RecyclerViewUtils.setupVerticalRecyclerView(this,trailerRecyclerView,listTrailerAdapter,LinearLayoutManager.VERTICAL,false);
+        RecyclerViewUtils.setupVerticalRecyclerView(this,reviewRecyclerView,listReviewAdapter,LinearLayoutManager.VERTICAL,false);
 
 //        castRecyclerView.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false));
 //        crewRecyclerView.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false));
@@ -285,9 +282,25 @@ public class MovieDetailActivity extends AppCompatActivity implements ItemTouchH
     }
     private void updateReview(){
         if(reviewResponseData.getResults()!=null&&!reviewResponseData.getResults().isEmpty()){
-            listReview=reviewResponseData.getResults();
-            listReviewAdapter=new ListReviewAdapter(listReview,MovieDetailActivity.this);
-//            reviewRecyclerView.setAdapter(listReviewAdapter);
+            if(movieVideosData.getResults().size()>5){
+                for (int i = 0; i < 5; i++) {
+                    listReview.add(reviewResponseData.getResults().get(i));
+                }
+                listReviewAdapter=new ListReviewAdapter(listReview,MovieDetailActivity.this);
+                reviewRecyclerView.setAdapter(listReviewAdapter);
+                seeMoreReviewView.setVisibility(View.VISIBLE);
+                SeeMoreOnClickListener.getSeeMoreOnClick(seeMoreReviewView,() -> {
+                    Intent intent=new Intent(this,AllReviewActivity.class);
+                    intent.putExtra(StringConstants.movieIDDataKey,movieID);
+                    startActivity(intent);
+                });
+            }else{
+                listReview=reviewResponseData.getResults();
+                listReviewAdapter=new ListReviewAdapter(listReview,MovieDetailActivity.this);
+                reviewRecyclerView.setAdapter(listReviewAdapter);
+            }
+        }else{
+            isHavingReviewTextView.setVisibility(View.VISIBLE);
         }
     }
     private void updateMovieDetail(){

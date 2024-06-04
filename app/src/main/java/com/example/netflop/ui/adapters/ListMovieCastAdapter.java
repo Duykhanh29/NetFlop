@@ -16,8 +16,7 @@ import com.bumptech.glide.Glide;
 import com.example.netflop.R;
 import com.example.netflop.constants.URLConstants;
 import com.example.netflop.data.models.MovieCast;
-import com.example.netflop.utils.CommonMethods;
-import com.example.netflop.utils.ItemMovieCastListener;
+import com.example.netflop.utils.listeners.ItemMovieCastListener;
 
 import java.util.List;
 

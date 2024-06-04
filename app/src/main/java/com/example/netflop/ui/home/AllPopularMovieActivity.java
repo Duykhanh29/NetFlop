@@ -18,6 +18,7 @@ import android.text.style.ForegroundColorSpan;
 import android.view.MenuItem;
 
 import com.example.netflop.R;
+import com.example.netflop.constants.IntConstants;
 import com.example.netflop.constants.StringConstants;
 import com.example.netflop.data.models.Cast;
 import com.example.netflop.data.models.Movie;
@@ -25,11 +26,8 @@ import com.example.netflop.data.models.Person;
 import com.example.netflop.databinding.ActivityAllPopularMovieBinding;
 import com.example.netflop.ui.adapters.GridMoviesAdapter;
 import com.example.netflop.ui.movie_detail.MovieDetailActivity;
-import com.example.netflop.utils.CustomActionBar;
-import com.example.netflop.utils.ItemTouchHelperAdapter;
+import com.example.netflop.utils.listeners.ItemTouchHelperAdapter;
 import com.example.netflop.utils.RecyclerViewUtils;
-import com.example.netflop.utils.SpacingItemDecorator;
-import com.example.netflop.viewmodel.NowPlayingViewModel;
 import com.example.netflop.viewmodel.PopularMovieViewModel;
 
 import java.util.ArrayList;
@@ -118,7 +116,7 @@ public class AllPopularMovieActivity extends AppCompatActivity implements ItemTo
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
                 GridLayoutManager gridLayoutManager = (GridLayoutManager) recyclerView.getLayoutManager();
-                if (gridLayoutManager != null && gridLayoutManager.findLastCompletelyVisibleItemPosition() == gridMoviesAdapter.getItemCount() - 1) {
+                if (gridLayoutManager != null && gridLayoutManager.findLastCompletelyVisibleItemPosition() == gridMoviesAdapter.getItemCount() - IntConstants.PRE_FETCH_THRESHOLD) {
                     // Gọi phương thức để tải trang tiếp theo
                     popularMovieViewModel.loadNextPage(AllPopularMovieActivity.this);
 //                    observeDataChange();

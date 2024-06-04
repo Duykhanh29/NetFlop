@@ -16,9 +16,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.netflop.R;
 import com.example.netflop.constants.URLConstants;
-import com.example.netflop.data.models.TVs.CreatedBy;
 import com.example.netflop.data.models.TVs.Season;
-import com.example.netflop.utils.OnTVClickListener;
+import com.example.netflop.utils.listeners.OnTVClickListener;
 
 import java.util.List;
 

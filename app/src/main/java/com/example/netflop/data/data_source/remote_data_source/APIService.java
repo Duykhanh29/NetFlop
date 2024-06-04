@@ -82,6 +82,8 @@ public interface APIService {
 
     @GET("movie/{movie_id}/reviews")
     Call<ReviewResponse> getReviewOfAMovie(@Path("movie_id") int id);
+    @GET("movie/{movie_id}/reviews")
+    Call<ReviewResponse> getReviewOfAMovie(@Path("movie_id") int id,@Query("page") int page);
 
     @GET("movie/{movie_id}/videos")
     Call<MovieVideos> getMovieVideos(@Path("movie_id") int id);

@@ -5,6 +5,8 @@ import android.text.SpannableString;
 import android.text.style.ClickableSpan;
 import android.view.View;
 
+import com.example.netflop.utils.listeners.OnClickListener;
+
 public class ClickableSpanHandler {
     public static SpannableString createClickableSpan(String text, OnClickListener onClickListener) {
         SpannableString spannableString = new SpannableString(text);

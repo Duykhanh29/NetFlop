@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -22,14 +21,11 @@ import com.example.netflop.data.models.TVs.CrewTV;
 import com.example.netflop.data.models.TVs.GuestStar;
 import com.example.netflop.data.models.TVs.TVEpisodeCredit;
 import com.example.netflop.data.models.TVs.TVEpisodeDetail;
-import com.example.netflop.data.models.TVs.TVSeasonsDetail;
 import com.example.netflop.databinding.ActivityTvepisodeDetailBinding;
-import com.example.netflop.ui.adapters.GridEpisodeAdapter;
 import com.example.netflop.ui.adapters.ListCrewTVAdapter;
 import com.example.netflop.ui.adapters.ListGuestStarAdapter;
-import com.example.netflop.utils.OnClickIDListener;
+import com.example.netflop.utils.listeners.OnClickIDListener;
 import com.example.netflop.utils.RecyclerViewUtils;
-import com.example.netflop.utils.SpacingItemDecorator;
 import com.example.netflop.utils.ToolBarUtils;
 import com.example.netflop.viewmodel.TVDetailViewModel;
 

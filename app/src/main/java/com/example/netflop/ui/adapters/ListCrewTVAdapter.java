@@ -17,8 +17,7 @@ import com.example.netflop.R;
 import com.example.netflop.constants.StringConstants;
 import com.example.netflop.constants.URLConstants;
 import com.example.netflop.data.models.TVs.CrewTV;
-import com.example.netflop.data.models.TVs.GuestStar;
-import com.example.netflop.utils.OnClickIDListener;
+import com.example.netflop.utils.listeners.OnClickIDListener;
 
 import java.util.List;
 

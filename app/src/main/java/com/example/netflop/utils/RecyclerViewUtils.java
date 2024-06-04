@@ -14,6 +14,13 @@ public class RecyclerViewUtils {
         recyclerView.addItemDecoration(itemDecorator);
         recyclerView.setAdapter(adapter);
     }
+    public static void setupVerticalRecyclerView(Context context, RecyclerView recyclerView, RecyclerView.Adapter<?> adapter, int orientation, boolean reverseLayout){
+        LinearLayoutManager layoutManager = new LinearLayoutManager(context, orientation, reverseLayout);
+        recyclerView.setLayoutManager(layoutManager);
+        SpacingItemDecorator itemDecorator=new SpacingItemDecorator(20,0);
+        recyclerView.addItemDecoration(itemDecorator);
+        recyclerView.setAdapter(adapter);
+    }
     public static void setupGridRecyclerView(Context context, RecyclerView recyclerView, RecyclerView.Adapter<?> adapter,int count){
         GridLayoutManager gridLayoutManager = new GridLayoutManager(context, count);
         recyclerView.setLayoutManager(gridLayoutManager);

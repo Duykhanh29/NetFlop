@@ -16,9 +16,13 @@
         android:theme="@style/Theme.NetFlop"
         tools:targetApi="31">
         <activity
-            android:name=".ui.TV_Detail.TVEpisodeDetailActivity"
+            android:name=".ui.movie_detail.AllReviewActivity"
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
             android:exported="false" />
+        <activity
+            android:name=".ui.TV_Detail.TVEpisodeDetailActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar" />
         <activity
             android:name=".ui.TV_Detail.TVSeasonDetailActivity"
             android:exported="false"
@@ -64,12 +68,12 @@
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar" />
         <activity
             android:name=".ui.movie_detail.YoutubePlayerActivity"
-            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar" />
         <activity
             android:name=".ui.movie_detail.AllTrailersActivity"
-            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar" />
         <activity
             android:name=".ui.movie_detail.MovieDetailActivity"
             android:exported="false"

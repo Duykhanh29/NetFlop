@@ -1,14 +1,11 @@
 package com.example.netflop.utils;
 
-import android.content.Intent;
 import android.text.SpannableString;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
-import com.example.netflop.ui.home.AllTrendingMovieActivity;
-
-import java.util.function.Function;
+import com.example.netflop.utils.listeners.OnClickListener;
 
 public class SeeMoreOnClickListener {
     public static void getSeeMoreOnClick(TextView textView, Runnable  onclick){

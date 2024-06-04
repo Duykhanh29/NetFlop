@@ -106,9 +106,9 @@ public class MovieRepositories {
         return mutableLiveData;
     }
 
-    public LiveData<ReviewResponse> getReviewByID(int ID) {
+    public LiveData<ReviewResponse> getReviewByID(int ID,int page) {
         MutableLiveData<ReviewResponse> mutableLiveData = new MutableLiveData<>();
-        Call<ReviewResponse> call=apiService.getReviewOfAMovie(ID);
+        Call<ReviewResponse> call=apiService.getReviewOfAMovie(ID,page);
         call.enqueue(new Callback<ReviewResponse>() {
             @Override
             public void onResponse(Call<ReviewResponse> call, Response<ReviewResponse> response) {

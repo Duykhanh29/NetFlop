@@ -17,8 +17,7 @@ import com.bumptech.glide.Glide;
 import com.example.netflop.R;
 import com.example.netflop.constants.URLConstants;
 import com.example.netflop.data.models.TVs.AiringTodayModel;
-import com.example.netflop.utils.CommonMethods;
-import com.example.netflop.utils.ItemTVOnClickListener;
+import com.example.netflop.utils.listeners.ItemTVOnClickListener;
 
 import java.util.List;
 
