@@ -1,6 +1,6 @@
 package com.example.netflop.data.responses.TVs;
 
-import com.example.netflop.data.models.TVs.AiringTodayModel;
+import com.example.netflop.data.models.remote.TVs.AiringTodayModel;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;

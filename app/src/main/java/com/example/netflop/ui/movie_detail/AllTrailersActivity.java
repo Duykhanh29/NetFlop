@@ -13,11 +13,10 @@ import android.view.View;
 
 import com.example.netflop.R;
 import com.example.netflop.constants.StringConstants;
-import com.example.netflop.data.models.Video;
+import com.example.netflop.data.models.remote.movies.Video;
 import com.example.netflop.databinding.ActivityAllTrailersBinding;
-import com.example.netflop.ui.adapters.SecondListTrailerAdapter;
+import com.example.netflop.ui.adapters.remote.SecondListTrailerAdapter;
 import com.example.netflop.utils.RecyclerViewUtils;
-import com.example.netflop.utils.SpacingItemDecorator;
 
 import java.util.ArrayList;
 import java.util.List;

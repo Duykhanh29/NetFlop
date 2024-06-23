@@ -6,28 +6,21 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.view.View;
 
 import com.example.netflop.R;
 import com.example.netflop.constants.IntConstants;
 import com.example.netflop.constants.StringConstants;
-import com.example.netflop.data.models.Review;
-import com.example.netflop.data.models.Video;
+import com.example.netflop.data.models.remote.movies.Review;
 import com.example.netflop.databinding.ActivityAllReviewBinding;
-import com.example.netflop.databinding.ActivityAllTrailersBinding;
-import com.example.netflop.ui.adapters.ListReviewAdapter;
-import com.example.netflop.ui.adapters.SecondListTrailerAdapter;
-import com.example.netflop.ui.home.AllPopularMovieActivity;
+import com.example.netflop.ui.adapters.remote.ListReviewAdapter;
 import com.example.netflop.utils.RecyclerViewUtils;
-import com.example.netflop.viewmodel.PopularPeopleViewModel;
-import com.example.netflop.viewmodel.ReviewViewModel;
+import com.example.netflop.viewmodel.remote.ReviewViewModel;
 
 import java.util.ArrayList;
 import java.util.List;

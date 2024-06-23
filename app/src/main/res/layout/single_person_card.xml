@@ -27,6 +27,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="top|start"
                 android:layout_margin="1dp"
+                android:id="@+id/addPersonButton"
                 android:background="@drawable/favourite_button"
                 android:src="@drawable/favourite"></ImageButton>
         </FrameLayout>

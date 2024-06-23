@@ -93,12 +93,22 @@
                     android:layout_height="wrap_content"
                     android:src="@drawable/popularity"></ImageView>
                 <TextView
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     style="@style/NormalTextStyle"
                     android:layout_marginLeft="20dp"
                     android:id="@+id/personPopularityView"
                     ></TextView>
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent"></View>
+                <ImageView
+                    android:id="@+id/addFavouriteImage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/favorite_red_border"></ImageView>
             </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"

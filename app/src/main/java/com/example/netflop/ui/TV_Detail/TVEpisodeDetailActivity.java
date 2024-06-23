@@ -1,5 +1,6 @@
 package com.example.netflop.ui.TV_Detail;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
@@ -17,17 +18,20 @@ import com.bumptech.glide.Glide;
 import com.example.netflop.R;
 import com.example.netflop.constants.StringConstants;
 import com.example.netflop.constants.URLConstants;
-import com.example.netflop.data.models.TVs.CrewTV;
-import com.example.netflop.data.models.TVs.GuestStar;
-import com.example.netflop.data.models.TVs.TVEpisodeCredit;
-import com.example.netflop.data.models.TVs.TVEpisodeDetail;
+import com.example.netflop.constants.enums.TypeOfMedia;
+import com.example.netflop.data.models.local.FavouriteMedia;
+import com.example.netflop.data.models.remote.TVs.CrewTV;
+import com.example.netflop.data.models.remote.TVs.GuestStar;
+import com.example.netflop.data.models.remote.TVs.TVEpisodeCredit;
+import com.example.netflop.data.models.remote.TVs.TVEpisodeDetail;
 import com.example.netflop.databinding.ActivityTvepisodeDetailBinding;
-import com.example.netflop.ui.adapters.ListCrewTVAdapter;
-import com.example.netflop.ui.adapters.ListGuestStarAdapter;
+import com.example.netflop.ui.adapters.remote.ListCrewTVAdapter;
+import com.example.netflop.ui.adapters.remote.ListGuestStarAdapter;
 import com.example.netflop.utils.listeners.OnClickIDListener;
 import com.example.netflop.utils.RecyclerViewUtils;
 import com.example.netflop.utils.ToolBarUtils;
-import com.example.netflop.viewmodel.TVDetailViewModel;
+import com.example.netflop.viewmodel.local.FavouriteMediaViewModel;
+import com.example.netflop.viewmodel.remote.TVDetailViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +41,7 @@ public class TVEpisodeDetailActivity extends AppCompatActivity implements OnClic
 
     // view model
     TVDetailViewModel tvDetailViewModel;
+    FavouriteMediaViewModel favouriteMediaViewModel;
 
     // primitive variable
     int tvSeriesID;
@@ -56,7 +61,10 @@ public class TVEpisodeDetailActivity extends AppCompatActivity implements OnClic
     RecyclerView guestTVEpisodeRecyclerView,crewTVEpisodeRecyclerView,castTVEpisodeRecyclerView;
     TextView isHavingGuestTextView,isHavingCastTextView,isHavingCrewTextView;
 
-
+    ImageView addFavouriteView;
+    List<FavouriteMedia> listFavourite;
+    boolean isFavourite=false;
+    String tvTitle,imagePath;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,7 +75,18 @@ public class TVEpisodeDetailActivity extends AppCompatActivity implements OnClic
         getData();
         initialize();
         callAPIs();
+        loadFavouriteData();
         observeDataChange();
+        observeFavouriteDataChange();
+        handleFavouriteCLick();
+        getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if(isEnabled()){
+                    finish();
+                }
+            }
+        });
     }
 
     private void getBinding(){
@@ -87,6 +106,7 @@ public class TVEpisodeDetailActivity extends AppCompatActivity implements OnClic
         isHavingGuestTextView=binding.isHavingGuestEpisodeView;
         isHavingCastTextView=binding.isHavingCastEpisodeView;
         isHavingCrewTextView=binding.isHavingCrewEpisodeView;
+        addFavouriteView=binding.addFavouriteImage;
     }
     private void getData(){
         Intent intent=getIntent();
@@ -98,13 +118,15 @@ public class TVEpisodeDetailActivity extends AppCompatActivity implements OnClic
         setSupportActionBar(toolbar);
         ToolBarUtils.setupBasicToolbar(toolbar,() -> finish());
         tvDetailViewModel= new ViewModelProvider(this).get(TVDetailViewModel.class);
+        favouriteMediaViewModel= new ViewModelProvider(this).get(FavouriteMediaViewModel.class);
         listGuest=new ArrayList<>();
         listCast=new ArrayList<>();
         listCrew=new ArrayList<>();
+        listFavourite=new ArrayList<>();
 
         listCrewTVAdapter=new ListCrewTVAdapter(listCrew,this,this);
-        listCastAdapter=new ListGuestStarAdapter(listCast,this,this);
-        listGuestStarAdapter=new ListGuestStarAdapter(listGuest,this,this);
+        listCastAdapter=new ListGuestStarAdapter(listCast,this,this,favouriteMediaViewModel);
+        listGuestStarAdapter=new ListGuestStarAdapter(listGuest,this,this,favouriteMediaViewModel);
 
 
 //        guestTVEpisodeRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
@@ -147,9 +169,54 @@ public class TVEpisodeDetailActivity extends AppCompatActivity implements OnClic
         });
 
     }
+    private  void observeFavouriteDataChange(){
+        favouriteMediaViewModel.getFavouritePeople().observe(this, new Observer<List<FavouriteMedia>>() {
+            @Override
+            public void onChanged(List<FavouriteMedia> favouriteMedia) {
+                listFavourite=favouriteMedia;
+                for (int i = 0; i < favouriteMedia.size(); i++) {
+                    if(favouriteMedia.get(i).getMediaID()==tvSeriesID){
+                        isFavourite=true;
+                        addFavouriteView.setImageResource(R.drawable.favoourite_no_border);
+                    }
+                }
+                if(!isFavourite){
+                    addFavouriteView.setImageResource(R.drawable.favorite_red_border);
+                }
+            }
+        });
+    }
+    private  void handleFavouriteCLick(){
+        addFavouriteView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(isFavourite){
+                    int index=0;
+                    for (int i = 0; i <listFavourite.size() ; i++) {
+                        if(listFavourite.get(i).getMediaID()==tvSeriesID&&listFavourite.get(i).getSeasonNumber()==seasonNumber&&listFavourite.get(i).getEpisodeNumber()==episodeNumber){
+                            index=i;
+                            break;
+                        }
+                    }
+                    if(index!=0){
+                        favouriteMediaViewModel.deleteFavouriteMedia(listFavourite.get(index).getId());
+                        isFavourite=false;
+                    }
+                }else{
+                    favouriteMediaViewModel.insertFavouriteMedia(tvSeriesID,tvTitle, TypeOfMedia.TVSeason,seasonNumber,episodeNumber,imagePath);
+                }
+
+            }
+        });
+    }
+    private  void loadFavouriteData(){
+        favouriteMediaViewModel.fetchTVEpisodesData();
+    }
     private void updateData(TVEpisodeDetail tvEpisodeDetail){
         toolbar.setTitle(tvEpisodeDetail.getName()!=null?tvEpisodeDetail.getName():"null");
+        tvTitle=tvEpisodeDetail.getName()!=null?tvEpisodeDetail.getName():"null";
         if(tvEpisodeDetail.getStillPath()!=null){
+            imagePath=tvEpisodeDetail.getStillPath();
             String url= URLConstants.imageURL+tvEpisodeDetail.getStillPath();
             Glide.with(this).load(url).placeholder(R.drawable.place_holder).into(imageView);
         }
@@ -171,7 +238,7 @@ public class TVEpisodeDetailActivity extends AppCompatActivity implements OnClic
     private void updateCreditData(TVEpisodeCredit tvEpisodeCredit){
         if(tvEpisodeCredit.getCast()!=null&&!tvEpisodeCredit.getCast().isEmpty()){
             listCast=tvEpisodeCredit.getCast();
-            listCastAdapter=new ListGuestStarAdapter(listCast,this,this);
+            listCastAdapter=new ListGuestStarAdapter(listCast,this,this,favouriteMediaViewModel);
             castTVEpisodeRecyclerView.setAdapter(listCastAdapter);
         }else{
             isHavingCastTextView.setVisibility(View.VISIBLE);
@@ -179,7 +246,7 @@ public class TVEpisodeDetailActivity extends AppCompatActivity implements OnClic
         }
         if(tvEpisodeCredit.getGuestStars()!=null&&!tvEpisodeCredit.getGuestStars().isEmpty()){
             listGuest=tvEpisodeCredit.getGuestStars();
-            listGuestStarAdapter=new ListGuestStarAdapter(listCast,this,this);
+            listGuestStarAdapter=new ListGuestStarAdapter(listCast,this,this,favouriteMediaViewModel);
             guestTVEpisodeRecyclerView.setAdapter(listGuestStarAdapter);
         }else{
             isHavingGuestTextView.setVisibility(View.VISIBLE);

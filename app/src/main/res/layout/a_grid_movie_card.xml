@@ -28,6 +28,7 @@
                 android:background="@drawable/rounded_button"
                 android:layout_gravity="top|start"
                 android:src="@drawable/add"
+                android:id="@+id/addMovieImageButton"
                 android:layout_margin="1dp"></ImageButton>
         </FrameLayout>
         <LinearLayout

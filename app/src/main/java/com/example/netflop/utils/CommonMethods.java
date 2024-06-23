@@ -5,8 +5,9 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
 
-import com.example.netflop.data.models.ProductionCompany;
-import com.example.netflop.data.models.ProductionCountry;
+import com.example.netflop.data.models.local.FavouriteMedia;
+import com.example.netflop.data.models.remote.movies.ProductionCompany;
+import com.example.netflop.data.models.remote.movies.ProductionCountry;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -14,8 +15,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-
-import retrofit2.http.Tag;
 
 public class CommonMethods {
     public static String getDaysDifference(String startDate, String endDate) {
@@ -65,5 +64,47 @@ public class CommonMethods {
             result.add(list.get(i).getName());
         }
         return  result;
+    }
+
+    // favourite
+    public static boolean isMovieExisted(List<FavouriteMedia> listFavouriteMovie,int movieID){
+        for (int i = 0; i < listFavouriteMovie.size(); i++) {
+            if(listFavouriteMovie.get(i).getMediaID()==movieID){
+                return true;
+            }
+        }
+        return false;
+    }
+    public static boolean isPersonExisted(List<FavouriteMedia> listFavouritePeople,int personID){
+        for (int i = 0; i < listFavouritePeople.size(); i++) {
+            if(listFavouritePeople.get(i).getMediaID()==personID){
+                return true;
+            }
+        }
+        return false;
+    }
+    public static boolean isTVSeriesExisted(List<FavouriteMedia> listFavouriteTVSeries,int tvSeriesID){
+        for (int i = 0; i < listFavouriteTVSeries.size(); i++) {
+            if(listFavouriteTVSeries.get(i).getMediaID()==tvSeriesID){
+                return true;
+            }
+        }
+        return false;
+    }
+    public static boolean isTVSeasonExisted(List<FavouriteMedia> listFavouriteTVSeason,int tvSeriesID,int seasonNumber){
+        for (int i = 0; i < listFavouriteTVSeason.size(); i++) {
+            if(listFavouriteTVSeason.get(i).getMediaID()==tvSeriesID&&listFavouriteTVSeason.get(i).getSeasonNumber()==seasonNumber){
+                return true;
+            }
+        }
+        return false;
+    }
+    public static boolean isTVEpisodeExisted(List<FavouriteMedia> listFavouriteTVEpisode,int tvSeriesID,int seasonNumber,int episodeNumber){
+        for (int i = 0; i < listFavouriteTVEpisode.size(); i++) {
+            if(listFavouriteTVEpisode.get(i).getMediaID()==tvSeriesID&&listFavouriteTVEpisode.get(i).getSeasonNumber()==seasonNumber&&listFavouriteTVEpisode.get(i).getEpisodeNumber()==episodeNumber){
+                return true;
+            }
+        }
+        return false;
     }
 }

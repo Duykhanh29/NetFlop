@@ -15,20 +15,23 @@ import android.os.Bundle;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.view.MenuItem;
 
 import com.example.netflop.R;
 import com.example.netflop.constants.IntConstants;
 import com.example.netflop.constants.StringConstants;
-import com.example.netflop.data.models.Cast;
-import com.example.netflop.data.models.Movie;
-import com.example.netflop.data.models.Person;
+import com.example.netflop.data.models.local.FavouriteMedia;
+import com.example.netflop.data.models.remote.people.Cast;
+import com.example.netflop.data.models.remote.movies.Movie;
+import com.example.netflop.data.models.remote.people.Person;
 import com.example.netflop.databinding.ActivityAllUpcomingBinding;
-import com.example.netflop.ui.adapters.GridMoviesAdapter;
+import com.example.netflop.ui.adapters.remote.GridMoviesAdapter;
 import com.example.netflop.ui.movie_detail.MovieDetailActivity;
 import com.example.netflop.utils.listeners.ItemTouchHelperAdapter;
 import com.example.netflop.utils.RecyclerViewUtils;
-import com.example.netflop.viewmodel.UpcomingViewModel;
+import com.example.netflop.viewmodel.local.FavouriteMediaViewModel;
+import com.example.netflop.viewmodel.remote.UpcomingViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,9 +46,18 @@ public class AllUpcomingActivity extends AppCompatActivity implements ItemTouchH
 
     // view model
     UpcomingViewModel upcomingViewModel;
+    FavouriteMediaViewModel favouriteMediaViewModel;
     // UI
     RecyclerView allUpcomingMovieRecyclerView;
     ActionBar actionBar;
+//    detailActivityLauncher = registerForActivityResult(
+//        new ActivityResultContracts.StartActivityForResult(),
+//    result -> {
+//        if (result.getResultCode() == RESULT_OK) {
+//            fetchFavouriteData();
+//        }
+//    }
+//    );
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,8 +67,19 @@ public class AllUpcomingActivity extends AppCompatActivity implements ItemTouchH
         getBinding();
         initialize();
         callAPI();
+        fetchFavouriteData();
         observeDataChange();
         scrollListener();
+        observeFavouriteDataChange();
+        getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if(isEnabled()){
+                    finish();
+                }
+            }
+        });
+        Log.d("IAMINUPCOMING","Oke got it");
     }
     private void getBinding(){
         allUpcomingMovieRecyclerView=binding.allUpcomingMovieRecyclerView;
@@ -70,8 +93,9 @@ public class AllUpcomingActivity extends AppCompatActivity implements ItemTouchH
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeAsUpIndicator(R.drawable.black_arrow_back);
         upcomingViewModel=new ViewModelProvider(this).get(UpcomingViewModel.class);
+        favouriteMediaViewModel=new ViewModelProvider(this).get(FavouriteMediaViewModel.class);
         listMovie=new ArrayList<>();
-        gridMoviesAdapter=new GridMoviesAdapter(listMovie,this,this);
+        gridMoviesAdapter=new GridMoviesAdapter(listMovie,this,this,favouriteMediaViewModel);
 
         RecyclerViewUtils.setupGridRecyclerView(this,allUpcomingMovieRecyclerView,gridMoviesAdapter,2);
 
@@ -79,14 +103,7 @@ public class AllUpcomingActivity extends AppCompatActivity implements ItemTouchH
 //        SpacingItemDecorator itemDecorator=new SpacingItemDecorator(30,20);
 //        allUpcomingMovieRecyclerView.addItemDecoration(itemDecorator);
 //        allUpcomingMovieRecyclerView.setAdapter(gridMoviesAdapter);
-        getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {
-                if(isEnabled()){
-                    finish();
-                }
-            }
-        });
+
     }
     private void callAPI(){
         upcomingViewModel.fetchUpcomingMovie(this);
@@ -104,6 +121,17 @@ public class AllUpcomingActivity extends AppCompatActivity implements ItemTouchH
                 }
             }
         });
+    }
+    private  void observeFavouriteDataChange(){
+        favouriteMediaViewModel.getFavouriteMovies().observe(this, new Observer<List<FavouriteMedia>>() {
+            @Override
+            public void onChanged(List<FavouriteMedia> favouriteMedia) {
+//                gridMoviesAdapter.setFavouriteData(favouriteMedia);
+            }
+        });
+    }
+    private void fetchFavouriteData(){
+        favouriteMediaViewModel.fetchMovieData();
     }
     private void scrollListener(){
         allUpcomingMovieRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -145,6 +173,13 @@ public class AllUpcomingActivity extends AppCompatActivity implements ItemTouchH
     @Override
     public void onPersonClick(Person p) {
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d("onResume","onResume() of AllUpcomingActivity");
+        fetchFavouriteData();
     }
 
     @Override

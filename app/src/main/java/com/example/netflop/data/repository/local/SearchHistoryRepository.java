@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SearchHistoryRepository {
-    private static final String DATABASE_NAME = "database";
     private DatabaseHelper databaseHelper;
     public SearchHistoryRepository(Context context) {
         databaseHelper = new DatabaseHelper(context);

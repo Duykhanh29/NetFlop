@@ -15,20 +15,23 @@ import android.os.Bundle;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.view.MenuItem;
 
 import com.example.netflop.R;
 import com.example.netflop.constants.IntConstants;
 import com.example.netflop.constants.StringConstants;
-import com.example.netflop.data.models.Cast;
-import com.example.netflop.data.models.Movie;
-import com.example.netflop.data.models.Person;
+import com.example.netflop.data.models.local.FavouriteMedia;
+import com.example.netflop.data.models.remote.people.Cast;
+import com.example.netflop.data.models.remote.movies.Movie;
+import com.example.netflop.data.models.remote.people.Person;
 import com.example.netflop.databinding.ActivityAllPopularPeopleBinding;
-import com.example.netflop.ui.adapters.GridPeopleAdapter;
+import com.example.netflop.ui.adapters.remote.GridPeopleAdapter;
 import com.example.netflop.ui.person_detail.PersonDetailActivity;
 import com.example.netflop.utils.listeners.ItemTouchHelperAdapter;
 import com.example.netflop.utils.RecyclerViewUtils;
-import com.example.netflop.viewmodel.PopularPeopleViewModel;
+import com.example.netflop.viewmodel.local.FavouriteMediaViewModel;
+import com.example.netflop.viewmodel.remote.PopularPeopleViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +45,7 @@ public class AllPopularPeopleActivity extends AppCompatActivity implements ItemT
 
     // view model
     PopularPeopleViewModel popularPeopleViewModel;
+    FavouriteMediaViewModel favouriteMediaViewModel;
     // UI
     RecyclerView allPopularPeopleRecyclerView;
     ActionBar actionBar;
@@ -54,8 +58,18 @@ public class AllPopularPeopleActivity extends AppCompatActivity implements ItemT
         getBinding();
         initialize();
         callAPI();
+        fetchFavouriteData();
         observeDataChange();
         scrollListener();
+        observeFavouriteDataChange();
+        getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if(isEnabled()){
+                    finish();
+                }
+            }
+        });
     }
     private void getBinding(){
         allPopularPeopleRecyclerView=binding.allPopularPeopleRecyclerView;
@@ -69,8 +83,9 @@ public class AllPopularPeopleActivity extends AppCompatActivity implements ItemT
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeAsUpIndicator(R.drawable.black_arrow_back);
         popularPeopleViewModel=new ViewModelProvider(this).get(PopularPeopleViewModel.class);
+        favouriteMediaViewModel=new ViewModelProvider(this).get(FavouriteMediaViewModel.class);
         listPeople=new ArrayList<>();
-        gridPeopleAdapter=new GridPeopleAdapter(listPeople,this,this);
+        gridPeopleAdapter=new GridPeopleAdapter(listPeople,this,this,favouriteMediaViewModel);
 
 
         RecyclerViewUtils.setupGridRecyclerView(this,allPopularPeopleRecyclerView,gridPeopleAdapter,3);
@@ -79,14 +94,7 @@ public class AllPopularPeopleActivity extends AppCompatActivity implements ItemT
 //        allPopularPeopleRecyclerView.addItemDecoration(itemDecorator);
 //        allPopularPeopleRecyclerView.setAdapter(gridPeopleAdapter);
 //        allUpcomingMovieRecyclerView.setAdapter(gridMoviesAdapter);
-        getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {
-                if(isEnabled()){
-                    finish();
-                }
-            }
-        });
+
     }
     private void callAPI(){
         popularPeopleViewModel.fetchPopularPeople(this);
@@ -102,6 +110,17 @@ public class AllPopularPeopleActivity extends AppCompatActivity implements ItemT
                 }
             }
         });
+    }
+    private  void observeFavouriteDataChange(){
+        favouriteMediaViewModel.getFavouritePeople().observe(this, new Observer<List<FavouriteMedia>>() {
+            @Override
+            public void onChanged(List<FavouriteMedia> favouriteMedia) {
+//                gridPeopleAdapter.setFavouriteData(favouriteMedia);
+            }
+        });
+    }
+    private void fetchFavouriteData(){
+        favouriteMediaViewModel.fetchPeopleData();
     }
     private void scrollListener(){
         allPopularPeopleRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -143,6 +162,12 @@ public class AllPopularPeopleActivity extends AppCompatActivity implements ItemT
         Intent intent=new Intent(this, PersonDetailActivity.class);
         intent.putExtra(StringConstants.personDetailDataKey,selectedPerson.getID());
         startActivity(intent);
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d("onResume","onResume() of AllUpcomingActivity");
+        fetchFavouriteData();
     }
 
     @Override

@@ -15,20 +15,23 @@ import android.os.Bundle;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.view.MenuItem;
 
 import com.example.netflop.R;
 import com.example.netflop.constants.IntConstants;
 import com.example.netflop.constants.StringConstants;
-import com.example.netflop.data.models.Cast;
-import com.example.netflop.data.models.Movie;
-import com.example.netflop.data.models.Person;
+import com.example.netflop.data.models.local.FavouriteMedia;
+import com.example.netflop.data.models.remote.people.Cast;
+import com.example.netflop.data.models.remote.movies.Movie;
+import com.example.netflop.data.models.remote.people.Person;
 import com.example.netflop.databinding.ActivityAllTrendingMovieBinding;
-import com.example.netflop.ui.adapters.GridMoviesAdapter;
+import com.example.netflop.ui.adapters.remote.GridMoviesAdapter;
 import com.example.netflop.ui.movie_detail.MovieDetailActivity;
 import com.example.netflop.utils.listeners.ItemTouchHelperAdapter;
 import com.example.netflop.utils.RecyclerViewUtils;
-import com.example.netflop.viewmodel.TrendingMovieViewModel;
+import com.example.netflop.viewmodel.local.FavouriteMediaViewModel;
+import com.example.netflop.viewmodel.remote.TrendingMovieViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +46,7 @@ public class AllTrendingMovieActivity extends AppCompatActivity implements ItemT
 
     // view model
     TrendingMovieViewModel trendingMovieViewModel;
+    FavouriteMediaViewModel favouriteMediaViewModel;
     // UI
     RecyclerView allTrendingMovieRecyclerView;
     ActionBar actionBar;
@@ -55,8 +59,18 @@ public class AllTrendingMovieActivity extends AppCompatActivity implements ItemT
         getBinding();
         initialize();
         callAPI();
+        fetchFavouriteData();
         observeDataChange();
         scrollListener();
+        observeFavouriteDataChange();
+        getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if(isEnabled()){
+                    finish();
+                }
+            }
+        });
     }
     private void getBinding(){
         allTrendingMovieRecyclerView=binding.allTrendingMovieRecyclerView;
@@ -70,8 +84,9 @@ public class AllTrendingMovieActivity extends AppCompatActivity implements ItemT
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeAsUpIndicator(R.drawable.black_arrow_back);
         trendingMovieViewModel=new ViewModelProvider(this).get(TrendingMovieViewModel.class);
+        favouriteMediaViewModel=new ViewModelProvider(this).get(FavouriteMediaViewModel.class);
         listMovie=new ArrayList<>();
-        gridMoviesAdapter=new GridMoviesAdapter(listMovie,this,this);
+        gridMoviesAdapter=new GridMoviesAdapter(listMovie,this,this,favouriteMediaViewModel);
 
         RecyclerViewUtils.setupGridRecyclerView(this,allTrendingMovieRecyclerView,gridMoviesAdapter,2);
 
@@ -79,14 +94,7 @@ public class AllTrendingMovieActivity extends AppCompatActivity implements ItemT
 //        SpacingItemDecorator itemDecorator=new SpacingItemDecorator(30,20);
 //        allTrendingMovieRecyclerView.addItemDecoration(itemDecorator);
 //        allTrendingMovieRecyclerView.setAdapter(gridMoviesAdapter);
-        getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {
-                if(isEnabled()){
-                    finish();
-                }
-            }
-        });
+
     }
     private void callAPI(){
         trendingMovieViewModel.fetchTrendingMovie(this);
@@ -104,6 +112,17 @@ public class AllTrendingMovieActivity extends AppCompatActivity implements ItemT
                 }
             }
         });
+    }
+    private  void observeFavouriteDataChange(){
+        favouriteMediaViewModel.getFavouriteMovies().observe(this, new Observer<List<FavouriteMedia>>() {
+            @Override
+            public void onChanged(List<FavouriteMedia> favouriteMedia) {
+//                gridMoviesAdapter.setFavouriteData(favouriteMedia);
+            }
+        });
+    }
+    private void fetchFavouriteData(){
+        favouriteMediaViewModel.fetchMovieData();
     }
     private void scrollListener(){
         allTrendingMovieRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -146,6 +165,13 @@ public class AllTrendingMovieActivity extends AppCompatActivity implements ItemT
     public void onPersonClick(Person p) {
 
     }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d("onResume","onResume() of AllUpcomingActivity");
+        fetchFavouriteData();
+    }
+
 
     @Override
     public void onCastClick(Cast cast) {

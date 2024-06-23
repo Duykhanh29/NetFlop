@@ -14,6 +14,7 @@ import android.os.Parcelable;
 import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.denzcoskun.imageslider.ImageSlider;
@@ -22,33 +23,36 @@ import com.denzcoskun.imageslider.models.SlideModel;
 import com.example.netflop.R;
 import com.example.netflop.constants.StringConstants;
 import com.example.netflop.constants.URLConstants;
-import com.example.netflop.data.models.Cast;
-import com.example.netflop.data.models.Credit;
-import com.example.netflop.data.models.Genre;
-import com.example.netflop.data.models.Movie;
-import com.example.netflop.data.models.MovieDetail;
-import com.example.netflop.data.models.MovieImages;
-import com.example.netflop.data.models.MovieVideos;
-import com.example.netflop.data.models.Person;
-import com.example.netflop.data.models.ProductionCompany;
-import com.example.netflop.data.models.ProductionCountry;
-import com.example.netflop.data.models.Review;
-import com.example.netflop.data.models.SpokenLanguage;
-import com.example.netflop.data.models.Video;
-import com.example.netflop.data.responses.RecommendationMovieResponse;
-import com.example.netflop.data.responses.ReviewResponse;
+import com.example.netflop.constants.enums.TypeOfMedia;
+import com.example.netflop.data.models.local.FavouriteMedia;
+import com.example.netflop.data.models.remote.people.Cast;
+import com.example.netflop.data.models.remote.movies.Credit;
+import com.example.netflop.data.models.remote.movies.Genre;
+import com.example.netflop.data.models.remote.movies.Movie;
+import com.example.netflop.data.models.remote.movies.MovieDetail;
+import com.example.netflop.data.models.remote.movies.MovieImages;
+import com.example.netflop.data.models.remote.movies.MovieVideos;
+import com.example.netflop.data.models.remote.people.Person;
+import com.example.netflop.data.models.remote.movies.ProductionCompany;
+import com.example.netflop.data.models.remote.movies.ProductionCountry;
+import com.example.netflop.data.models.remote.movies.Review;
+import com.example.netflop.data.models.remote.movies.SpokenLanguage;
+import com.example.netflop.data.models.remote.movies.Video;
+import com.example.netflop.data.responses.movies.RecommendationMovieResponse;
+import com.example.netflop.data.responses.movies.ReviewResponse;
 import com.example.netflop.databinding.ActivityMovieDetailBinding;
 import com.example.netflop.helpers.CustomTextView;
-import com.example.netflop.ui.adapters.ListCastAdapter;
-import com.example.netflop.ui.adapters.ListMovieAdapter;
-import com.example.netflop.ui.adapters.ListReviewAdapter;
-import com.example.netflop.ui.adapters.ListTrailerAdapter;
+import com.example.netflop.ui.adapters.remote.ListCastAdapter;
+import com.example.netflop.ui.adapters.remote.ListMovieAdapter;
+import com.example.netflop.ui.adapters.remote.ListReviewAdapter;
+import com.example.netflop.ui.adapters.remote.ListTrailerAdapter;
 import com.example.netflop.ui.person_detail.PersonDetailActivity;
 import com.example.netflop.utils.listeners.ItemTouchHelperAdapter;
 import com.example.netflop.utils.listeners.OnTrailerClickListener;
 import com.example.netflop.utils.RecyclerViewUtils;
 import com.example.netflop.utils.SeeMoreOnClickListener;
-import com.example.netflop.viewmodel.MovieViewModel;
+import com.example.netflop.viewmodel.local.FavouriteMediaViewModel;
+import com.example.netflop.viewmodel.remote.MovieViewModel;
 import com.google.android.flexbox.FlexboxLayout;
 
 import java.util.ArrayList;
@@ -64,7 +68,10 @@ public class MovieDetailActivity extends AppCompatActivity implements ItemTouchH
     RecommendationMovieResponse recommendationMovieResponseData;
 
     int movieID;
+
+    // view models
     MovieViewModel movieViewModel;
+    FavouriteMediaViewModel favouriteMediaViewModel;
 
     private List<Cast> cast;
     private List<Cast> crew;
@@ -85,8 +92,11 @@ public class MovieDetailActivity extends AppCompatActivity implements ItemTouchH
     ImageSlider imageSlider;
     List<String> listImage;
     List<SlideModel> slideModels;
+    List<FavouriteMedia> listFavouriteMovie;
+    boolean isFavourite=false;
 
     ImageButton backButton;
+    ImageView favouriteImageButton;
     TextView titleMovie,overviewText,voteRatedMovie,releaseDateText,runtimeText,popularityTextView,statusTextView,tagLineTextView,budgetTextView,revenueTextView,homePageTextView;
     RecyclerView castRecyclerView,crewRecyclerView,recommendationRecyclerView,trailerRecyclerView,reviewRecyclerView;
     FlexboxLayout genresFlexBox,companyFlexBox,countryFlexBox,languageFlexBox;
@@ -102,6 +112,9 @@ public class MovieDetailActivity extends AppCompatActivity implements ItemTouchH
     Movie selectedMovie;
 
 
+    String titleOfMovie,posterImage;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,7 +125,9 @@ public class MovieDetailActivity extends AppCompatActivity implements ItemTouchH
         getData();
         initialize();
         callAPIs();
+        loadFavouriteData();
         observerDataChanged();
+        observeFavouriteDataChange();
         getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
@@ -137,6 +152,7 @@ public class MovieDetailActivity extends AppCompatActivity implements ItemTouchH
         budgetTextView=binding.budgetDetail;
         homePageTextView=binding.homePageDetail;
         revenueTextView=binding.revenueDetail;
+        favouriteImageButton=binding.addFavouriteImage;
 
         castRecyclerView=binding.castRecyclerView;
         crewRecyclerView=binding.crewsRecyclerView;
@@ -163,21 +179,24 @@ public class MovieDetailActivity extends AppCompatActivity implements ItemTouchH
     }
     private void initialize(){
         movieViewModel= new ViewModelProvider(this).get(MovieViewModel.class);
+        favouriteMediaViewModel=new ViewModelProvider(this).get(FavouriteMediaViewModel.class);
         listImage=new ArrayList<>();
         slideModels=new ArrayList<>();
+        listFavouriteMovie=new ArrayList<>();
         cast=new ArrayList<>();
         crew=new ArrayList<>();
         recommendationMovie=new ArrayList<>();
         listReview=new ArrayList<>();
         trailers=new ArrayList<>();
         setSlideImageList();
+        handleFavouriteCLick();
         initializeAdapters();
         initializeRecyclerView();
     }
     private void initializeAdapters(){
         castAdapter=new ListCastAdapter(this,cast,this);
         crewAdapter=new ListCastAdapter(this,crew,this);
-        recommendationAdapter=new ListMovieAdapter(recommendationMovie,this,R.layout.single_movie_card,this);
+        recommendationAdapter=new ListMovieAdapter(recommendationMovie,this,R.layout.single_movie_card,this,favouriteMediaViewModel);
         listTrailerAdapter=new ListTrailerAdapter(trailers,this,this);
         listReviewAdapter=new ListReviewAdapter(listReview,this);
     }
@@ -233,7 +252,7 @@ public class MovieDetailActivity extends AppCompatActivity implements ItemTouchH
         if(recommendationMovieResponseData.getResults()!=null&&!recommendationMovieResponseData.getResults().isEmpty()){
             recommendationMovie=recommendationMovieResponseData.getResults();
         }
-        recommendationAdapter=new ListMovieAdapter(recommendationMovie,this,R.layout.single_movie_card,this);
+        recommendationAdapter=new ListMovieAdapter(recommendationMovie,this,R.layout.single_movie_card,this,favouriteMediaViewModel);
         recommendationRecyclerView.setAdapter(recommendationAdapter);
     }
     private void updateCredit(){
@@ -282,7 +301,7 @@ public class MovieDetailActivity extends AppCompatActivity implements ItemTouchH
     }
     private void updateReview(){
         if(reviewResponseData.getResults()!=null&&!reviewResponseData.getResults().isEmpty()){
-            if(movieVideosData.getResults().size()>5){
+            if(reviewResponseData.getResults().size()>5){
                 for (int i = 0; i < 5; i++) {
                     listReview.add(reviewResponseData.getResults().get(i));
                 }
@@ -306,12 +325,14 @@ public class MovieDetailActivity extends AppCompatActivity implements ItemTouchH
     private void updateMovieDetail(){
         if(movieDetailData.getPosterPath()!=null){
             addListImage(movieDetailData.getPosterPath());
+            posterImage=movieDetailData.getPosterPath();
         }
         if(movieDetailData.getBackdropPath()!=null){
             addListImage(movieDetailData.getBackdropPath());
         }
         setSlideImageList();
         titleMovie.setText(movieDetailData.getTitle());
+        titleOfMovie=movieDetailData.getTitle();
         overviewText.setText(movieDetailData.getOverview());
         voteRatedMovie.setText(movieDetailData.getVoteAverage()+" ("+movieDetailData.getVoteCount()+")");
         releaseDateText.setText(movieDetailData.getReleaseDate());
@@ -430,11 +451,55 @@ public class MovieDetailActivity extends AppCompatActivity implements ItemTouchH
             }
         });
     }
+    private  void observeFavouriteDataChange(){
+        favouriteMediaViewModel.getFavouriteMovies().observe(this, new Observer<List<FavouriteMedia>>() {
+            @Override
+            public void onChanged(List<FavouriteMedia> favouriteMedia) {
+                listFavouriteMovie=favouriteMedia;
+
+                for (int i = 0; i < favouriteMedia.size(); i++) {
+                    if(favouriteMedia.get(i).getMediaID()==movieID){
+                        isFavourite=true;
+                        favouriteImageButton.setImageResource(R.drawable.favoourite_no_border);
+                    }
+                }
+                if(!isFavourite){
+                    favouriteImageButton.setImageResource(R.drawable.favourite);
+                }
+            }
+        });
+    }
+    private  void loadFavouriteData(){
+        favouriteMediaViewModel.fetchMovieData();
+    }
     private void onBackHandle(){
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 finish();
+            }
+        });
+    }
+    private void handleFavouriteCLick(){
+        favouriteImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(isFavourite){
+                    int index=0;
+                    for (int i = 0; i <listFavouriteMovie.size() ; i++) {
+                        if(listFavouriteMovie.get(i).getMediaID()==movieID){
+                            index=i;
+                            break;
+                        }
+                    }
+                    if(index!=0){
+                        favouriteMediaViewModel.deleteFavouriteMedia(listFavouriteMovie.get(index).getId());
+                        isFavourite=false;
+                    }
+                }else{
+                    favouriteMediaViewModel.insertFavouriteMedia(movieID,titleOfMovie,TypeOfMedia.movie,null,null,posterImage);
+                }
+
             }
         });
     }

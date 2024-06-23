@@ -16,9 +16,27 @@
         android:theme="@style/Theme.NetFlop"
         tools:targetApi="31">
         <activity
-            android:name=".ui.movie_detail.AllReviewActivity"
-            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
+            android:name=".ui.favourite.AllFavouriteMovieActivity"
             android:exported="false" />
+        <activity
+            android:name=".ui.favourite.AllFavouriteMediaActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.favourite.AllFavouriteEpisodeActivity"
+            android:exported="false"/>
+        <activity
+            android:name=".ui.favourite.AllFavouriteTVSeasonActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.favourite.AllFavouriteTVSeriesActivity"
+            android:exported="false"/>
+        <activity
+            android:name=".ui.favourite.AllFavouritePeopleActivity"
+            android:exported="false"/>
+        <activity
+            android:name=".ui.movie_detail.AllReviewActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar" />
         <activity
             android:name=".ui.TV_Detail.TVEpisodeDetailActivity"
             android:exported="false"

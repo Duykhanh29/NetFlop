@@ -15,18 +15,21 @@ import android.os.Bundle;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.view.MenuItem;
 
 import com.example.netflop.R;
 import com.example.netflop.constants.IntConstants;
 import com.example.netflop.constants.StringConstants;
-import com.example.netflop.data.models.TVs.AiringTodayModel;
+import com.example.netflop.data.models.local.FavouriteMedia;
+import com.example.netflop.data.models.remote.TVs.AiringTodayModel;
 import com.example.netflop.databinding.ActivityAllPopularTvactivityBinding;
 import com.example.netflop.ui.TV_Detail.TVSeriesDetailActivity;
-import com.example.netflop.ui.adapters.GridTVAdapter;
+import com.example.netflop.ui.adapters.remote.GridTVAdapter;
 import com.example.netflop.utils.listeners.ItemTVOnClickListener;
 import com.example.netflop.utils.RecyclerViewUtils;
-import com.example.netflop.viewmodel.PopularTVViewModel;
+import com.example.netflop.viewmodel.local.FavouriteMediaViewModel;
+import com.example.netflop.viewmodel.remote.PopularTVViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +42,7 @@ public class AllPopularTVActivity extends AppCompatActivity implements ItemTVOnC
 
     // view model
     PopularTVViewModel popularTVViewModel;
+    FavouriteMediaViewModel favouriteMediaViewModel;
     // UI
     RecyclerView allPopularTVRecyclerView;
     ActionBar actionBar;
@@ -51,8 +55,18 @@ public class AllPopularTVActivity extends AppCompatActivity implements ItemTVOnC
         getBinding();
         initialize();
         callAPI();
+        fetchFavouriteData();
         observeDataChange();
         scrollListener();
+        observeFavouriteDataChange();
+        getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if(isEnabled()){
+                    finish();
+                }
+            }
+        });
     }
     private void getBinding(){
         allPopularTVRecyclerView=binding.allPopularTVRecyclerView;
@@ -66,8 +80,9 @@ public class AllPopularTVActivity extends AppCompatActivity implements ItemTVOnC
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeAsUpIndicator(R.drawable.black_arrow_back);
         popularTVViewModel=new ViewModelProvider(this).get(PopularTVViewModel.class);
+        favouriteMediaViewModel=new ViewModelProvider(this).get(FavouriteMediaViewModel.class);
         todayModelList=new ArrayList<>();
-        gridTVAdapter=new GridTVAdapter(todayModelList,this,this);
+        gridTVAdapter=new GridTVAdapter(todayModelList,this,this,favouriteMediaViewModel);
 
         RecyclerViewUtils.setupGridRecyclerView(this,allPopularTVRecyclerView,gridTVAdapter,2);
 
@@ -76,14 +91,7 @@ public class AllPopularTVActivity extends AppCompatActivity implements ItemTVOnC
 //        allPopularTVRecyclerView.addItemDecoration(itemDecorator);
 //        allPopularTVRecyclerView.setAdapter(gridTVAdapter);
 //        allUpcomingMovieRecyclerView.setAdapter(gridMoviesAdapter);
-        getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {
-                if(isEnabled()){
-                    finish();
-                }
-            }
-        });
+
     }
     private void callAPI(){
         popularTVViewModel.fetchPopularTV(this);
@@ -100,6 +108,18 @@ public class AllPopularTVActivity extends AppCompatActivity implements ItemTVOnC
             }
         });
     }
+    private  void observeFavouriteDataChange(){
+        favouriteMediaViewModel.getFavouriteTVSeries().observe(this, new Observer<List<FavouriteMedia>>() {
+            @Override
+            public void onChanged(List<FavouriteMedia> favouriteMedia) {
+//                gridTVAdapter.setFavouriteData(favouriteMedia);
+            }
+        });
+    }
+    private void fetchFavouriteData(){
+        favouriteMediaViewModel.fetchTVSeriesData();
+    }
+
     private void scrollListener(){
         allPopularTVRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -127,6 +147,13 @@ public class AllPopularTVActivity extends AppCompatActivity implements ItemTVOnC
         }
         return  true;
     }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d("onResume","onResume() of AllUpcomingActivity");
+        fetchFavouriteData();
+    }
+
 
     @Override
     public void onTVCLick(AiringTodayModel airingTodayModel) {

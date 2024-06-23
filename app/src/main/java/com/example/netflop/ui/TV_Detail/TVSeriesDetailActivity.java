@@ -27,20 +27,23 @@ import com.denzcoskun.imageslider.models.SlideModel;
 import com.example.netflop.R;
 import com.example.netflop.constants.StringConstants;
 import com.example.netflop.constants.URLConstants;
-import com.example.netflop.data.models.Genre;
-import com.example.netflop.data.models.ProductionCompany;
-import com.example.netflop.data.models.ProductionCountry;
-import com.example.netflop.data.models.TVs.CreatedBy;
-import com.example.netflop.data.models.TVs.Season;
-import com.example.netflop.data.models.TVs.TVSeriesDetail;
+import com.example.netflop.constants.enums.TypeOfMedia;
+import com.example.netflop.data.models.local.FavouriteMedia;
+import com.example.netflop.data.models.remote.movies.Genre;
+import com.example.netflop.data.models.remote.movies.ProductionCompany;
+import com.example.netflop.data.models.remote.movies.ProductionCountry;
+import com.example.netflop.data.models.remote.TVs.CreatedBy;
+import com.example.netflop.data.models.remote.TVs.Season;
+import com.example.netflop.data.models.remote.TVs.TVSeriesDetail;
 import com.example.netflop.databinding.ActivityTvseriesDetailBinding;
 import com.example.netflop.helpers.CustomTextView;
-import com.example.netflop.ui.adapters.ListCreatedByAdapter;
-import com.example.netflop.ui.adapters.ListSeasonAdapter;
+import com.example.netflop.ui.adapters.remote.ListCreatedByAdapter;
+import com.example.netflop.ui.adapters.remote.ListSeasonAdapter;
 import com.example.netflop.utils.listeners.OnTVClickListener;
 import com.example.netflop.utils.RecyclerViewUtils;
 import com.example.netflop.utils.ToolBarUtils;
-import com.example.netflop.viewmodel.TVDetailViewModel;
+import com.example.netflop.viewmodel.local.FavouriteMediaViewModel;
+import com.example.netflop.viewmodel.remote.TVDetailViewModel;
 import com.google.android.flexbox.FlexboxLayout;
 
 import java.util.ArrayList;
@@ -62,6 +65,7 @@ public class TVSeriesDetailActivity extends AppCompatActivity implements OnTVCli
     ListCreatedByAdapter listCreatedByAdapter;
     // view model
     TVDetailViewModel tvDetailViewModel;
+    FavouriteMediaViewModel favouriteMediaViewModel;
     // list data
     List<SlideModel> slideModels;
     List<String> listImage;
@@ -79,6 +83,11 @@ public class TVSeriesDetailActivity extends AppCompatActivity implements OnTVCli
     TextView nameLatestTextView,latestTypeOfTVEpisodeTextView,latestNumberOfTVEpisodeTextView,nameNextEpisodeTextView,nextTypeOfTVEpisodeTextView,nextNumberOfTVEpisodeTextView;
     ImageView latestTVEpisodeImageView,nextTVEpisodeImageView;
     TextView isHavingLatestEpisodeView,isHavingNextEpisodeView,isHavingCreatedByEpisodeView;
+
+    ImageView addFavouriteView;
+    List<FavouriteMedia> listFavourite;
+    boolean isFavourite=false;
+    String tvSeriesTitle,imagePath;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,7 +100,10 @@ public class TVSeriesDetailActivity extends AppCompatActivity implements OnTVCli
         getData();
         initialize();
         callAPIs();
+        loadFavouriteData();
         observeDataChange();
+        observeFavouriteDataChange();
+        handleFavouriteCLick();
         getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
@@ -142,6 +154,7 @@ public class TVSeriesDetailActivity extends AppCompatActivity implements OnTVCli
         isHavingNextEpisodeView=binding.isHavingNextEpisodeView;
         isHavingCreatedByEpisodeView=binding.isHavingCreatedByEpisodeView;
 
+        addFavouriteView=binding.addFavouriteImage;
     }
     private void getData(){
         Intent intent=getIntent();
@@ -153,6 +166,8 @@ public class TVSeriesDetailActivity extends AppCompatActivity implements OnTVCli
 
 
         tvDetailViewModel= new ViewModelProvider(this).get(TVDetailViewModel.class);
+        favouriteMediaViewModel= new ViewModelProvider(this).get(FavouriteMediaViewModel.class);
+        listFavourite=new ArrayList<>();
         listCountry=new ArrayList<>();
         listCompany=new ArrayList<>();
         listGenre=new ArrayList<>();
@@ -161,7 +176,7 @@ public class TVSeriesDetailActivity extends AppCompatActivity implements OnTVCli
         listSeason=new ArrayList<>();
         listCreatedBy=new ArrayList<>();
         listCreatedByAdapter=new ListCreatedByAdapter(listCreatedBy,this);
-        listSeasonAdapter=new ListSeasonAdapter(listSeason,this,this);
+        listSeasonAdapter=new ListSeasonAdapter(tvSeriesID,listSeason,this,this,favouriteMediaViewModel);
         RecyclerViewUtils.setupHorizontalRecyclerView(this,createdByRecyclerView,listCreatedByAdapter,LinearLayoutManager.HORIZONTAL,false);
         RecyclerViewUtils.setupHorizontalRecyclerView(this,seasonsTVSeriesRecyclerView,listSeasonAdapter,LinearLayoutManager.HORIZONTAL,false);
 
@@ -191,6 +206,49 @@ public class TVSeriesDetailActivity extends AppCompatActivity implements OnTVCli
             }
         });
     }
+    private  void observeFavouriteDataChange(){
+        favouriteMediaViewModel.getFavouriteTVSeasons().observe(this, new Observer<List<FavouriteMedia>>() {
+            @Override
+            public void onChanged(List<FavouriteMedia> favouriteMedia) {
+                listFavourite=favouriteMedia;
+                for (int i = 0; i < favouriteMedia.size(); i++) {
+                    if(favouriteMedia.get(i).getMediaID()==tvSeriesID){
+                        isFavourite=true;
+                        addFavouriteView.setImageResource(R.drawable.favoourite_no_border);
+                    }
+                }
+                if(!isFavourite){
+                    addFavouriteView.setImageResource(R.drawable.favorite_red_border);
+                }
+            }
+        });
+    }
+    private  void handleFavouriteCLick(){
+        addFavouriteView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(isFavourite){
+                    int index=0;
+                    for (int i = 0; i <listFavourite.size() ; i++) {
+                        if(listFavourite.get(i).getMediaID()==tvSeriesID){
+                            index=i;
+                            break;
+                        }
+                    }
+                    if(index!=0){
+                        favouriteMediaViewModel.deleteFavouriteMedia(index);
+                        isFavourite=false;
+                    }
+                }else{
+                    favouriteMediaViewModel.insertFavouriteMedia(tvSeriesID,tvSeriesTitle, TypeOfMedia.TVSeries,null,null,imagePath);
+                }
+
+            }
+        });
+    }
+    private  void loadFavouriteData(){
+        favouriteMediaViewModel.fetchTVSeriesData();
+    }
     private void updateData(TVSeriesDetail tvSeriesDetail){
         overviewTextView.setText(tvSeriesDetail.getOverview());
         isAdultTVSeriesTextView.setText(tvSeriesDetail.getAdult()? "Any" :"Only adult");
@@ -212,12 +270,14 @@ public class TVSeriesDetailActivity extends AppCompatActivity implements OnTVCli
         numberOfEpisodeTextView.setText(tvSeriesDetail.getNumberOfEpisodes()+"");
         firstDateTextView.setText(tvSeriesDetail.getFirstAirDate());
         if(tvSeriesDetail.getPosterPath()!=null){
+            imagePath=tvSeriesDetail.getPosterPath();
             listImage.add(URLConstants.imageURL+tvSeriesDetail.getPosterPath());
         }
         if(tvSeriesDetail.getBackdropPath()!=null){
             listImage.add(URLConstants.imageURL+ tvSeriesDetail.getBackdropPath());
         }
         toolbar.setTitle(tvSeriesDetail.getName()!=null?tvSeriesDetail.getName():"null");
+        tvSeriesTitle=tvSeriesDetail.getName()!=null ?tvSeriesDetail.getName():"";
         setSlideImageList();
         for (Genre genre:tvSeriesDetail.getGenres()) {
             Context context = new ContextThemeWrapper(this, R.style.NormalTextStyle);
@@ -291,7 +351,7 @@ public class TVSeriesDetailActivity extends AppCompatActivity implements OnTVCli
             createdByRecyclerView.setVisibility(View.GONE);
         }
         listSeason=tvSeriesDetail.getSeasons();
-        listSeasonAdapter=new ListSeasonAdapter(listSeason,this,this);
+        listSeasonAdapter=new ListSeasonAdapter(tvSeriesID,listSeason,this,this,favouriteMediaViewModel);
         seasonsTVSeriesRecyclerView.setAdapter(listSeasonAdapter);
     }
     private void addToSlideModels(){
@@ -310,5 +370,11 @@ public class TVSeriesDetailActivity extends AppCompatActivity implements OnTVCli
         intent.putExtra(StringConstants.tvSeriesIDKey,tvSeriesID);
         intent.putExtra(StringConstants.seasonNumberKey,number);
         startActivity(intent);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadFavouriteData();
     }
 }

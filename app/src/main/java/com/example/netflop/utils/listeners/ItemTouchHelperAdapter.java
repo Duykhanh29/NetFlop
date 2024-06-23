@@ -1,8 +1,8 @@
 package com.example.netflop.utils.listeners;
 
-import com.example.netflop.data.models.Cast;
-import com.example.netflop.data.models.Movie;
-import com.example.netflop.data.models.Person;
+import com.example.netflop.data.models.remote.people.Cast;
+import com.example.netflop.data.models.remote.movies.Movie;
+import com.example.netflop.data.models.remote.people.Person;
 
 public interface ItemTouchHelperAdapter {
     void onMovieClick(Movie movie);

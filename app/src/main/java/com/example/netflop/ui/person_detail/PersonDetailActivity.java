@@ -16,6 +16,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,18 +29,21 @@ import com.example.netflop.constants.GenderConstants;
 import com.example.netflop.constants.StringConstants;
 import com.example.netflop.constants.URLConstants;
 import com.example.netflop.constants.enums.GenderEnums;
-import com.example.netflop.data.models.CombinedCredit;
-import com.example.netflop.data.models.MovieCast;
-import com.example.netflop.data.models.PersonDetail;
-import com.example.netflop.data.models.PersonImages;
-import com.example.netflop.data.models.Profile;
+import com.example.netflop.constants.enums.TypeOfMedia;
+import com.example.netflop.data.models.local.FavouriteMedia;
+import com.example.netflop.data.models.remote.movies.CombinedCredit;
+import com.example.netflop.data.models.remote.movies.MovieCast;
+import com.example.netflop.data.models.remote.people.PersonDetail;
+import com.example.netflop.data.models.remote.people.PersonImages;
+import com.example.netflop.data.models.remote.people.Profile;
 import com.example.netflop.databinding.ActivityPersonDetailBinding;
 import com.example.netflop.ui.TV_Detail.TVSeriesDetailActivity;
-import com.example.netflop.ui.adapters.ListMovieCastAdapter;
+import com.example.netflop.ui.adapters.remote.ListMovieCastAdapter;
 import com.example.netflop.ui.movie_detail.MovieDetailActivity;
 import com.example.netflop.utils.listeners.ItemMovieCastListener;
 import com.example.netflop.utils.RecyclerViewUtils;
-import com.example.netflop.viewmodel.PersonViewModel;
+import com.example.netflop.viewmodel.local.FavouriteMediaViewModel;
+import com.example.netflop.viewmodel.remote.PersonViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,6 +57,7 @@ public class PersonDetailActivity extends AppCompatActivity implements ItemMovie
     List<MovieCast> castList,crewList;
     List<String> asKnownAsList;
     List<String> listImage;
+    List<FavouriteMedia> listFavourite;
 
     List<SlideModel> slideModels;
     PersonImages personImagesData;
@@ -66,6 +71,8 @@ public class PersonDetailActivity extends AppCompatActivity implements ItemMovie
 
     //view model
     PersonViewModel personViewModel;
+    FavouriteMediaViewModel favouriteMediaViewModel;
+
     // UI
     RecyclerView castRecyclerView,crewRecyclerView;
     Toolbar toolbar;
@@ -75,7 +82,10 @@ public class PersonDetailActivity extends AppCompatActivity implements ItemMovie
     TextView isCrewHavingTV,isCastHavingTV;
 
 
+    ImageView addFavouriteView;
+    boolean isFavourite=false;
 
+    String personName,personAvatar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,7 +96,10 @@ public class PersonDetailActivity extends AppCompatActivity implements ItemMovie
         getData();
         initialize();
         callAPIs();
+        loadFavouriteData();
+        observeFavouriteDataChange();
         observeDataChange();
+        handleFavouriteCLick();
         getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
@@ -112,6 +125,7 @@ public class PersonDetailActivity extends AppCompatActivity implements ItemMovie
         asKnownAsListView=binding.alsoKnownAsView;
         isCrewHavingTV=binding.isHavingCrewView;
         isCastHavingTV=binding.isHavingCastView;
+        addFavouriteView=binding.addFavouriteImage;
     }
     private void getData(){
         Intent intent=getIntent();
@@ -128,8 +142,10 @@ public class PersonDetailActivity extends AppCompatActivity implements ItemMovie
             }
         });
         personViewModel= new ViewModelProvider(this).get(PersonViewModel.class);
+        favouriteMediaViewModel=new ViewModelProvider(this).get(FavouriteMediaViewModel.class);
         castList=new ArrayList<>();
         crewList=new ArrayList<>();
+        listFavourite=new ArrayList<>();
         asKnownAsList=new ArrayList<>();
         listImage=new ArrayList<>();
         slideModels=new ArrayList<>();
@@ -208,6 +224,7 @@ public class PersonDetailActivity extends AppCompatActivity implements ItemMovie
         }
         knownForDepartmentTV.setText(personDetailData.getKnownForDepartment());
         toolbar.setTitle(personDetailData.getName());
+        personName=personDetailData.getName();
         if(personDetailData.getAlsoKnownAs()!=null&&!personDetailData.getAlsoKnownAs().isEmpty()){
             asKnownAsList=personDetailData.getAlsoKnownAs();
             adapter = new ArrayAdapter<>(
@@ -218,6 +235,7 @@ public class PersonDetailActivity extends AppCompatActivity implements ItemMovie
             asKnownAsListView.setAdapter(adapter);
         }
         if(personDetailData.getProfilePath()!=null){
+            personAvatar=personDetailData.getProfilePath();
             addListImage(personDetailData.getProfilePath());
             setSlideImageList();
         }
@@ -279,7 +297,50 @@ public class PersonDetailActivity extends AppCompatActivity implements ItemMovie
             startActivity(intent);
         }
     }
+    private  void loadFavouriteData(){
+        favouriteMediaViewModel.fetchPeopleData();
+    }
 
+    private  void observeFavouriteDataChange(){
+        favouriteMediaViewModel.getFavouriteMovies().observe(this, new Observer<List<FavouriteMedia>>() {
+            @Override
+            public void onChanged(List<FavouriteMedia> favouriteMedia) {
+                listFavourite=favouriteMedia;
+                for (int i = 0; i < favouriteMedia.size(); i++) {
+                    if(favouriteMedia.get(i).getMediaID()==personID){
+                        isFavourite=true;
+                        addFavouriteView.setImageResource(R.drawable.favoourite_no_border);
+                    }
+                }
+                if(!isFavourite){
+                    addFavouriteView.setImageResource(R.drawable.favorite_red_border);
+                }
+            }
+        });
+    }
+    private  void handleFavouriteCLick(){
+        addFavouriteView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(isFavourite){
+                    int index=0;
+                    for (int i = 0; i <listFavourite.size() ; i++) {
+                        if(listFavourite.get(i).getMediaID()==personID){
+                            index=i;
+                            break;
+                        }
+                    }
+                    if(index!=0){
+                        favouriteMediaViewModel.deleteFavouriteMedia(listFavourite.get(index).getId());
+                        isFavourite=false;
+                    }
+                }else{
+                    favouriteMediaViewModel.insertFavouriteMedia(personID,personName, TypeOfMedia.person,null,null,personAvatar);
+                }
+
+            }
+        });
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

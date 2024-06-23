@@ -435,6 +435,7 @@
                 android:text="Trailers"></TextView>
 
             <androidx.recyclerview.widget.RecyclerView
+                android:layout_marginTop="10dp"
                 android:id="@+id/trailerDetailRecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"></androidx.recyclerview.widget.RecyclerView>
@@ -466,7 +467,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="23dp"
-            android:background="@drawable/round_border">
+            android:background="@drawable/round_border"
+            app:cardCornerRadius="15dp"
+            android:elevation="5dp"
+            >
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -492,7 +496,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="No trailer"
-                    android:visibility="invisible"></TextView>
+                    android:visibility="gone"></TextView>
                 <TextView
                     android:id="@+id/seeMoreReviewDetail"
                     style="@style/NormalTextStyle"
@@ -502,7 +506,7 @@
                     android:layout_marginBottom="10dp"
                     android:text="See more"
                     android:layout_marginRight="10dp"
-                    android:visibility="invisible"></TextView>
+                    android:visibility="gone"></TextView>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
@@ -510,6 +514,7 @@
 
         <!--        related movies-->
         <TextView
+            android:layout_marginTop="5dp"
             style="@style/Header2TextStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

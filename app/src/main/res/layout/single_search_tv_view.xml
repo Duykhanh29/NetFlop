@@ -22,14 +22,15 @@
                 android:id="@+id/searchTVImageView"
                 android:scaleType="centerCrop"
                 ></ImageView>
+
             <ImageButton
+                android:id="@+id/searchTVSeriesButtonView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/rounded_button"
                 android:layout_gravity="top|start"
-                android:src="@drawable/add"
-                android:id="@+id/searchTVSeriesButtonView"
-                android:layout_margin="1dp"></ImageButton>
+                android:layout_margin="1dp"
+                android:background="@drawable/rounded_button"
+                android:src="@drawable/add"></ImageButton>
         </FrameLayout>
         <LinearLayout
             android:layout_width="match_parent"

@@ -10,11 +10,23 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-        <ImageView
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="140dp"
-            android:id="@+id/tvEpisodeImageView"
-            ></ImageView>
+            android:layout_height="140dp">
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/tvEpisodeImageView"
+                ></ImageView>
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/rounded_button"
+                android:layout_gravity="top|start"
+                android:src="@drawable/add"
+                android:id="@+id/addImageButton"
+                android:layout_margin="1dp"></ImageButton>
+        </FrameLayout>
         <LinearLayout
             android:paddingVertical="10dp"
             android:layout_width="match_parent"

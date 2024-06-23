@@ -29,19 +29,20 @@ import com.example.netflop.constants.IntConstants;
 import com.example.netflop.constants.RequestCode;
 import com.example.netflop.constants.StringConstants;
 import com.example.netflop.constants.enums.SearchType;
-import com.example.netflop.data.models.Cast;
-import com.example.netflop.data.models.Movie;
-import com.example.netflop.data.models.Person;
-import com.example.netflop.data.models.SearchMultiModel;
-import com.example.netflop.data.models.TVs.AiringTodayModel;
+import com.example.netflop.data.models.local.FavouriteMedia;
+import com.example.netflop.data.models.remote.people.Cast;
+import com.example.netflop.data.models.remote.movies.Movie;
+import com.example.netflop.data.models.remote.people.Person;
+import com.example.netflop.data.models.remote.movies.SearchMultiModel;
+import com.example.netflop.data.models.remote.TVs.AiringTodayModel;
 import com.example.netflop.data.models.local.SearchHistory;
 import com.example.netflop.databinding.FragmentSearchBinding;
 import com.example.netflop.ui.TV_Detail.TVSeriesDetailActivity;
-import com.example.netflop.ui.adapters.SearchAdapter;
-import com.example.netflop.ui.adapters.SearchMovieAdapter;
-import com.example.netflop.ui.adapters.SearchPersonAdapter;
-import com.example.netflop.ui.adapters.SearchTVAdapter;
-import com.example.netflop.ui.adapters.search_history.SearchHistoryAdapter;
+import com.example.netflop.ui.adapters.remote.SearchAdapter;
+import com.example.netflop.ui.adapters.remote.SearchMovieAdapter;
+import com.example.netflop.ui.adapters.remote.SearchPersonAdapter;
+import com.example.netflop.ui.adapters.remote.SearchTVAdapter;
+import com.example.netflop.ui.adapters.local.SearchHistoryAdapter;
 import com.example.netflop.ui.movie_detail.MovieDetailActivity;
 import com.example.netflop.ui.person_detail.PersonDetailActivity;
 import com.example.netflop.utils.listeners.ItemTVOnClickListener;
@@ -49,11 +50,12 @@ import com.example.netflop.utils.listeners.ItemTouchHelperAdapter;
 import com.example.netflop.utils.listeners.OnSearchHistoryListener;
 import com.example.netflop.utils.RecyclerViewUtils;
 import com.example.netflop.utils.listeners.SearchItemOnClickListener;
-import com.example.netflop.viewmodel.SearchHistoryViewModel;
-import com.example.netflop.viewmodel.SearchMovieViewModel;
-import com.example.netflop.viewmodel.SearchMultiViewModel;
-import com.example.netflop.viewmodel.SearchPeopleViewModel;
-import com.example.netflop.viewmodel.SearchTVViewModel;
+import com.example.netflop.viewmodel.local.FavouriteMediaViewModel;
+import com.example.netflop.viewmodel.local.SearchHistoryViewModel;
+import com.example.netflop.viewmodel.remote.SearchMovieViewModel;
+import com.example.netflop.viewmodel.remote.SearchMultiViewModel;
+import com.example.netflop.viewmodel.remote.SearchPeopleViewModel;
+import com.example.netflop.viewmodel.remote.SearchTVViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,6 +72,7 @@ public class SearchFragment extends Fragment implements SearchItemOnClickListene
     SearchMovieViewModel searchMovieViewModel;
     SearchTVViewModel searchTVViewModel;
     SearchHistoryViewModel searchHistoryViewModel;
+    FavouriteMediaViewModel favouriteMediaViewModel;
 
     // lists
     List<SearchMultiModel> searchMultiList;
@@ -218,6 +221,7 @@ public class SearchFragment extends Fragment implements SearchItemOnClickListene
         getOnBackPressed();
         onFilterButtonHandle();
         onScrollListener();
+        observeFavouriteDataChange();
         return root;
     }
     private void getBinding(){
@@ -246,11 +250,12 @@ public class SearchFragment extends Fragment implements SearchItemOnClickListene
         searchMovieViewModel=new ViewModelProvider(this).get(SearchMovieViewModel.class);
         searchTVViewModel=new ViewModelProvider(this).get(SearchTVViewModel.class);
         searchHistoryViewModel=new ViewModelProvider(this,ViewModelProvider.AndroidViewModelFactory.getInstance(getActivity().getApplication())).get(SearchHistoryViewModel.class);
+        favouriteMediaViewModel=new ViewModelProvider(this).get(FavouriteMediaViewModel.class);
 
         searchPersonAdapter=new SearchPersonAdapter(listPerson,getActivity(),this);
         searchMovieAdapter=new SearchMovieAdapter(listMovie,getActivity(),this);
         searchAdapter=new SearchAdapter(searchMultiList,getActivity(),this);
-        searchTVAdapter=new SearchTVAdapter(lisTVShow,getActivity(),this);
+        searchTVAdapter=new SearchTVAdapter(lisTVShow,getActivity(),this,favouriteMediaViewModel);
         searchHistoryAdapter=new SearchHistoryAdapter(getActivity(),searchHistoriesData,this,searchHistoryViewModel);
 
         RecyclerViewUtils.setupHorizontalRecyclerView(getActivity(),searchHistoriesRecyclerView,searchHistoryAdapter,LinearLayout.VERTICAL,false);
@@ -289,7 +294,7 @@ public class SearchFragment extends Fragment implements SearchItemOnClickListene
         searchMultiList=new ArrayList<>();
         listPerson=new ArrayList<>();
         listMovie=new ArrayList<>();
-        searchTVAdapter=new SearchTVAdapter(lisTVShow,getActivity(),this);
+        searchTVAdapter=new SearchTVAdapter(lisTVShow,getActivity(),this,favouriteMediaViewModel);
         recyclerView.setAdapter(searchTVAdapter);
     }
 
@@ -459,6 +464,14 @@ public class SearchFragment extends Fragment implements SearchItemOnClickListene
                 }else{
                     searchTVAdapter.notifyDataSetChanged();
                 }
+            }
+        });
+    }
+    private  void observeFavouriteDataChange(){
+        favouriteMediaViewModel.getFavouriteTVSeries().observe(getViewLifecycleOwner(), new Observer<List<FavouriteMedia>>() {
+            @Override
+            public void onChanged(List<FavouriteMedia> favouriteMedia) {
+//                searchTVAdapter.setFavouriteData(favouriteMedia);
             }
         });
     }

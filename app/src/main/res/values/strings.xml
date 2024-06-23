@@ -2,7 +2,7 @@
     <string name="app_name">NetFlop</string>
     <string name="title_home">Home</string>
     <string name="title_search">Search</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="title_favourite">Favourite</string>
     <string name="open_nav">Open</string>
     <string name="close_nav">Close</string>
 

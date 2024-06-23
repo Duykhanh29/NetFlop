@@ -15,21 +15,24 @@ import android.os.Bundle;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.view.MenuItem;
 
 import com.example.netflop.R;
 import com.example.netflop.constants.IntConstants;
 import com.example.netflop.constants.StringConstants;
-import com.example.netflop.data.models.Cast;
-import com.example.netflop.data.models.Movie;
-import com.example.netflop.data.models.Person;
+import com.example.netflop.data.models.local.FavouriteMedia;
+import com.example.netflop.data.models.remote.people.Cast;
+import com.example.netflop.data.models.remote.movies.Movie;
+import com.example.netflop.data.models.remote.people.Person;
 import com.example.netflop.databinding.ActivityAllTopRatedMovieBinding;
-import com.example.netflop.ui.adapters.GridMoviesAdapter;
+import com.example.netflop.ui.adapters.remote.GridMoviesAdapter;
 import com.example.netflop.ui.movie_detail.MovieDetailActivity;
 import com.example.netflop.utils.listeners.ItemTouchHelperAdapter;
 import com.example.netflop.utils.RecyclerViewUtils;
 import com.example.netflop.utils.SpacingItemDecorator;
-import com.example.netflop.viewmodel.TopRatedViewModel;
+import com.example.netflop.viewmodel.local.FavouriteMediaViewModel;
+import com.example.netflop.viewmodel.remote.TopRatedViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +47,7 @@ public class AllTopRatedMovieActivity extends AppCompatActivity implements ItemT
 
     // view model
     TopRatedViewModel topRatedViewModel;
+    FavouriteMediaViewModel favouriteMediaViewModel;
     // UI
     RecyclerView allTopRatedMovieRecyclerView;
     ActionBar actionBar;
@@ -56,8 +60,18 @@ public class AllTopRatedMovieActivity extends AppCompatActivity implements ItemT
         getBinding();
         initialize();
         callAPI();
+        fetchFavouriteData();
         observeDataChange();
         scrollListener();
+        observeFavouriteDataChange();
+        getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if(isEnabled()){
+                    finish();
+                }
+            }
+        });
     }
     private void getBinding(){
         allTopRatedMovieRecyclerView=binding.allTopRatedMovieRecyclerView;
@@ -71,8 +85,9 @@ public class AllTopRatedMovieActivity extends AppCompatActivity implements ItemT
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeAsUpIndicator(R.drawable.black_arrow_back);
         topRatedViewModel=new ViewModelProvider(this).get(TopRatedViewModel.class);
+        favouriteMediaViewModel=new ViewModelProvider(this).get(FavouriteMediaViewModel.class);
         listMovie=new ArrayList<>();
-        gridMoviesAdapter=new GridMoviesAdapter(listMovie,this,this);
+        gridMoviesAdapter=new GridMoviesAdapter(listMovie,this,this,favouriteMediaViewModel);
 
         RecyclerViewUtils.setupGridRecyclerView(this,allTopRatedMovieRecyclerView,gridMoviesAdapter,2);
 
@@ -80,14 +95,7 @@ public class AllTopRatedMovieActivity extends AppCompatActivity implements ItemT
         SpacingItemDecorator itemDecorator=new SpacingItemDecorator(30,20);
         allTopRatedMovieRecyclerView.addItemDecoration(itemDecorator);
         allTopRatedMovieRecyclerView.setAdapter(gridMoviesAdapter);
-        getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {
-                if(isEnabled()){
-                    finish();
-                }
-            }
-        });
+
     }
     private void callAPI(){
         topRatedViewModel.fetchTopRated(this);
@@ -105,6 +113,17 @@ public class AllTopRatedMovieActivity extends AppCompatActivity implements ItemT
                 }
             }
         });
+    }
+    private  void observeFavouriteDataChange(){
+        favouriteMediaViewModel.getFavouriteMovies().observe(this, new Observer<List<FavouriteMedia>>() {
+            @Override
+            public void onChanged(List<FavouriteMedia> favouriteMedia) {
+//                gridMoviesAdapter.setFavouriteData(favouriteMedia);
+            }
+        });
+    }
+    private void fetchFavouriteData(){
+        favouriteMediaViewModel.fetchMovieData();
     }
     private void scrollListener(){
         allTopRatedMovieRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -148,6 +167,13 @@ public class AllTopRatedMovieActivity extends AppCompatActivity implements ItemT
     public void onPersonClick(Person p) {
 
     }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d("onResume","onResume() of AllUpcomingActivity");
+        fetchFavouriteData();
+    }
+
 
     @Override
     public void onCastClick(Cast cast) {
