@@ -37,11 +37,14 @@ import com.example.netflop.data.models.remote.TVs.Season;
 import com.example.netflop.data.models.remote.TVs.TVSeriesDetail;
 import com.example.netflop.databinding.ActivityTvseriesDetailBinding;
 import com.example.netflop.helpers.CustomTextView;
+import com.example.netflop.helpers.NoInternetToastHelpers;
 import com.example.netflop.ui.adapters.remote.ListCreatedByAdapter;
 import com.example.netflop.ui.adapters.remote.ListSeasonAdapter;
+import com.example.netflop.ui.base.BaseActivity;
 import com.example.netflop.utils.listeners.OnTVClickListener;
 import com.example.netflop.utils.RecyclerViewUtils;
 import com.example.netflop.utils.ToolBarUtils;
+import com.example.netflop.viewmodel.connectivity.ConnectivityViewModel;
 import com.example.netflop.viewmodel.local.FavouriteMediaViewModel;
 import com.example.netflop.viewmodel.remote.TVDetailViewModel;
 import com.google.android.flexbox.FlexboxLayout;
@@ -49,7 +52,7 @@ import com.google.android.flexbox.FlexboxLayout;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TVSeriesDetailActivity extends AppCompatActivity implements OnTVClickListener {
+public class TVSeriesDetailActivity extends BaseActivity implements OnTVClickListener {
     ActivityTvseriesDetailBinding binding;
 
 
@@ -66,6 +69,7 @@ public class TVSeriesDetailActivity extends AppCompatActivity implements OnTVCli
     // view model
     TVDetailViewModel tvDetailViewModel;
     FavouriteMediaViewModel favouriteMediaViewModel;
+    ConnectivityViewModel connectivityViewModel;
     // list data
     List<SlideModel> slideModels;
     List<String> listImage;
@@ -167,6 +171,7 @@ public class TVSeriesDetailActivity extends AppCompatActivity implements OnTVCli
 
         tvDetailViewModel= new ViewModelProvider(this).get(TVDetailViewModel.class);
         favouriteMediaViewModel= new ViewModelProvider(this).get(FavouriteMediaViewModel.class);
+        connectivityViewModel=new ViewModelProvider(this).get(ConnectivityViewModel.class);
         listFavourite=new ArrayList<>();
         listCountry=new ArrayList<>();
         listCompany=new ArrayList<>();
@@ -366,10 +371,14 @@ public class TVSeriesDetailActivity extends AppCompatActivity implements OnTVCli
 
     @Override
     public void onClick(int number) {
-        Intent intent=new Intent(this, TVSeasonDetailActivity.class);
-        intent.putExtra(StringConstants.tvSeriesIDKey,tvSeriesID);
-        intent.putExtra(StringConstants.seasonNumberKey,number);
-        startActivity(intent);
+        if(connectivityViewModel.getState()){
+            Intent intent=new Intent(this, TVSeasonDetailActivity.class);
+            intent.putExtra(StringConstants.tvSeriesIDKey,tvSeriesID);
+            intent.putExtra(StringConstants.seasonNumberKey,number);
+            startActivity(intent);
+        }else{
+            NoInternetToastHelpers.show(this);
+        }
     }
 
     @Override

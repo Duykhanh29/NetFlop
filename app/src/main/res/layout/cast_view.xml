@@ -19,7 +19,7 @@
             android:id="@+id/cast_avatar_image"
             android:layout_width="70dp"
             android:layout_height="70dp"
-            android:scaleType="centerCrop"
+            android:scaleType="centerInside"
             android:src="@drawable/circel_avatar"
             />
         <View

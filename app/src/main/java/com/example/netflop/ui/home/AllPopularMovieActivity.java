@@ -26,17 +26,20 @@ import com.example.netflop.data.models.remote.people.Cast;
 import com.example.netflop.data.models.remote.movies.Movie;
 import com.example.netflop.data.models.remote.people.Person;
 import com.example.netflop.databinding.ActivityAllPopularMovieBinding;
+import com.example.netflop.helpers.NoInternetToastHelpers;
 import com.example.netflop.ui.adapters.remote.GridMoviesAdapter;
+import com.example.netflop.ui.base.BaseActivity;
 import com.example.netflop.ui.movie_detail.MovieDetailActivity;
 import com.example.netflop.utils.listeners.ItemTouchHelperAdapter;
 import com.example.netflop.utils.RecyclerViewUtils;
+import com.example.netflop.viewmodel.connectivity.ConnectivityViewModel;
 import com.example.netflop.viewmodel.local.FavouriteMediaViewModel;
 import com.example.netflop.viewmodel.remote.PopularMovieViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class AllPopularMovieActivity extends AppCompatActivity implements ItemTouchHelperAdapter {
+public class AllPopularMovieActivity extends BaseActivity implements ItemTouchHelperAdapter {
     ActivityAllPopularMovieBinding binding;
 
     //
@@ -47,6 +50,7 @@ public class AllPopularMovieActivity extends AppCompatActivity implements ItemTo
     // view model
     PopularMovieViewModel popularMovieViewModel;
     FavouriteMediaViewModel favouriteMediaViewModel;
+    ConnectivityViewModel connectivityViewModel;
     // UI
     RecyclerView allPopularMovieRecyclerView;
     ActionBar actionBar;
@@ -85,6 +89,7 @@ public class AllPopularMovieActivity extends AppCompatActivity implements ItemTo
         actionBar.setHomeAsUpIndicator(R.drawable.black_arrow_back);
         popularMovieViewModel=new ViewModelProvider(this).get(PopularMovieViewModel.class);
         favouriteMediaViewModel=new ViewModelProvider(this).get(FavouriteMediaViewModel.class);
+        connectivityViewModel=new ViewModelProvider(this).get(ConnectivityViewModel.class);
         listMovie=new ArrayList<>();
         gridMoviesAdapter=new GridMoviesAdapter(listMovie,this,this,favouriteMediaViewModel);
 
@@ -155,10 +160,14 @@ public class AllPopularMovieActivity extends AppCompatActivity implements ItemTo
 
     @Override
     public void onMovieClick(Movie movie) {
-        selectedMovie=movie;
-        Intent intent=new Intent(this, MovieDetailActivity.class);
-        intent.putExtra(StringConstants.movieDetailPageDataKey,selectedMovie.getID());
-        startActivity(intent);
+        if(connectivityViewModel.getState()){
+            selectedMovie=movie;
+            Intent intent=new Intent(this, MovieDetailActivity.class);
+            intent.putExtra(StringConstants.movieDetailPageDataKey,selectedMovie.getID());
+            startActivity(intent);
+        }else{
+            NoInternetToastHelpers.show(this);
+        }
     }
 
     @Override

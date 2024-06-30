@@ -15,9 +15,10 @@ import com.example.netflop.R;
 import com.example.netflop.databinding.FavouriteCardViewBinding;
 import com.example.netflop.databinding.FragmentFavouriteBinding;
 import com.example.netflop.databinding.FragmentHomeBinding;
+import com.example.netflop.ui.base.BaseFragment;
 import com.example.netflop.viewmodel.local.FavouriteMediaViewModel;
 
-public class FavouriteFragment extends Fragment {
+public class FavouriteFragment extends BaseFragment {
 
     private FragmentFavouriteBinding binding;
     FavouriteCardViewBinding viewMovieCard,viewPeopleCard,viewTVSeriesCard,viewTVSeasonCard,viewTVEpisodeCard;

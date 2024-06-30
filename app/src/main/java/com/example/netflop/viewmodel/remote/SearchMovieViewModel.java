@@ -40,6 +40,9 @@ public class SearchMovieViewModel extends ViewModel {
 //        callAPI(query,includeAdult);
         searchMovie(query,includeAdult,lifecycleOwner);
     }
+    public void resetCurrentPage(){
+        currentPage=1;
+    }
     public void searchMovie(String query, boolean includeAdult, LifecycleOwner lifecycleOwner){
 
         searchRepository.searchMovies(query,includeAdult,currentPage).observe(lifecycleOwner, new Observer<SearchMovieResponse>() {

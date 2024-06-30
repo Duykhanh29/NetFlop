@@ -27,6 +27,9 @@ public class SearchTVViewModel extends ViewModel {
         this.list=new ArrayList<>();
         searchRepository=new SearchRepository();
     }
+    public void resetCurrentPage(){
+        currentPage=1;
+    }
 
     public MutableLiveData<SearchTVResponse> getSearchData() {
         return searchData;

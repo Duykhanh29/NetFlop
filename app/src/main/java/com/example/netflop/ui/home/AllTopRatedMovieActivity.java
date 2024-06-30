@@ -26,18 +26,22 @@ import com.example.netflop.data.models.remote.people.Cast;
 import com.example.netflop.data.models.remote.movies.Movie;
 import com.example.netflop.data.models.remote.people.Person;
 import com.example.netflop.databinding.ActivityAllTopRatedMovieBinding;
+import com.example.netflop.helpers.NoInternetToastHelpers;
+import com.example.netflop.ui.TV_Detail.TVSeriesDetailActivity;
 import com.example.netflop.ui.adapters.remote.GridMoviesAdapter;
+import com.example.netflop.ui.base.BaseActivity;
 import com.example.netflop.ui.movie_detail.MovieDetailActivity;
 import com.example.netflop.utils.listeners.ItemTouchHelperAdapter;
 import com.example.netflop.utils.RecyclerViewUtils;
 import com.example.netflop.utils.SpacingItemDecorator;
+import com.example.netflop.viewmodel.connectivity.ConnectivityViewModel;
 import com.example.netflop.viewmodel.local.FavouriteMediaViewModel;
 import com.example.netflop.viewmodel.remote.TopRatedViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class AllTopRatedMovieActivity extends AppCompatActivity implements ItemTouchHelperAdapter {
+public class AllTopRatedMovieActivity extends BaseActivity implements ItemTouchHelperAdapter {
     ActivityAllTopRatedMovieBinding binding;
 
     //
@@ -48,6 +52,7 @@ public class AllTopRatedMovieActivity extends AppCompatActivity implements ItemT
     // view model
     TopRatedViewModel topRatedViewModel;
     FavouriteMediaViewModel favouriteMediaViewModel;
+    ConnectivityViewModel connectivityViewModel;
     // UI
     RecyclerView allTopRatedMovieRecyclerView;
     ActionBar actionBar;
@@ -86,6 +91,7 @@ public class AllTopRatedMovieActivity extends AppCompatActivity implements ItemT
         actionBar.setHomeAsUpIndicator(R.drawable.black_arrow_back);
         topRatedViewModel=new ViewModelProvider(this).get(TopRatedViewModel.class);
         favouriteMediaViewModel=new ViewModelProvider(this).get(FavouriteMediaViewModel.class);
+        connectivityViewModel=new ViewModelProvider(this).get(ConnectivityViewModel.class);
         listMovie=new ArrayList<>();
         gridMoviesAdapter=new GridMoviesAdapter(listMovie,this,this,favouriteMediaViewModel);
 
@@ -157,10 +163,14 @@ public class AllTopRatedMovieActivity extends AppCompatActivity implements ItemT
 
     @Override
     public void onMovieClick(Movie movie) {
-        selectedMovie=movie;
-        Intent intent=new Intent(this, MovieDetailActivity.class);
-        intent.putExtra(StringConstants.movieDetailPageDataKey,selectedMovie.getID());
-        startActivity(intent);
+        if(connectivityViewModel.getState()){
+            selectedMovie=movie;
+            Intent intent=new Intent(this, MovieDetailActivity.class);
+            intent.putExtra(StringConstants.movieDetailPageDataKey,selectedMovie.getID());
+            startActivity(intent);
+        }else{
+            NoInternetToastHelpers.show(this);
+        }
     }
 
     @Override

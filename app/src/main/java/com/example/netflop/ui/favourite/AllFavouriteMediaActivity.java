@@ -15,6 +15,7 @@ import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.netflop.R;
@@ -23,21 +24,24 @@ import com.example.netflop.constants.enums.TypeOfMedia;
 import com.example.netflop.data.models.local.FavouriteMedia;
 import com.example.netflop.databinding.ActivityAllFavouriteEpisodeBinding;
 import com.example.netflop.databinding.ActivityAllFavouriteMediaBinding;
+import com.example.netflop.helpers.NoInternetToastHelpers;
 import com.example.netflop.ui.TV_Detail.TVEpisodeDetailActivity;
 import com.example.netflop.ui.TV_Detail.TVSeasonDetailActivity;
 import com.example.netflop.ui.TV_Detail.TVSeriesDetailActivity;
 import com.example.netflop.ui.adapters.local.ListFavouriteMediaAdapter;
+import com.example.netflop.ui.base.BaseActivity;
 import com.example.netflop.ui.movie_detail.MovieDetailActivity;
 import com.example.netflop.ui.person_detail.PersonDetailActivity;
 import com.example.netflop.utils.CustomActionBar;
 import com.example.netflop.utils.RecyclerViewUtils;
 import com.example.netflop.utils.listeners.FavouriteListener;
+import com.example.netflop.viewmodel.connectivity.ConnectivityViewModel;
 import com.example.netflop.viewmodel.local.FavouriteMediaViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class AllFavouriteMediaActivity extends AppCompatActivity implements FavouriteListener {
+public class AllFavouriteMediaActivity extends BaseActivity implements FavouriteListener {
     ActivityAllFavouriteMediaBinding binding;
     ListFavouriteMediaAdapter listFavouriteMediaAdapter;
 
@@ -47,10 +51,11 @@ public class AllFavouriteMediaActivity extends AppCompatActivity implements Favo
 
     // view model
     FavouriteMediaViewModel favouriteMediaViewModel;
+    ConnectivityViewModel connectivityViewModel;
 
     // UI
     RecyclerView recyclerView;
-    TextView noDataTV;
+    ImageView noDataImage;
 
     // selected
     FavouriteMedia selectedFavourite;
@@ -67,7 +72,7 @@ public class AllFavouriteMediaActivity extends AppCompatActivity implements Favo
     }
     private void getBinding(){
         recyclerView=binding.allFavouriteView;
-        noDataTV=binding.noDataFavourite;
+        noDataImage=binding.noDataFavourite;
     }
     private void initialize(){
         actionBar=getSupportActionBar();
@@ -78,7 +83,7 @@ public class AllFavouriteMediaActivity extends AppCompatActivity implements Favo
         actionBar.setHomeAsUpIndicator(R.drawable.black_arrow_back);
 //        CustomActionBar.createActionBar(actionBar,"All playing now movie");
         favouriteMediaViewModel=new ViewModelProvider(this).get(FavouriteMediaViewModel.class);
-
+        connectivityViewModel=new ViewModelProvider(this).get(ConnectivityViewModel.class);
         listFavourite=new ArrayList<>();
         listFavouriteMediaAdapter=new ListFavouriteMediaAdapter(listFavourite,this,this,favouriteMediaViewModel);
 
@@ -104,7 +109,7 @@ public class AllFavouriteMediaActivity extends AppCompatActivity implements Favo
                     listFavouriteMediaAdapter.notifyDataSetChanged();
                 }else{
                     recyclerView.setVisibility(View.GONE);
-                    noDataTV.setVisibility(View.VISIBLE);
+                    noDataImage.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -112,28 +117,33 @@ public class AllFavouriteMediaActivity extends AppCompatActivity implements Favo
 
     @Override
     public void onClick(FavouriteMedia favouriteMedia) {
-        selectedFavourite=favouriteMedia;
-        Intent intent;
-        if(selectedFavourite.getTypeOfMedia()== TypeOfMedia.movie){
-            intent=new Intent(this, MovieDetailActivity.class);
-            intent.putExtra(StringConstants.movieDetailPageDataKey,selectedFavourite.getMediaID());
-        }else if(selectedFavourite.getTypeOfMedia()== TypeOfMedia.person){
-            intent=new Intent(this, PersonDetailActivity.class);
-            intent.putExtra(StringConstants.personDetailDataKey,selectedFavourite.getMediaID());
-        }else if(selectedFavourite.getTypeOfMedia()== TypeOfMedia.TVSeries){
-            intent=new Intent(this, TVSeriesDetailActivity.class);
-            intent.putExtra(StringConstants.tvSeriesIDKey,selectedFavourite.getMediaID());
-        }else if(selectedFavourite.getTypeOfMedia()== TypeOfMedia.TVSeason){
-            intent=new Intent(this, TVSeasonDetailActivity.class);
-            intent.putExtra(StringConstants.tvSeriesIDKey,selectedFavourite.getMediaID());
-            intent.putExtra(StringConstants.seasonNumberKey,selectedFavourite.getSeasonNumber());
+        if(connectivityViewModel.getState()){
+            selectedFavourite=favouriteMedia;
+            Intent intent;
+            if(selectedFavourite.getTypeOfMedia()== TypeOfMedia.movie){
+                intent=new Intent(this, MovieDetailActivity.class);
+                intent.putExtra(StringConstants.movieDetailPageDataKey,selectedFavourite.getMediaID());
+            }else if(selectedFavourite.getTypeOfMedia()== TypeOfMedia.person){
+                intent=new Intent(this, PersonDetailActivity.class);
+                intent.putExtra(StringConstants.personDetailDataKey,selectedFavourite.getMediaID());
+            }else if(selectedFavourite.getTypeOfMedia()== TypeOfMedia.TVSeries){
+                intent=new Intent(this, TVSeriesDetailActivity.class);
+                intent.putExtra(StringConstants.tvSeriesIDKey,selectedFavourite.getMediaID());
+            }else if(selectedFavourite.getTypeOfMedia()== TypeOfMedia.TVSeason){
+                intent=new Intent(this, TVSeasonDetailActivity.class);
+                intent.putExtra(StringConstants.tvSeriesIDKey,selectedFavourite.getMediaID());
+                intent.putExtra(StringConstants.seasonNumberKey,selectedFavourite.getSeasonNumber());
+            }else{
+                intent=new Intent(this, TVEpisodeDetailActivity.class);
+                intent.putExtra(StringConstants.tvSeriesIDKey,selectedFavourite.getMediaID());
+                intent.putExtra(StringConstants.seasonNumberKey,selectedFavourite.getSeasonNumber());
+                intent.putExtra(StringConstants.episodeNumberKey,selectedFavourite.getEpisodeNumber());
+            }
+            startActivity(intent);
         }else{
-            intent=new Intent(this, TVEpisodeDetailActivity.class);
-            intent.putExtra(StringConstants.tvSeriesIDKey,selectedFavourite.getMediaID());
-            intent.putExtra(StringConstants.seasonNumberKey,selectedFavourite.getSeasonNumber());
-            intent.putExtra(StringConstants.episodeNumberKey,selectedFavourite.getEpisodeNumber());
+            NoInternetToastHelpers.show(this);
         }
-        startActivity(intent);
+
     }
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {

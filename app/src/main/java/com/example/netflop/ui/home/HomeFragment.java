@@ -2,19 +2,24 @@ package com.example.netflop.ui.home;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.netflop.R;
 import com.example.netflop.constants.StringConstants;
@@ -30,6 +35,7 @@ import com.example.netflop.data.responses.movies.TrendingMovieResponse;
 import com.example.netflop.data.responses.people.TrendingPeopleResponse;
 import com.example.netflop.data.responses.movies.UpcomingResponse;
 import com.example.netflop.databinding.FragmentHomeBinding;
+import com.example.netflop.helpers.NoInternetToastHelpers;
 import com.example.netflop.ui.TV_Detail.TVSeriesDetailActivity;
 import com.example.netflop.ui.adapters.remote.HorizontalShimmerAdapter;
 import com.example.netflop.ui.adapters.remote.ListMovieAdapter;
@@ -37,12 +43,14 @@ import com.example.netflop.ui.adapters.remote.ListPersonAdapter;
 import com.example.netflop.ui.adapters.remote.ListTVAdapter;
 import com.example.netflop.ui.adapters.remote.SecondListMovieAdapter;
 import com.example.netflop.ui.adapters.remote.VerticalShimmerAdapter;
+import com.example.netflop.ui.base.BaseFragment;
 import com.example.netflop.ui.movie_detail.MovieDetailActivity;
 import com.example.netflop.ui.person_detail.PersonDetailActivity;
 import com.example.netflop.utils.listeners.ItemTVOnClickListener;
 import com.example.netflop.utils.listeners.ItemTouchHelperAdapter;
 import com.example.netflop.utils.SeeMoreOnClickListener;
 import com.example.netflop.utils.SpacingItemDecorator;
+import com.example.netflop.viewmodel.connectivity.ConnectivityViewModel;
 import com.example.netflop.viewmodel.local.FavouriteMediaViewModel;
 import com.example.netflop.viewmodel.remote.NowPlayingViewModel;
 import com.example.netflop.viewmodel.remote.PopularMovieViewModel;
@@ -56,8 +64,10 @@ import com.example.netflop.viewmodel.remote.UpcomingViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-public class HomeFragment extends Fragment implements ItemTouchHelperAdapter, ItemTVOnClickListener {
+public class HomeFragment extends BaseFragment implements ItemTouchHelperAdapter, ItemTVOnClickListener {
 
     private FragmentHomeBinding binding;
 
@@ -72,6 +82,7 @@ public class HomeFragment extends Fragment implements ItemTouchHelperAdapter, It
     private TopRatedTVViewModel topRatedTVViewModel;
     private PopularTVViewModel popularTVViewModel;
     private FavouriteMediaViewModel favouriteMediaViewModel;
+    private ConnectivityViewModel connectivityViewModel;
 
     // lists data
     List<Movie> listNowPlaying;
@@ -109,7 +120,8 @@ public class HomeFragment extends Fragment implements ItemTouchHelperAdapter, It
     RecyclerView playingNowShimmerRecyclerView,popularMovieShimmerRecyclerView,topRatedShimmerRecyclerView,trendingMovieShimmerRecyclerView,trendingPeopleShimmerRecyclerView,upcomingShimmerRecyclerView,popularPeopleShimmerRecyclerView,popularTVShimmerRecyclerView,topRatedTVShimmerRecyclerView;
     TextView topRated,upcoming,trendingMovie,trendingPeople,nowPlaying,popularMovie,popularPeople,popularTVTextView,topRatedTVTextView;
     TextView seeMoreTrendingMovie,seeMorePopularMovie,seeMoreUpcoming,seeMoreNowPlayingMovie,seeMoreTrendingPeople,seeMoreTopRatedMovie,seeMorePopularPeople,seeMorePopularTVTextView,seeMoreTopRatedTVTextView;
-
+    SwipeRefreshLayout swipeRefreshLayout;
+    ConstraintLayout noInternetDialog;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -122,6 +134,7 @@ public class HomeFragment extends Fragment implements ItemTouchHelperAdapter, It
         fetchFavouriteData();
         observeFavouriteDataChange();
         seeMoreListeners();
+        onHandleRefresh();
         return root;
     }
 
@@ -171,6 +184,8 @@ public class HomeFragment extends Fragment implements ItemTouchHelperAdapter, It
         popularPeopleShimmerRecyclerView=binding.recyclerViewPopularPeopleShimmer;
         popularTVShimmerRecyclerView=binding.recyclerViewPopularTVShimmer;
         topRatedTVShimmerRecyclerView=binding.recyclerViewTopRatedTVShimmer;
+        swipeRefreshLayout=binding.swipeRefreshHome;
+
     }
     private void init(){
         initializeDataUI();
@@ -368,6 +383,7 @@ public class HomeFragment extends Fragment implements ItemTouchHelperAdapter, It
         topRatedTVViewModel=new ViewModelProvider(this).get(TopRatedTVViewModel.class);
         popularTVViewModel=new ViewModelProvider(this).get(PopularTVViewModel.class);
         favouriteMediaViewModel=new ViewModelProvider(this).get(FavouriteMediaViewModel.class);
+        connectivityViewModel=new ViewModelProvider(this).get(ConnectivityViewModel.class);
     }
     private void initializeListData(){
         listNowPlaying=new ArrayList<>();
@@ -422,6 +438,7 @@ public class HomeFragment extends Fragment implements ItemTouchHelperAdapter, It
 
 
     private void callAPIs(){
+        ExecutorService executor = Executors.newFixedThreadPool(4);
         nowPlayingViewModel.fetchNowPlaying(getViewLifecycleOwner());
         popularMovieViewModel.fetchPopularMovie(getViewLifecycleOwner());
         topRatedViewModel.fetchTopRated(getViewLifecycleOwner());
@@ -431,6 +448,7 @@ public class HomeFragment extends Fragment implements ItemTouchHelperAdapter, It
         popularPeopleViewModel.fetchPopularPeople(getViewLifecycleOwner());
         popularTVViewModel.fetchPopularTV(getViewLifecycleOwner());
         topRatedTVViewModel.fetchTopRatedTV(getViewLifecycleOwner());
+        executor.shutdown();
     }
     private void observeChanges(){
         // now playing
@@ -704,18 +722,28 @@ public class HomeFragment extends Fragment implements ItemTouchHelperAdapter, It
 
     @Override
     public void onMovieClick(Movie movie) {
-        selectedMovie=movie;
-        Intent intent=new Intent(getActivity(), MovieDetailActivity.class);
-        intent.putExtra(StringConstants.movieDetailPageDataKey,selectedMovie.getID());
-        startActivity(intent);
+        if(connectivityViewModel.getState()){
+            selectedMovie=movie;
+            Intent intent=new Intent(getActivity(), MovieDetailActivity.class);
+            intent.putExtra(StringConstants.movieDetailPageDataKey,selectedMovie.getID());
+            startActivity(intent);
+        }else{
+            NoInternetToastHelpers.show(getActivity());
+        }
+
     }
 
     @Override
     public void onPersonClick(Person p) {
-        selectedPerson=p;
-        Intent intent=new Intent(getActivity(), PersonDetailActivity.class);
-        intent.putExtra(StringConstants.personDetailDataKey,selectedPerson.getID());
-        startActivity(intent);
+        if(connectivityViewModel.getState()){
+            selectedPerson=p;
+            Intent intent=new Intent(getActivity(), PersonDetailActivity.class);
+            intent.putExtra(StringConstants.personDetailDataKey,selectedPerson.getID());
+            startActivity(intent);
+        }else{
+            NoInternetToastHelpers.show(getActivity());
+        }
+
     }
 
     @Override
@@ -725,8 +753,35 @@ public class HomeFragment extends Fragment implements ItemTouchHelperAdapter, It
 
     @Override
     public void onTVCLick(AiringTodayModel airingTodayModel) {
-        Intent intent=new Intent(getActivity(), TVSeriesDetailActivity.class);
-        intent.putExtra(StringConstants.tvSeriesIDKey,airingTodayModel.getId());
-        startActivity(intent);
+        if(connectivityViewModel.getState()){
+            Intent intent=new Intent(getActivity(), TVSeriesDetailActivity.class);
+            intent.putExtra(StringConstants.tvSeriesIDKey,airingTodayModel.getId());
+            startActivity(intent);
+        }else{
+            NoInternetToastHelpers.show(getActivity());
+        }
+
     }
+    private void onHandleRefresh(){
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refreshData();
+            }
+        });
+    }
+
+    private void refreshData() {
+        // Đoạn code để làm mới dữ liệu (ví dụ: gọi API, cập nhật dữ liệu...)
+        // Sau khi làm mới xong, bạn cần gọi lại hàm setRefreshing(false) để dừng hoạt động làm mới
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                swipeRefreshLayout.setRefreshing(false);
+                callAPIs();
+                fetchFavouriteData();
+            }
+        }, 2000);
+    }
+
 }

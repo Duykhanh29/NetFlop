@@ -26,23 +26,27 @@ import com.example.netflop.data.models.remote.people.Cast;
 import com.example.netflop.data.models.remote.movies.Movie;
 import com.example.netflop.data.models.remote.people.Person;
 import com.example.netflop.databinding.ActivityAllPlayingNowBinding;
+import com.example.netflop.helpers.NoInternetToastHelpers;
 import com.example.netflop.ui.adapters.remote.GridMoviesAdapter;
+import com.example.netflop.ui.base.BaseActivity;
 import com.example.netflop.ui.movie_detail.MovieDetailActivity;
 import com.example.netflop.utils.listeners.ItemTouchHelperAdapter;
 import com.example.netflop.utils.RecyclerViewUtils;
+import com.example.netflop.viewmodel.connectivity.ConnectivityViewModel;
 import com.example.netflop.viewmodel.local.FavouriteMediaViewModel;
 import com.example.netflop.viewmodel.remote.NowPlayingViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class AllPlayingNowActivity extends AppCompatActivity implements ItemTouchHelperAdapter {
+public class AllPlayingNowActivity extends BaseActivity implements ItemTouchHelperAdapter {
     ActivityAllPlayingNowBinding binding;
     RecyclerView allPlayingNowRecyclerView;
     GridMoviesAdapter gridMoviesAdapter;
     List<Movie> listMovie;
     NowPlayingViewModel nowPlayingViewModel;
     FavouriteMediaViewModel favouriteMediaViewModel;
+    ConnectivityViewModel connectivityViewModel;
 
     Movie selectedMovie;
     ActionBar actionBar;
@@ -81,7 +85,7 @@ public class AllPlayingNowActivity extends AppCompatActivity implements ItemTouc
 //        CustomActionBar.createActionBar(actionBar,"All playing now movie");
         nowPlayingViewModel=new ViewModelProvider(this).get(NowPlayingViewModel.class);
         favouriteMediaViewModel=new ViewModelProvider(this).get(FavouriteMediaViewModel.class);
-
+        connectivityViewModel=new ViewModelProvider(this).get(ConnectivityViewModel.class);
         listMovie=new ArrayList<>();
         gridMoviesAdapter=new GridMoviesAdapter(listMovie,this,this,favouriteMediaViewModel);
 
@@ -163,10 +167,15 @@ public class AllPlayingNowActivity extends AppCompatActivity implements ItemTouc
 
     @Override
     public void onMovieClick(Movie movie) {
-        selectedMovie=movie;
-        Intent intent=new Intent(this, MovieDetailActivity.class);
-        intent.putExtra(StringConstants.movieDetailPageDataKey,selectedMovie.getID());
-        startActivity(intent);
+        if(connectivityViewModel.getState()){
+            selectedMovie=movie;
+            Intent intent=new Intent(this, MovieDetailActivity.class);
+            intent.putExtra(StringConstants.movieDetailPageDataKey,selectedMovie.getID());
+            startActivity(intent);
+        }else{
+            NoInternetToastHelpers.show(this);
+        }
+
     }
 
     @Override

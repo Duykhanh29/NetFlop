@@ -26,17 +26,21 @@ import com.example.netflop.data.models.remote.people.Cast;
 import com.example.netflop.data.models.remote.movies.Movie;
 import com.example.netflop.data.models.remote.people.Person;
 import com.example.netflop.databinding.ActivityAllTrendingMovieBinding;
+import com.example.netflop.helpers.NoInternetToastHelpers;
+import com.example.netflop.ui.TV_Detail.TVSeriesDetailActivity;
 import com.example.netflop.ui.adapters.remote.GridMoviesAdapter;
+import com.example.netflop.ui.base.BaseActivity;
 import com.example.netflop.ui.movie_detail.MovieDetailActivity;
 import com.example.netflop.utils.listeners.ItemTouchHelperAdapter;
 import com.example.netflop.utils.RecyclerViewUtils;
+import com.example.netflop.viewmodel.connectivity.ConnectivityViewModel;
 import com.example.netflop.viewmodel.local.FavouriteMediaViewModel;
 import com.example.netflop.viewmodel.remote.TrendingMovieViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class AllTrendingMovieActivity extends AppCompatActivity implements ItemTouchHelperAdapter {
+public class AllTrendingMovieActivity extends BaseActivity implements ItemTouchHelperAdapter {
     ActivityAllTrendingMovieBinding binding;
 
     //
@@ -47,6 +51,7 @@ public class AllTrendingMovieActivity extends AppCompatActivity implements ItemT
     // view model
     TrendingMovieViewModel trendingMovieViewModel;
     FavouriteMediaViewModel favouriteMediaViewModel;
+    ConnectivityViewModel connectivityViewModel;
     // UI
     RecyclerView allTrendingMovieRecyclerView;
     ActionBar actionBar;
@@ -85,6 +90,7 @@ public class AllTrendingMovieActivity extends AppCompatActivity implements ItemT
         actionBar.setHomeAsUpIndicator(R.drawable.black_arrow_back);
         trendingMovieViewModel=new ViewModelProvider(this).get(TrendingMovieViewModel.class);
         favouriteMediaViewModel=new ViewModelProvider(this).get(FavouriteMediaViewModel.class);
+        connectivityViewModel=new ViewModelProvider(this).get(ConnectivityViewModel.class);
         listMovie=new ArrayList<>();
         gridMoviesAdapter=new GridMoviesAdapter(listMovie,this,this,favouriteMediaViewModel);
 
@@ -155,10 +161,14 @@ public class AllTrendingMovieActivity extends AppCompatActivity implements ItemT
 
     @Override
     public void onMovieClick(Movie movie) {
-        selectedMovie=movie;
-        Intent intent=new Intent(this, MovieDetailActivity.class);
-        intent.putExtra(StringConstants.movieDetailPageDataKey,selectedMovie.getID());
-        startActivity(intent);
+        if(connectivityViewModel.getState()){
+            selectedMovie=movie;
+            Intent intent=new Intent(this, MovieDetailActivity.class);
+            intent.putExtra(StringConstants.movieDetailPageDataKey,selectedMovie.getID());
+            startActivity(intent);
+        }else{
+            NoInternetToastHelpers.show(this);
+        }
     }
 
     @Override

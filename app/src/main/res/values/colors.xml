@@ -13,4 +13,7 @@
     <color name="lightTeal">#D9EDED</color>
     <color name="lightGrey">#DCDBDB</color>
     <color name="borderColor">#6D92B8</color>
+    <color name="lavender">#8692f7</color>
+    <color name="inactive">#C4C4C4</color>
+    <color name="active">#003E80</color>
 </resources>

@@ -45,9 +45,18 @@
                 android:paddingHorizontal="10dp"
                 android:paddingVertical="10dp"
                 >
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/explorationImage"
+                    android:src="@drawable/exploration"
+                    android:scaleType="centerInside"
+                    ></ImageView>
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:id="@+id/searchHistoryView"
                     android:orientation="vertical">
                     <TextView
                         android:layout_width="wrap_content"
@@ -102,15 +111,16 @@
             android:layout_height="wrap_content"
             android:id="@+id/searchRecyclerView"
             ></androidx.recyclerview.widget.RecyclerView>
-        <TextView
+        <ImageView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="No data"
-            android:visibility="invisible"
+            android:layout_height="match_parent"
             android:id="@+id/noSearchDataView"
+            android:src="@drawable/not_found"
+            android:scaleType="centerInside"
+            android:visibility="invisible"
             android:gravity="center"
             android:layout_gravity="center"
-            ></TextView>
+            ></ImageView>
     </LinearLayout>
 
 </LinearLayout>

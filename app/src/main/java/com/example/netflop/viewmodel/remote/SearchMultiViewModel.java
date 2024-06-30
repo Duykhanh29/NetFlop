@@ -39,6 +39,9 @@ public class SearchMultiViewModel extends ViewModel {
 //        callAPI(query,includeAdult);
         searchMultiple(query,includeAdult,lifecycleOwner);
     }
+    public void resetCurrentPage(){
+        currentPage=1;
+    }
 
     public void searchMultiple(String query, boolean includeAdult, LifecycleOwner lifecycleOwner){
 

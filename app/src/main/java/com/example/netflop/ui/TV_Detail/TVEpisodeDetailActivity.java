@@ -27,6 +27,7 @@ import com.example.netflop.data.models.remote.TVs.TVEpisodeDetail;
 import com.example.netflop.databinding.ActivityTvepisodeDetailBinding;
 import com.example.netflop.ui.adapters.remote.ListCrewTVAdapter;
 import com.example.netflop.ui.adapters.remote.ListGuestStarAdapter;
+import com.example.netflop.ui.base.BaseActivity;
 import com.example.netflop.utils.listeners.OnClickIDListener;
 import com.example.netflop.utils.RecyclerViewUtils;
 import com.example.netflop.utils.ToolBarUtils;
@@ -36,7 +37,7 @@ import com.example.netflop.viewmodel.remote.TVDetailViewModel;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TVEpisodeDetailActivity extends AppCompatActivity implements OnClickIDListener {
+public class TVEpisodeDetailActivity extends BaseActivity implements OnClickIDListener {
     ActivityTvepisodeDetailBinding binding;
 
     // view model

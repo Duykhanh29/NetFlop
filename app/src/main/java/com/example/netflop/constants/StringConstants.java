@@ -26,4 +26,10 @@ public class StringConstants {
     public static final String movieType="movie";
     public static final String tvType="tv";
     public static final String personType="person";
+
+    // onBoarding
+    public static final String onBoardingKey="onBoardingKey";
+
+    public static final String networkKey="NETWORK_KEY";
+    public static final String networkStateKey="NETWORK_STATE_KEY";
 }

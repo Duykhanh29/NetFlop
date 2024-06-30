@@ -15,6 +15,7 @@ import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.netflop.R;
@@ -23,22 +24,26 @@ import com.example.netflop.data.models.local.FavouriteMedia;
 import com.example.netflop.data.models.remote.movies.Movie;
 import com.example.netflop.databinding.ActivityAllFavouriteEpisodeBinding;
 import com.example.netflop.databinding.ActivityAllPlayingNowBinding;
+import com.example.netflop.helpers.NoInternetToastHelpers;
 import com.example.netflop.ui.TV_Detail.TVEpisodeDetailActivity;
 import com.example.netflop.ui.adapters.local.ListFavouriteMediaAdapter;
 import com.example.netflop.ui.adapters.remote.GridMoviesAdapter;
+import com.example.netflop.ui.base.BaseActivity;
 import com.example.netflop.utils.CustomActionBar;
 import com.example.netflop.utils.RecyclerViewUtils;
 import com.example.netflop.utils.listeners.FavouriteListener;
+import com.example.netflop.viewmodel.connectivity.ConnectivityViewModel;
 import com.example.netflop.viewmodel.local.FavouriteMediaViewModel;
 import com.example.netflop.viewmodel.remote.NowPlayingViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class AllFavouriteEpisodeActivity extends AppCompatActivity implements FavouriteListener {
+public class AllFavouriteEpisodeActivity extends BaseActivity implements FavouriteListener {
     ActivityAllFavouriteEpisodeBinding binding;
     // adapters
     ListFavouriteMediaAdapter listFavouriteMediaAdapter;
+    ConnectivityViewModel connectivityViewModel;
 
     // list data
     List<FavouriteMedia> listFavourite;
@@ -49,7 +54,7 @@ public class AllFavouriteEpisodeActivity extends AppCompatActivity implements Fa
 
     // UI
     RecyclerView recyclerView;
-    TextView noDataTV;
+    ImageView noDataImage;
 
 
     @Override
@@ -65,7 +70,7 @@ public class AllFavouriteEpisodeActivity extends AppCompatActivity implements Fa
     }
     private void getBinding(){
         recyclerView=binding.allFavouriteEpisodeView;
-        noDataTV=binding.noDataFavouriteEpisode;
+        noDataImage=binding.noDataFavouriteEpisode;
     }
     private void initialize(){
         actionBar=getSupportActionBar();
@@ -76,7 +81,7 @@ public class AllFavouriteEpisodeActivity extends AppCompatActivity implements Fa
         actionBar.setHomeAsUpIndicator(R.drawable.black_arrow_back);
 //        CustomActionBar.createActionBar(actionBar,"All playing now movie");
         favouriteMediaViewModel=new ViewModelProvider(this).get(FavouriteMediaViewModel.class);
-
+        connectivityViewModel=new ViewModelProvider(this).get(ConnectivityViewModel.class);
         listFavourite=new ArrayList<>();
         listFavouriteMediaAdapter=new ListFavouriteMediaAdapter(listFavourite,this,this,favouriteMediaViewModel);
 
@@ -102,7 +107,7 @@ public class AllFavouriteEpisodeActivity extends AppCompatActivity implements Fa
                     listFavouriteMediaAdapter.notifyDataSetChanged();
                 }else{
                     recyclerView.setVisibility(View.GONE);
-                    noDataTV.setVisibility(View.VISIBLE);
+                    noDataImage.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -110,11 +115,16 @@ public class AllFavouriteEpisodeActivity extends AppCompatActivity implements Fa
 
     @Override
     public void onClick(FavouriteMedia favouriteMedia) {
-        Intent  intent=new Intent(this, TVEpisodeDetailActivity.class);
-        intent.putExtra(StringConstants.tvSeriesIDKey,favouriteMedia.getMediaID());
-        intent.putExtra(StringConstants.seasonNumberKey,favouriteMedia.getSeasonNumber());
-        intent.putExtra(StringConstants.episodeNumberKey,favouriteMedia.getEpisodeNumber());
-        startActivity(intent);
+        if(connectivityViewModel.getState()){
+            Intent  intent=new Intent(this, TVEpisodeDetailActivity.class);
+            intent.putExtra(StringConstants.tvSeriesIDKey,favouriteMedia.getMediaID());
+            intent.putExtra(StringConstants.seasonNumberKey,favouriteMedia.getSeasonNumber());
+            intent.putExtra(StringConstants.episodeNumberKey,favouriteMedia.getEpisodeNumber());
+            startActivity(intent);
+        }else{
+            NoInternetToastHelpers.show(this);
+        }
+
     }
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {

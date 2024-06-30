@@ -24,17 +24,21 @@ import com.example.netflop.constants.StringConstants;
 import com.example.netflop.data.models.local.FavouriteMedia;
 import com.example.netflop.data.models.remote.TVs.AiringTodayModel;
 import com.example.netflop.databinding.ActivityAllPopularTvactivityBinding;
+import com.example.netflop.helpers.NoInternetToastHelpers;
 import com.example.netflop.ui.TV_Detail.TVSeriesDetailActivity;
 import com.example.netflop.ui.adapters.remote.GridTVAdapter;
+import com.example.netflop.ui.base.BaseActivity;
+import com.example.netflop.ui.person_detail.PersonDetailActivity;
 import com.example.netflop.utils.listeners.ItemTVOnClickListener;
 import com.example.netflop.utils.RecyclerViewUtils;
+import com.example.netflop.viewmodel.connectivity.ConnectivityViewModel;
 import com.example.netflop.viewmodel.local.FavouriteMediaViewModel;
 import com.example.netflop.viewmodel.remote.PopularTVViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class AllPopularTVActivity extends AppCompatActivity implements ItemTVOnClickListener {
+public class AllPopularTVActivity extends BaseActivity implements ItemTVOnClickListener {
     ActivityAllPopularTvactivityBinding binding;
     AiringTodayModel selectedTV;
     GridTVAdapter gridTVAdapter;
@@ -43,6 +47,7 @@ public class AllPopularTVActivity extends AppCompatActivity implements ItemTVOnC
     // view model
     PopularTVViewModel popularTVViewModel;
     FavouriteMediaViewModel favouriteMediaViewModel;
+    ConnectivityViewModel connectivityViewModel;
     // UI
     RecyclerView allPopularTVRecyclerView;
     ActionBar actionBar;
@@ -81,6 +86,7 @@ public class AllPopularTVActivity extends AppCompatActivity implements ItemTVOnC
         actionBar.setHomeAsUpIndicator(R.drawable.black_arrow_back);
         popularTVViewModel=new ViewModelProvider(this).get(PopularTVViewModel.class);
         favouriteMediaViewModel=new ViewModelProvider(this).get(FavouriteMediaViewModel.class);
+        connectivityViewModel=new ViewModelProvider(this).get(ConnectivityViewModel.class);
         todayModelList=new ArrayList<>();
         gridTVAdapter=new GridTVAdapter(todayModelList,this,this,favouriteMediaViewModel);
 
@@ -157,9 +163,13 @@ public class AllPopularTVActivity extends AppCompatActivity implements ItemTVOnC
 
     @Override
     public void onTVCLick(AiringTodayModel airingTodayModel) {
-        selectedTV=airingTodayModel;
-        Intent intent=new Intent(this, TVSeriesDetailActivity.class);
-        intent.putExtra(StringConstants.tvSeriesIDKey,selectedTV.getId());
-        startActivity(intent);
+        if(connectivityViewModel.getState()){
+            selectedTV=airingTodayModel;
+            Intent intent=new Intent(this, TVSeriesDetailActivity.class);
+            intent.putExtra(StringConstants.tvSeriesIDKey,selectedTV.getId());
+            startActivity(intent);
+        }else{
+            NoInternetToastHelpers.show(this);
+        }
     }
 }

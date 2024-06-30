@@ -16,6 +16,7 @@ import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.netflop.R;
@@ -23,18 +24,22 @@ import com.example.netflop.constants.StringConstants;
 import com.example.netflop.data.models.local.FavouriteMedia;
 import com.example.netflop.databinding.ActivityAllFavouriteTvseasonBinding;
 import com.example.netflop.databinding.ActivityAllFavouriteTvseriesBinding;
+import com.example.netflop.helpers.NoInternetToastHelpers;
+import com.example.netflop.ui.TV_Detail.TVSeasonDetailActivity;
 import com.example.netflop.ui.TV_Detail.TVSeriesDetailActivity;
 import com.example.netflop.ui.adapters.local.ListFavouriteMediaAdapter;
+import com.example.netflop.ui.base.BaseActivity;
 import com.example.netflop.ui.person_detail.PersonDetailActivity;
 import com.example.netflop.utils.CustomActionBar;
 import com.example.netflop.utils.RecyclerViewUtils;
 import com.example.netflop.utils.listeners.FavouriteListener;
+import com.example.netflop.viewmodel.connectivity.ConnectivityViewModel;
 import com.example.netflop.viewmodel.local.FavouriteMediaViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class AllFavouriteTVSeriesActivity extends AppCompatActivity implements FavouriteListener {
+public class AllFavouriteTVSeriesActivity extends BaseActivity implements FavouriteListener {
     ActivityAllFavouriteTvseriesBinding binding;
     ListFavouriteMediaAdapter listFavouriteMediaAdapter;
 
@@ -44,10 +49,10 @@ public class AllFavouriteTVSeriesActivity extends AppCompatActivity implements F
 
     // view model
     FavouriteMediaViewModel favouriteMediaViewModel;
-
+    ConnectivityViewModel connectivityViewModel;
     // UI
     RecyclerView recyclerView;
-    TextView noDataTV;
+    ImageView noDataImage;
 
     // selected
     FavouriteMedia selectedFavourite;
@@ -64,7 +69,7 @@ public class AllFavouriteTVSeriesActivity extends AppCompatActivity implements F
     }
     private void getBinding(){
         recyclerView=binding.allFavouriteSeriesView;
-        noDataTV=binding.noDataFavouriteSeries;
+        noDataImage=binding.noDataFavouriteSeries;
     }
     private void initialize(){
         actionBar=getSupportActionBar();
@@ -77,7 +82,7 @@ public class AllFavouriteTVSeriesActivity extends AppCompatActivity implements F
 
 //        CustomActionBar.createActionBar(actionBar,"All playing now movie");
         favouriteMediaViewModel=new ViewModelProvider(this).get(FavouriteMediaViewModel.class);
-
+        connectivityViewModel=new ViewModelProvider(this).get(ConnectivityViewModel.class);
         listFavourite=new ArrayList<>();
         listFavouriteMediaAdapter=new ListFavouriteMediaAdapter(listFavourite,this,this,favouriteMediaViewModel);
 
@@ -103,7 +108,7 @@ public class AllFavouriteTVSeriesActivity extends AppCompatActivity implements F
                     listFavouriteMediaAdapter.notifyDataSetChanged();
                 }else{
                     recyclerView.setVisibility(View.GONE);
-                    noDataTV.setVisibility(View.VISIBLE);
+                    noDataImage.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -117,10 +122,14 @@ public class AllFavouriteTVSeriesActivity extends AppCompatActivity implements F
 
     @Override
     public void onClick(FavouriteMedia favouriteMedia) {
-        selectedFavourite=favouriteMedia;
-        Intent intent=new Intent(this, TVSeriesDetailActivity.class);
-        intent.putExtra(StringConstants.tvSeriesIDKey,selectedFavourite.getMediaID());
-        startActivity(intent);
+        if(connectivityViewModel.getState()){
+            selectedFavourite=favouriteMedia;
+            Intent intent=new Intent(this, TVSeriesDetailActivity.class);
+            intent.putExtra(StringConstants.tvSeriesIDKey,selectedFavourite.getMediaID());
+            startActivity(intent);
+        }else{
+            NoInternetToastHelpers.show(this);
+        }
     }
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {

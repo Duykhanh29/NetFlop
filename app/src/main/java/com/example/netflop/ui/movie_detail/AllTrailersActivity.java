@@ -16,12 +16,13 @@ import com.example.netflop.constants.StringConstants;
 import com.example.netflop.data.models.remote.movies.Video;
 import com.example.netflop.databinding.ActivityAllTrailersBinding;
 import com.example.netflop.ui.adapters.remote.SecondListTrailerAdapter;
+import com.example.netflop.ui.base.BaseActivity;
 import com.example.netflop.utils.RecyclerViewUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class AllTrailersActivity extends AppCompatActivity  {
+public class AllTrailersActivity extends BaseActivity {
     ActivityAllTrailersBinding binding;
     SecondListTrailerAdapter listTrailerAdapter;
     List<Video> listVideo;

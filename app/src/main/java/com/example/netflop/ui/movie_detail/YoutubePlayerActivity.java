@@ -13,11 +13,12 @@ import com.example.netflop.R;
 import com.example.netflop.constants.StringConstants;
 import com.example.netflop.constants.URLConstants;
 import com.example.netflop.databinding.ActivityYoutubePlayerBinding;
+import com.example.netflop.ui.base.BaseActivity;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView;
 
-public class YoutubePlayerActivity extends AppCompatActivity {
+public class YoutubePlayerActivity extends BaseActivity {
     ActivityYoutubePlayerBinding binding;
     YouTubePlayerView youTubePlayerView;
     String youtubeURL= "";

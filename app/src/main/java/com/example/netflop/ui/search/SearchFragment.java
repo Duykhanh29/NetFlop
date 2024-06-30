@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -37,12 +38,14 @@ import com.example.netflop.data.models.remote.movies.SearchMultiModel;
 import com.example.netflop.data.models.remote.TVs.AiringTodayModel;
 import com.example.netflop.data.models.local.SearchHistory;
 import com.example.netflop.databinding.FragmentSearchBinding;
+import com.example.netflop.helpers.NoInternetToastHelpers;
 import com.example.netflop.ui.TV_Detail.TVSeriesDetailActivity;
 import com.example.netflop.ui.adapters.remote.SearchAdapter;
 import com.example.netflop.ui.adapters.remote.SearchMovieAdapter;
 import com.example.netflop.ui.adapters.remote.SearchPersonAdapter;
 import com.example.netflop.ui.adapters.remote.SearchTVAdapter;
 import com.example.netflop.ui.adapters.local.SearchHistoryAdapter;
+import com.example.netflop.ui.base.BaseFragment;
 import com.example.netflop.ui.movie_detail.MovieDetailActivity;
 import com.example.netflop.ui.person_detail.PersonDetailActivity;
 import com.example.netflop.utils.listeners.ItemTVOnClickListener;
@@ -50,6 +53,7 @@ import com.example.netflop.utils.listeners.ItemTouchHelperAdapter;
 import com.example.netflop.utils.listeners.OnSearchHistoryListener;
 import com.example.netflop.utils.RecyclerViewUtils;
 import com.example.netflop.utils.listeners.SearchItemOnClickListener;
+import com.example.netflop.viewmodel.connectivity.ConnectivityViewModel;
 import com.example.netflop.viewmodel.local.FavouriteMediaViewModel;
 import com.example.netflop.viewmodel.local.SearchHistoryViewModel;
 import com.example.netflop.viewmodel.remote.SearchMovieViewModel;
@@ -61,7 +65,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class SearchFragment extends Fragment implements SearchItemOnClickListener, ItemTouchHelperAdapter, ItemTVOnClickListener, OnSearchHistoryListener {
+public class SearchFragment extends BaseFragment implements SearchItemOnClickListener, ItemTouchHelperAdapter, ItemTVOnClickListener, OnSearchHistoryListener {
 
     private FragmentSearchBinding binding;
 
@@ -73,6 +77,7 @@ public class SearchFragment extends Fragment implements SearchItemOnClickListene
     SearchTVViewModel searchTVViewModel;
     SearchHistoryViewModel searchHistoryViewModel;
     FavouriteMediaViewModel favouriteMediaViewModel;
+    ConnectivityViewModel connectivityViewModel;
 
     // lists
     List<SearchMultiModel> searchMultiList;
@@ -89,7 +94,8 @@ public class SearchFragment extends Fragment implements SearchItemOnClickListene
     SearchHistoryAdapter searchHistoryAdapter;
     // UI
     DrawerLayout drawerLayout;
-    TextView typeOfSearchingTV,isAdultTV,noSearchDataView;
+    TextView typeOfSearchingTV,isAdultTV;
+
     ImageButton filterButton;
 
     SearchView searchView;
@@ -119,6 +125,10 @@ public class SearchFragment extends Fragment implements SearchItemOnClickListene
     AiringTodayModel selectedTV;
 
     LinearLayout nonSearchLayout,searchLayoutView;
+
+    ImageView noSearchDataView;
+    ImageView explorationView;
+    LinearLayout searchHistoryView;
 
     private ActivityResultLauncher<Intent> launcher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -216,6 +226,7 @@ public class SearchFragment extends Fragment implements SearchItemOnClickListene
         View root = binding.getRoot();
         getBinding();
         initialize();
+        callSearchHistoryData();
         observeSearchHistoryChanged();
         observeDataChanged();
         getOnBackPressed();
@@ -234,6 +245,8 @@ public class SearchFragment extends Fragment implements SearchItemOnClickListene
         nonSearchLayout=binding.noSearchLayoutView;
         searchLayoutView=binding.searchOutputLayout;
         searchHistoriesRecyclerView=binding.searchHistoryRecyclerView;
+        explorationView=binding.explorationImage;
+        searchHistoryView=binding.searchHistoryView;
     }
 
 
@@ -251,6 +264,7 @@ public class SearchFragment extends Fragment implements SearchItemOnClickListene
         searchTVViewModel=new ViewModelProvider(this).get(SearchTVViewModel.class);
         searchHistoryViewModel=new ViewModelProvider(this,ViewModelProvider.AndroidViewModelFactory.getInstance(getActivity().getApplication())).get(SearchHistoryViewModel.class);
         favouriteMediaViewModel=new ViewModelProvider(this).get(FavouriteMediaViewModel.class);
+        connectivityViewModel=new ViewModelProvider(this).get(ConnectivityViewModel.class);
 
         searchPersonAdapter=new SearchPersonAdapter(listPerson,getActivity(),this);
         searchMovieAdapter=new SearchMovieAdapter(listMovie,getActivity(),this);
@@ -322,49 +336,57 @@ public class SearchFragment extends Fragment implements SearchItemOnClickListene
                     hideKeyboard();
                     return false;
                 }else{
-                    if(isCheckAll){
-                        callAPIs(query,isAdult);
-                        typeOfSearchingTV.setText("Any");
-                        if(isAdult){
-                            isAdultTV.setText("Adult");
+                    if(connectivityViewModel.getState()){
+                        if(isCheckAll){
+                            searchMultiViewModel.resetCurrentPage();
+                            callAPIs(query,isAdult);
+                            typeOfSearchingTV.setText("Any");
+                            if(isAdult){
+                                isAdultTV.setText("Adult");
+                            }else{
+                                isAdultTV.setText("Any");
+                            }
+                            searchHistoryViewModel.insertSearchHistory(query,SearchType.MULTI,isAdult?1:0);
+                        }else if(isMovie){
+                            searchMovieViewModel.resetCurrentPage();
+                            typeOfSearchingTV.setText("Search: Movies");
+                            if(isAdult){
+                                isAdultTV.setText("Adult");
+                            }else{
+                                isAdultTV.setText("Any");
+                            }
+                            callMovieAPI(query,isAdult);
+                            searchHistoryViewModel.insertSearchHistory(query,SearchType.MOVIE,isAdult?1:0);
+                        }else if(isPerson){
+                            searchPeopleViewModel.resetCurrentPage();
+                            typeOfSearchingTV.setText("Search: People");
+                            if(isAdult){
+                                isAdultTV.setText("Adult");
+                            }else{
+                                isAdultTV.setText("Any");
+                            }
+                            callPersonAPI(query,isAdult);
+                            searchHistoryViewModel.insertSearchHistory(query,SearchType.PEOPLE,isAdult?1:0);
                         }else{
-                            isAdultTV.setText("Any");
+                            searchTVViewModel.resetCurrentPage();
+                            typeOfSearchingTV.setText("Search: TV");
+                            if(isAdult){
+                                isAdultTV.setText("Adult");
+                            }else{
+                                isAdultTV.setText("Any");
+                            }
+                            callTVAPI(query,isAdult);
+                            searchHistoryViewModel.insertSearchHistory(query,SearchType.TV,isAdult?1:0);
                         }
-                        searchHistoryViewModel.insertSearchHistory(query,SearchType.MULTI,isAdult?1:0);
-                    }else if(isMovie){
-                        typeOfSearchingTV.setText("Search: Movies");
-                        if(isAdult){
-                            isAdultTV.setText("Adult");
-                        }else{
-                            isAdultTV.setText("Any");
-                        }
-                        callMovieAPI(query,isAdult);
-                        searchHistoryViewModel.insertSearchHistory(query,SearchType.MOVIE,isAdult?1:0);
-                    }else if(isPerson){
-                        typeOfSearchingTV.setText("Search: People");
-                        if(isAdult){
-                            isAdultTV.setText("Adult");
-                        }else{
-                            isAdultTV.setText("Any");
-                        }
-                        callPersonAPI(query,isAdult);
-                        searchHistoryViewModel.insertSearchHistory(query,SearchType.PEOPLE,isAdult?1:0);
+                        searchView.clearFocus();
+                        nonSearchLayout.setVisibility(View.GONE);
+                        searchLayoutView.setVisibility(View.VISIBLE);
+                        isSearched=true;
                     }else{
-                        typeOfSearchingTV.setText("Search: TV");
-                        if(isAdult){
-                            isAdultTV.setText("Adult");
-                        }else{
-                            isAdultTV.setText("Any");
-                        }
-                        callTVAPI(query,isAdult);
-                        searchHistoryViewModel.insertSearchHistory(query,SearchType.TV,isAdult?1:0);
+                        NoInternetToastHelpers.show(getActivity());
                     }
-                    searchView.clearFocus();
-                    nonSearchLayout.setVisibility(View.GONE);
-                    searchLayoutView.setVisibility(View.VISIBLE);
-
                 }
-                isSearched=true;
+
                 return true;
             }
 
@@ -392,22 +414,34 @@ public class SearchFragment extends Fragment implements SearchItemOnClickListene
     private void callTVAPI(String searchKey,boolean isAdultValue){
         searchTVViewModel.searchTVShows(searchKey,isAdultValue,getViewLifecycleOwner());
     }
+
+    private void callSearchHistoryData(){
+        searchHistoryViewModel.getData();
+    }
+
     private void observeSearchHistoryChanged(){
         searchHistoryViewModel.getSearchHistories().observe(getViewLifecycleOwner(), new Observer<List<SearchHistory>>() {
             @Override
             public void onChanged(List<SearchHistory> searchHistories) {
                 if(searchHistories!=null&&!searchHistories.isEmpty()){
+                    explorationView.setVisibility(View.GONE);
+                    searchHistoryView.setVisibility(View.VISIBLE);
                     searchHistoriesData.clear();
 //                    Collections.reverse(searchHistories);
                     if(searchHistories.size()>5){
                         for (int i = 0; i < 5; i++) {
-                            searchHistoriesData.add(searchHistories.get(i));
+                            searchHistoriesData.add(searchHistories.get(searchHistories.size()-i-1));
                         }
                     }else{
                         searchHistoriesData.addAll(searchHistories);
                     }
 //                    searchHistoriesData.addAll(searchHistories);
                     searchHistoryAdapter.notifyDataSetChanged();
+                }else{
+                    if(explorationView.getVisibility()==View.GONE){
+                        searchHistoryView.setVisibility(View.GONE);
+                        explorationView.setVisibility(View.VISIBLE);
+                    }
                 }
             }
         });
@@ -416,14 +450,19 @@ public class SearchFragment extends Fragment implements SearchItemOnClickListene
         searchMultiViewModel.getListSearchMulti().observe(getViewLifecycleOwner(), new Observer<List<SearchMultiModel>>() {
             @Override
             public void onChanged(List<SearchMultiModel> searchMultiModels) {
-
                 if(searchMultiModels!=null&&!searchMultiModels.isEmpty()){
+                    if(recyclerView.getVisibility()==View.GONE){
+                        noSearchDataView.setVisibility(View.GONE);
+                        recyclerView.setVisibility(View.VISIBLE);
+                    }
                     searchMultiList.clear();  // Clear the list to ensure no duplicates if needed
                     searchMultiList.addAll(searchMultiModels);
                     searchAdapter.notifyDataSetChanged();
                 }else{
                     searchAdapter.notifyDataSetChanged();
-                                                                                                                                }
+                    recyclerView.setVisibility(View.GONE);
+                    noSearchDataView.setVisibility(View.VISIBLE);
+                }
             }
         });
         searchMovieViewModel.getListMovieData().observe(getViewLifecycleOwner(), new Observer<List<Movie>>() {
@@ -431,11 +470,17 @@ public class SearchFragment extends Fragment implements SearchItemOnClickListene
             public void onChanged(List<Movie> movies) {
 
                 if(movies!=null&&!movies.isEmpty()){
+                    if(recyclerView.getVisibility()==View.GONE){
+                        noSearchDataView.setVisibility(View.GONE);
+                        recyclerView.setVisibility(View.VISIBLE);
+                    }
                     listMovie.clear();
                     listMovie.addAll(movies);
                     searchMovieAdapter.notifyDataSetChanged();
                 }else{
                     searchMovieAdapter.notifyDataSetChanged();
+                    recyclerView.setVisibility(View.GONE);
+                    noSearchDataView.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -445,12 +490,17 @@ public class SearchFragment extends Fragment implements SearchItemOnClickListene
             public void onChanged(List<Person> people) {
 
                 if(people!=null&&!people.isEmpty()){
+                    if(recyclerView.getVisibility()==View.GONE){
+                        noSearchDataView.setVisibility(View.GONE);
+                        recyclerView.setVisibility(View.VISIBLE);
+                    }
                     listPerson.clear();
                     listPerson.addAll(people);
                     searchPersonAdapter.notifyDataSetChanged();
                 }else{
                     searchPersonAdapter.notifyDataSetChanged();
-
+                    recyclerView.setVisibility(View.GONE);
+                    noSearchDataView.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -458,11 +508,17 @@ public class SearchFragment extends Fragment implements SearchItemOnClickListene
             @Override
             public void onChanged(List<AiringTodayModel> airingTodayModels) {
                 if(airingTodayModels!=null&&!airingTodayModels.isEmpty()){
+                    if(recyclerView.getVisibility()==View.GONE){
+                        noSearchDataView.setVisibility(View.GONE);
+                        recyclerView.setVisibility(View.VISIBLE);
+                    }
                     lisTVShow.clear();
                     lisTVShow.addAll(airingTodayModels);
                     searchTVAdapter.notifyDataSetChanged();
                 }else{
                     searchTVAdapter.notifyDataSetChanged();
+                    recyclerView.setVisibility(View.GONE);
+                    noSearchDataView.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -588,36 +644,50 @@ public class SearchFragment extends Fragment implements SearchItemOnClickListene
 
     @Override
     public void onClick(SearchMultiModel searchMultiModel) {
-        selectedSearchMultiModel=searchMultiModel;
-        if(Objects.equals(searchMultiModel.getMediaType(), "movie")){
-            Intent intent=new Intent(getActivity(), MovieDetailActivity.class);
-            intent.putExtra(StringConstants.movieDetailPageDataKey,searchMultiModel.getId());
-            startActivity(intent);
-        }else if(searchMultiModel.getMediaType().equals("person")){
-            Intent intent=new Intent(getActivity(), PersonDetailActivity.class);
-            intent.putExtra(StringConstants.personDetailDataKey,searchMultiModel.getId());
-            startActivity(intent);
+        if(connectivityViewModel.getState()){
+            selectedSearchMultiModel=searchMultiModel;
+            if(Objects.equals(searchMultiModel.getMediaType(), "movie")){
+                Intent intent=new Intent(getActivity(), MovieDetailActivity.class);
+                intent.putExtra(StringConstants.movieDetailPageDataKey,searchMultiModel.getId());
+                startActivity(intent);
+            }else if(searchMultiModel.getMediaType().equals("person")){
+                Intent intent=new Intent(getActivity(), PersonDetailActivity.class);
+                intent.putExtra(StringConstants.personDetailDataKey,searchMultiModel.getId());
+                startActivity(intent);
+            }else{
+                Intent intent=new Intent(getActivity(), TVSeriesDetailActivity.class);
+                intent.putExtra(StringConstants.tvSeriesIDKey,searchMultiModel.getId());
+                startActivity(intent);
+            }
         }else{
-            Intent intent=new Intent(getActivity(), TVSeriesDetailActivity.class);
-            intent.putExtra(StringConstants.tvSeriesIDKey,searchMultiModel.getId());
-            startActivity(intent);
+            NoInternetToastHelpers.show(getActivity());
         }
+
     }
 
     @Override
     public void onMovieClick(Movie movie) {
-        selectedMovie=movie;
-        Intent intent=new Intent(getActivity(), MovieDetailActivity.class);
-        intent.putExtra(StringConstants.movieDetailPageDataKey,selectedMovie.getID());
-        startActivity(intent);
+        if(connectivityViewModel.getState()){
+            selectedMovie=movie;
+            Intent intent=new Intent(getActivity(), MovieDetailActivity.class);
+            intent.putExtra(StringConstants.movieDetailPageDataKey,selectedMovie.getID());
+            startActivity(intent);
+        }else{
+            NoInternetToastHelpers.show(getActivity());
+        }
+
     }
 
     @Override
     public void onPersonClick(Person p) {
-        selectedPerson=p;
-        Intent intent=new Intent(getActivity(), PersonDetailActivity.class);
-        intent.putExtra(StringConstants.personDetailDataKey,selectedPerson.getID());
-        startActivity(intent);
+        if(connectivityViewModel.getState()){
+            selectedPerson=p;
+            Intent intent=new Intent(getActivity(), PersonDetailActivity.class);
+            intent.putExtra(StringConstants.personDetailDataKey,selectedPerson.getID());
+            startActivity(intent);
+        } else{
+            NoInternetToastHelpers.show(getActivity());
+        }
     }
 
     @Override
@@ -627,30 +697,48 @@ public class SearchFragment extends Fragment implements SearchItemOnClickListene
 
     @Override
     public void onTVCLick(AiringTodayModel airingTodayModel) {
-        selectedTV=airingTodayModel;
-        Intent intent=new Intent(getActivity(), TVSeriesDetailActivity.class);
-        intent.putExtra(StringConstants.tvSeriesIDKey,selectedTV.getId());
-        startActivity(intent);
+        if(connectivityViewModel.getState()){
+            selectedTV=airingTodayModel;
+            Intent intent=new Intent(getActivity(), TVSeriesDetailActivity.class);
+            intent.putExtra(StringConstants.tvSeriesIDKey,selectedTV.getId());
+            startActivity(intent);
+        }else{
+            NoInternetToastHelpers.show(getActivity());
+        }
+
     }
 
     @Override
     public void onClick(SearchHistory searchHistory) {
-        if(searchHistory.getSearchType()==SearchType.TV){
-            callTVAPI(searchHistory.getSearchKey(),searchHistory.isAdult()==1?true:false);
-            nonSearchLayout.setVisibility(View.GONE);
-            searchLayoutView.setVisibility(View.VISIBLE);
-        }else if(searchHistory.getSearchType()==SearchType.MOVIE){
-            callMovieAPI(searchHistory.getSearchKey(),searchHistory.isAdult()==1?true:false);
-            nonSearchLayout.setVisibility(View.GONE);
-            searchLayoutView.setVisibility(View.VISIBLE);
-        }else if(searchHistory.getSearchType()==SearchType.MULTI){
-            callAPIs(searchHistory.getSearchKey(),searchHistory.isAdult()==1?true:false);
-            nonSearchLayout.setVisibility(View.GONE);
-            searchLayoutView.setVisibility(View.VISIBLE);
+        if(connectivityViewModel.getState()){
+            if(searchHistory.getSearchType()==SearchType.TV){
+                callTVAPI(searchHistory.getSearchKey(),searchHistory.isAdult()==1?true:false);
+                queryText=searchHistory.getSearchKey();
+                searchView.setQuery(queryText,false);
+                nonSearchLayout.setVisibility(View.GONE);
+                searchLayoutView.setVisibility(View.VISIBLE);
+            }else if(searchHistory.getSearchType()==SearchType.MOVIE){
+                callMovieAPI(searchHistory.getSearchKey(),searchHistory.isAdult()==1?true:false);
+                queryText=searchHistory.getSearchKey();
+                searchView.setQuery(queryText,false);
+                nonSearchLayout.setVisibility(View.GONE);
+                searchLayoutView.setVisibility(View.VISIBLE);
+            }else if(searchHistory.getSearchType()==SearchType.MULTI){
+                callAPIs(searchHistory.getSearchKey(),searchHistory.isAdult()==1?true:false);
+                queryText=searchHistory.getSearchKey();
+                searchView.setQuery(queryText,false);
+                nonSearchLayout.setVisibility(View.GONE);
+                searchLayoutView.setVisibility(View.VISIBLE);
+            }else{
+                callPersonAPI(searchHistory.getSearchKey(),searchHistory.isAdult()==1?true:false);
+                queryText=searchHistory.getSearchKey();
+                searchView.setQuery(queryText,false);
+                nonSearchLayout.setVisibility(View.GONE);
+                searchLayoutView.setVisibility(View.VISIBLE);
+            }
         }else{
-            callPersonAPI(searchHistory.getSearchKey(),searchHistory.isAdult()==1?true:false);
-            nonSearchLayout.setVisibility(View.GONE);
-            searchLayoutView.setVisibility(View.VISIBLE);
+            NoInternetToastHelpers.show(getActivity());
         }
+
     }
 }

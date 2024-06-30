@@ -19,13 +19,14 @@ import com.example.netflop.constants.StringConstants;
 import com.example.netflop.data.models.remote.movies.Review;
 import com.example.netflop.databinding.ActivityAllReviewBinding;
 import com.example.netflop.ui.adapters.remote.ListReviewAdapter;
+import com.example.netflop.ui.base.BaseActivity;
 import com.example.netflop.utils.RecyclerViewUtils;
 import com.example.netflop.viewmodel.remote.ReviewViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class AllReviewActivity extends AppCompatActivity {
+public class AllReviewActivity extends BaseActivity {
     ActivityAllReviewBinding binding;
     // view model
     ReviewViewModel reviewViewModel;

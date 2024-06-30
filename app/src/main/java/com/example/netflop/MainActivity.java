@@ -3,6 +3,7 @@ package com.example.netflop;
 import android.os.Bundle;
 
 import com.example.netflop.databinding.ActivityMainBinding;
+import com.example.netflop.ui.base.BaseActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,7 +14,7 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
     private ActivityMainBinding binding;
     Toolbar toolbar;

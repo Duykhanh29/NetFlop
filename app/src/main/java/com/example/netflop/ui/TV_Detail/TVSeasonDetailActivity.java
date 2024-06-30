@@ -22,17 +22,20 @@ import com.example.netflop.data.models.local.FavouriteMedia;
 import com.example.netflop.data.models.remote.TVs.Episode;
 import com.example.netflop.data.models.remote.TVs.TVSeasonsDetail;
 import com.example.netflop.databinding.ActivityTvseasonDetailBinding;
+import com.example.netflop.helpers.NoInternetToastHelpers;
 import com.example.netflop.ui.adapters.remote.GridEpisodeAdapter;
+import com.example.netflop.ui.base.BaseActivity;
 import com.example.netflop.utils.listeners.OnTVClickListener;
 import com.example.netflop.utils.RecyclerViewUtils;
 import com.example.netflop.utils.ToolBarUtils;
+import com.example.netflop.viewmodel.connectivity.ConnectivityViewModel;
 import com.example.netflop.viewmodel.local.FavouriteMediaViewModel;
 import com.example.netflop.viewmodel.remote.TVDetailViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TVSeasonDetailActivity extends AppCompatActivity implements OnTVClickListener {
+public class TVSeasonDetailActivity extends BaseActivity implements OnTVClickListener {
     ActivityTvseasonDetailBinding binding;
 
 
@@ -52,6 +55,7 @@ public class TVSeasonDetailActivity extends AppCompatActivity implements OnTVCli
     // view model
     TVDetailViewModel tvDetailViewModel;
     FavouriteMediaViewModel favouriteMediaViewModel;
+    ConnectivityViewModel connectivityViewModel;
     // adapters
     GridEpisodeAdapter episodeAdapter;
 
@@ -105,6 +109,7 @@ public class TVSeasonDetailActivity extends AppCompatActivity implements OnTVCli
         ToolBarUtils.setupBasicToolbar(toolbar,() -> finish());
         tvDetailViewModel= new ViewModelProvider(this).get(TVDetailViewModel.class);
         favouriteMediaViewModel=new ViewModelProvider(this).get(FavouriteMediaViewModel.class);
+        connectivityViewModel=new ViewModelProvider(this).get(ConnectivityViewModel.class);
         listEpisode=new ArrayList<>();
         listFavourite=new ArrayList<>();
         episodeAdapter=new GridEpisodeAdapter(tvSeriesID,listEpisode,this,this,favouriteMediaViewModel);
@@ -202,11 +207,15 @@ public class TVSeasonDetailActivity extends AppCompatActivity implements OnTVCli
 
     @Override
     public void onClick(int number) {
-        Intent intent=new Intent(this, TVEpisodeDetailActivity.class);
-        intent.putExtra(StringConstants.tvSeriesIDKey,tvSeriesID);
-        intent.putExtra(StringConstants.seasonNumberKey,seasonNumber);
-        intent.putExtra(StringConstants.episodeNumberKey,number);
-        startActivity(intent);
+        if(connectivityViewModel.getState()){
+            Intent intent=new Intent(this, TVEpisodeDetailActivity.class);
+            intent.putExtra(StringConstants.tvSeriesIDKey,tvSeriesID);
+            intent.putExtra(StringConstants.seasonNumberKey,seasonNumber);
+            intent.putExtra(StringConstants.episodeNumberKey,number);
+            startActivity(intent);
+        }else{
+            NoInternetToastHelpers.show(this);
+        }
     }
     @Override
     protected void onResume() {

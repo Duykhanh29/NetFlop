@@ -26,17 +26,21 @@ import com.example.netflop.data.models.remote.people.Cast;
 import com.example.netflop.data.models.remote.movies.Movie;
 import com.example.netflop.data.models.remote.people.Person;
 import com.example.netflop.databinding.ActivityAllUpcomingBinding;
+import com.example.netflop.helpers.NoInternetToastHelpers;
 import com.example.netflop.ui.adapters.remote.GridMoviesAdapter;
+import com.example.netflop.ui.base.BaseActivity;
 import com.example.netflop.ui.movie_detail.MovieDetailActivity;
+import com.example.netflop.ui.person_detail.PersonDetailActivity;
 import com.example.netflop.utils.listeners.ItemTouchHelperAdapter;
 import com.example.netflop.utils.RecyclerViewUtils;
+import com.example.netflop.viewmodel.connectivity.ConnectivityViewModel;
 import com.example.netflop.viewmodel.local.FavouriteMediaViewModel;
 import com.example.netflop.viewmodel.remote.UpcomingViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class AllUpcomingActivity extends AppCompatActivity implements ItemTouchHelperAdapter {
+public class AllUpcomingActivity extends BaseActivity implements ItemTouchHelperAdapter {
     ActivityAllUpcomingBinding binding;
 
     //
@@ -47,6 +51,7 @@ public class AllUpcomingActivity extends AppCompatActivity implements ItemTouchH
     // view model
     UpcomingViewModel upcomingViewModel;
     FavouriteMediaViewModel favouriteMediaViewModel;
+    ConnectivityViewModel connectivityViewModel;
     // UI
     RecyclerView allUpcomingMovieRecyclerView;
     ActionBar actionBar;
@@ -94,6 +99,7 @@ public class AllUpcomingActivity extends AppCompatActivity implements ItemTouchH
         actionBar.setHomeAsUpIndicator(R.drawable.black_arrow_back);
         upcomingViewModel=new ViewModelProvider(this).get(UpcomingViewModel.class);
         favouriteMediaViewModel=new ViewModelProvider(this).get(FavouriteMediaViewModel.class);
+        connectivityViewModel=new ViewModelProvider(this).get(ConnectivityViewModel.class);
         listMovie=new ArrayList<>();
         gridMoviesAdapter=new GridMoviesAdapter(listMovie,this,this,favouriteMediaViewModel);
 
@@ -164,10 +170,14 @@ public class AllUpcomingActivity extends AppCompatActivity implements ItemTouchH
 
     @Override
     public void onMovieClick(Movie movie) {
-        selectedMovie=movie;
-        Intent intent=new Intent(this, MovieDetailActivity.class);
-        intent.putExtra(StringConstants.movieDetailPageDataKey,selectedMovie.getID());
-        startActivity(intent);
+        if(connectivityViewModel.getState()){
+            selectedMovie=movie;
+            Intent intent=new Intent(this, MovieDetailActivity.class);
+            intent.putExtra(StringConstants.movieDetailPageDataKey,selectedMovie.getID());
+            startActivity(intent);
+        }else{
+            NoInternetToastHelpers.show(this);
+        }
     }
 
     @Override

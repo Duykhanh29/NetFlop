@@ -26,17 +26,21 @@ import com.example.netflop.data.models.remote.people.Cast;
 import com.example.netflop.data.models.remote.movies.Movie;
 import com.example.netflop.data.models.remote.people.Person;
 import com.example.netflop.databinding.ActivityAllPopularPeopleBinding;
+import com.example.netflop.helpers.NoInternetToastHelpers;
 import com.example.netflop.ui.adapters.remote.GridPeopleAdapter;
+import com.example.netflop.ui.base.BaseActivity;
+import com.example.netflop.ui.movie_detail.MovieDetailActivity;
 import com.example.netflop.ui.person_detail.PersonDetailActivity;
 import com.example.netflop.utils.listeners.ItemTouchHelperAdapter;
 import com.example.netflop.utils.RecyclerViewUtils;
+import com.example.netflop.viewmodel.connectivity.ConnectivityViewModel;
 import com.example.netflop.viewmodel.local.FavouriteMediaViewModel;
 import com.example.netflop.viewmodel.remote.PopularPeopleViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class AllPopularPeopleActivity extends AppCompatActivity implements ItemTouchHelperAdapter {
+public class AllPopularPeopleActivity extends BaseActivity implements ItemTouchHelperAdapter {
     ActivityAllPopularPeopleBinding binding;
 
     Person selectedPerson;
@@ -46,6 +50,7 @@ public class AllPopularPeopleActivity extends AppCompatActivity implements ItemT
     // view model
     PopularPeopleViewModel popularPeopleViewModel;
     FavouriteMediaViewModel favouriteMediaViewModel;
+    ConnectivityViewModel connectivityViewModel;
     // UI
     RecyclerView allPopularPeopleRecyclerView;
     ActionBar actionBar;
@@ -84,6 +89,7 @@ public class AllPopularPeopleActivity extends AppCompatActivity implements ItemT
         actionBar.setHomeAsUpIndicator(R.drawable.black_arrow_back);
         popularPeopleViewModel=new ViewModelProvider(this).get(PopularPeopleViewModel.class);
         favouriteMediaViewModel=new ViewModelProvider(this).get(FavouriteMediaViewModel.class);
+        connectivityViewModel=new ViewModelProvider(this).get(ConnectivityViewModel.class);
         listPeople=new ArrayList<>();
         gridPeopleAdapter=new GridPeopleAdapter(listPeople,this,this,favouriteMediaViewModel);
 
@@ -158,10 +164,14 @@ public class AllPopularPeopleActivity extends AppCompatActivity implements ItemT
 
     @Override
     public void onPersonClick(Person p) {
-        selectedPerson=p;
-        Intent intent=new Intent(this, PersonDetailActivity.class);
-        intent.putExtra(StringConstants.personDetailDataKey,selectedPerson.getID());
-        startActivity(intent);
+        if(connectivityViewModel.getState()){
+            selectedPerson=p;
+            Intent intent=new Intent(this, PersonDetailActivity.class);
+            intent.putExtra(StringConstants.personDetailDataKey,selectedPerson.getID());
+            startActivity(intent);
+        }else{
+            NoInternetToastHelpers.show(this);
+        }
     }
     @Override
     protected void onResume() {

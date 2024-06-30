@@ -11,12 +11,19 @@
         android:id="@+id/allFavouriteEpisodeView"
         android:padding="10dp"
         ></androidx.recyclerview.widget.RecyclerView>
-    <TextView
+    <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"
-        android:text="No data"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         android:id="@+id/noDataFavouriteEpisode"
+        android:gravity="center"
         android:visibility="gone"
-        ></TextView>
+        android:layout_marginTop="?attr/actionBarSize"
+        android:paddingHorizontal="120dp"
+        android:src="@drawable/empty_media"
+        ></ImageView>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

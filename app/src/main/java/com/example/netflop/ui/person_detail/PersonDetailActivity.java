@@ -37,11 +37,14 @@ import com.example.netflop.data.models.remote.people.PersonDetail;
 import com.example.netflop.data.models.remote.people.PersonImages;
 import com.example.netflop.data.models.remote.people.Profile;
 import com.example.netflop.databinding.ActivityPersonDetailBinding;
+import com.example.netflop.helpers.NoInternetToastHelpers;
 import com.example.netflop.ui.TV_Detail.TVSeriesDetailActivity;
 import com.example.netflop.ui.adapters.remote.ListMovieCastAdapter;
+import com.example.netflop.ui.base.BaseActivity;
 import com.example.netflop.ui.movie_detail.MovieDetailActivity;
 import com.example.netflop.utils.listeners.ItemMovieCastListener;
 import com.example.netflop.utils.RecyclerViewUtils;
+import com.example.netflop.viewmodel.connectivity.ConnectivityViewModel;
 import com.example.netflop.viewmodel.local.FavouriteMediaViewModel;
 import com.example.netflop.viewmodel.remote.PersonViewModel;
 
@@ -49,7 +52,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class PersonDetailActivity extends AppCompatActivity implements ItemMovieCastListener {
+public class PersonDetailActivity extends BaseActivity implements ItemMovieCastListener {
     ActivityPersonDetailBinding binding;
     int personID;
     MovieCast selectedMovieCast;
@@ -72,6 +75,7 @@ public class PersonDetailActivity extends AppCompatActivity implements ItemMovie
     //view model
     PersonViewModel personViewModel;
     FavouriteMediaViewModel favouriteMediaViewModel;
+    ConnectivityViewModel connectivityViewModel;
 
     // UI
     RecyclerView castRecyclerView,crewRecyclerView;
@@ -143,6 +147,7 @@ public class PersonDetailActivity extends AppCompatActivity implements ItemMovie
         });
         personViewModel= new ViewModelProvider(this).get(PersonViewModel.class);
         favouriteMediaViewModel=new ViewModelProvider(this).get(FavouriteMediaViewModel.class);
+        connectivityViewModel=new ViewModelProvider(this).get(ConnectivityViewModel.class);
         castList=new ArrayList<>();
         crewList=new ArrayList<>();
         listFavourite=new ArrayList<>();
@@ -285,17 +290,22 @@ public class PersonDetailActivity extends AppCompatActivity implements ItemMovie
 
     @Override
     public void onMovieCastClick(MovieCast movieCast) {
-        selectedMovieCast=movieCast;
-        // do sth
-        if(Objects.equals(selectedMovieCast.getMediaType(), "movie")){
-            Intent intent=new Intent(this, MovieDetailActivity.class);
-            intent.putExtra(StringConstants.movieDetailPageDataKey,selectedMovieCast.getId());
-            startActivity(intent);
+        if(connectivityViewModel.getState()){
+            selectedMovieCast=movieCast;
+            // do sth
+            if(Objects.equals(selectedMovieCast.getMediaType(), "movie")){
+                Intent intent=new Intent(this, MovieDetailActivity.class);
+                intent.putExtra(StringConstants.movieDetailPageDataKey,selectedMovieCast.getId());
+                startActivity(intent);
+            }else{
+                Intent intent=new Intent(this, TVSeriesDetailActivity.class);
+                intent.putExtra(StringConstants.tvSeriesIDKey,selectedMovieCast.getId());
+                startActivity(intent);
+            }
         }else{
-            Intent intent=new Intent(this, TVSeriesDetailActivity.class);
-            intent.putExtra(StringConstants.tvSeriesIDKey,selectedMovieCast.getId());
-            startActivity(intent);
+            NoInternetToastHelpers.show(this);
         }
+
     }
     private  void loadFavouriteData(){
         favouriteMediaViewModel.fetchPeopleData();

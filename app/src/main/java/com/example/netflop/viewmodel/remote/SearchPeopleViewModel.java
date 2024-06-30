@@ -42,6 +42,9 @@ public class SearchPeopleViewModel extends ViewModel {
 //        callAPI(query,includeAdult);
         searchPeople(query,includeAdult,lifecycleOwner);
     }
+    public void resetCurrentPage(){
+        currentPage=1;
+    }
 
     public void searchPeople(String query, boolean includeAdult, LifecycleOwner lifecycleOwner){
 

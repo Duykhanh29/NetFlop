@@ -42,15 +42,18 @@ import com.example.netflop.data.responses.movies.RecommendationMovieResponse;
 import com.example.netflop.data.responses.movies.ReviewResponse;
 import com.example.netflop.databinding.ActivityMovieDetailBinding;
 import com.example.netflop.helpers.CustomTextView;
+import com.example.netflop.helpers.NoInternetToastHelpers;
 import com.example.netflop.ui.adapters.remote.ListCastAdapter;
 import com.example.netflop.ui.adapters.remote.ListMovieAdapter;
 import com.example.netflop.ui.adapters.remote.ListReviewAdapter;
 import com.example.netflop.ui.adapters.remote.ListTrailerAdapter;
+import com.example.netflop.ui.base.BaseActivity;
 import com.example.netflop.ui.person_detail.PersonDetailActivity;
 import com.example.netflop.utils.listeners.ItemTouchHelperAdapter;
 import com.example.netflop.utils.listeners.OnTrailerClickListener;
 import com.example.netflop.utils.RecyclerViewUtils;
 import com.example.netflop.utils.SeeMoreOnClickListener;
+import com.example.netflop.viewmodel.connectivity.ConnectivityViewModel;
 import com.example.netflop.viewmodel.local.FavouriteMediaViewModel;
 import com.example.netflop.viewmodel.remote.MovieViewModel;
 import com.google.android.flexbox.FlexboxLayout;
@@ -58,7 +61,7 @@ import com.google.android.flexbox.FlexboxLayout;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MovieDetailActivity extends AppCompatActivity implements ItemTouchHelperAdapter, OnTrailerClickListener {
+public class MovieDetailActivity extends BaseActivity implements ItemTouchHelperAdapter, OnTrailerClickListener {
     ActivityMovieDetailBinding binding;
     MovieDetail movieDetailData;
     MovieImages movieImagesData;
@@ -72,6 +75,7 @@ public class MovieDetailActivity extends AppCompatActivity implements ItemTouchH
     // view models
     MovieViewModel movieViewModel;
     FavouriteMediaViewModel favouriteMediaViewModel;
+    ConnectivityViewModel connectivityViewModel;
 
     private List<Cast> cast;
     private List<Cast> crew;
@@ -180,6 +184,7 @@ public class MovieDetailActivity extends AppCompatActivity implements ItemTouchH
     private void initialize(){
         movieViewModel= new ViewModelProvider(this).get(MovieViewModel.class);
         favouriteMediaViewModel=new ViewModelProvider(this).get(FavouriteMediaViewModel.class);
+        connectivityViewModel=new ViewModelProvider(this).get(ConnectivityViewModel.class);
         listImage=new ArrayList<>();
         slideModels=new ArrayList<>();
         listFavouriteMovie=new ArrayList<>();
@@ -285,9 +290,14 @@ public class MovieDetailActivity extends AppCompatActivity implements ItemTouchH
                 trailerRecyclerView.setAdapter(listTrailerAdapter);
                 seeMoreTrailers.setVisibility(View.VISIBLE);
                 SeeMoreOnClickListener.getSeeMoreOnClick(seeMoreTrailers,() -> {
-                    List<Video> listVideo=movieVideosData.getResults();
-                    // nav to all trailers of movie
-                    navToAllTrailerActivity(listVideo);
+                    if(connectivityViewModel.getState()){
+                        List<Video> listVideo=movieVideosData.getResults();
+                        // nav to all trailers of movie
+                        navToAllTrailerActivity(listVideo);
+                    }else{
+                        NoInternetToastHelpers.show(this);
+                    }
+
                 });
 
             }else{
@@ -309,9 +319,14 @@ public class MovieDetailActivity extends AppCompatActivity implements ItemTouchH
                 reviewRecyclerView.setAdapter(listReviewAdapter);
                 seeMoreReviewView.setVisibility(View.VISIBLE);
                 SeeMoreOnClickListener.getSeeMoreOnClick(seeMoreReviewView,() -> {
-                    Intent intent=new Intent(this,AllReviewActivity.class);
-                    intent.putExtra(StringConstants.movieIDDataKey,movieID);
-                    startActivity(intent);
+                    if(connectivityViewModel.getState()){
+                        Intent intent=new Intent(this,AllReviewActivity.class);
+                        intent.putExtra(StringConstants.movieIDDataKey,movieID);
+                        startActivity(intent);
+                    }else{
+                        NoInternetToastHelpers.show(this);
+                    }
+
                 });
             }else{
                 listReview=reviewResponseData.getResults();
@@ -506,10 +521,15 @@ public class MovieDetailActivity extends AppCompatActivity implements ItemTouchH
 
     @Override
     public void onMovieClick(Movie movie) {
-        selectedMovie=movie;
-        Intent intent=new Intent(this, MovieDetailActivity.class);
-        intent.putExtra(StringConstants.movieDetailPageDataKey,movie.getID());
-        startActivity(intent);
+        if(connectivityViewModel.getState()){
+            selectedMovie=movie;
+            Intent intent=new Intent(this, MovieDetailActivity.class);
+            intent.putExtra(StringConstants.movieDetailPageDataKey,movie.getID());
+            startActivity(intent);
+        }else{
+            NoInternetToastHelpers.show(this);
+        }
+
     }
 
     @Override
@@ -519,19 +539,29 @@ public class MovieDetailActivity extends AppCompatActivity implements ItemTouchH
 
     @Override
     public void onCastClick(Cast cast) {
-        selectedCast=cast;
-        Intent intent=new Intent(this, PersonDetailActivity.class);
-        intent.putExtra(StringConstants.personDetailDataKey,selectedCast.getID());
-        startActivity(intent);
+        if(connectivityViewModel.getState()){
+            selectedCast=cast;
+            Intent intent=new Intent(this, PersonDetailActivity.class);
+            intent.putExtra(StringConstants.personDetailDataKey,selectedCast.getID());
+            startActivity(intent);
+        }else{
+            NoInternetToastHelpers.show(this);
+        }
+
     }
 
     @Override
     public void onCLickVideo(Video video) {
-        selectedTrailer=video;
-        Intent intent=new Intent(MovieDetailActivity.this, YoutubePlayerActivity.class);
-        intent.putExtra(StringConstants.youtubeURLKey,selectedTrailer.getKey());
-        intent.putExtra(StringConstants.youtubeTitleKey,selectedTrailer.getName());
-        startActivity(intent);
+        if(connectivityViewModel.getState()){
+            selectedTrailer=video;
+            Intent intent=new Intent(MovieDetailActivity.this, YoutubePlayerActivity.class);
+            intent.putExtra(StringConstants.youtubeURLKey,selectedTrailer.getKey());
+            intent.putExtra(StringConstants.youtubeTitleKey,selectedTrailer.getName());
+            startActivity(intent);
+        }else{
+            NoInternetToastHelpers.show(this);
+        }
+
     }
     private void navToAllTrailerActivity(List<Video> listVideo){
         Intent intent=new Intent(MovieDetailActivity.this,AllTrailersActivity.class);
