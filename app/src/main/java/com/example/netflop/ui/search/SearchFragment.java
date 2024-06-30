@@ -136,7 +136,7 @@ public class SearchFragment extends BaseFragment implements SearchItemOnClickLis
                 if (result.getResultCode() == getActivity().RESULT_OK) {
                     Intent data = result.getData();
                     if (data != null) {
-                        isAdult = data.getBooleanExtra(StringConstants.isAdultKey, false);
+//                        isAdult = data.getBooleanExtra(StringConstants.isAdultKey, false);
                          isCheckAll = data.getBooleanExtra(StringConstants.isCheckAllKey, false);
                          isPerson = data.getBooleanExtra(StringConstants.isPersonKey, false);
                          isMovie = data.getBooleanExtra(StringConstants.isMovieKey, false);
@@ -186,15 +186,19 @@ public class SearchFragment extends BaseFragment implements SearchItemOnClickLis
         if(isCheckAll){
             initializeMultipleRecyclerView();
             callAPIs(queryText,isAdult);
+            typeOfSearchingTV.setText("Any");
         } else if(isPerson){
             initializePeopleRecyclerView();
             callPersonAPI(queryText,isAdult);
+            typeOfSearchingTV.setText("Search: People");
         } else if(isMovie){
             initializeMovieRecyclerView();
             callMovieAPI(queryText,isAdult);
+            typeOfSearchingTV.setText("Search: Movie");
         } else {
             initializeTVRecyclerView();
             callTVAPI(queryText,isAdult);
+            typeOfSearchingTV.setText("Search: TV");
         }
     }
 //    private void onBackupHandle(){
@@ -610,6 +614,7 @@ public class SearchFragment extends BaseFragment implements SearchItemOnClickLis
         searchMovieAdapter.notifyDataSetChanged();
         searchPersonAdapter.notifyDataSetChanged();
         searchAdapter.notifyDataSetChanged();
+        searchView.setQuery("",false);
         searchMultiViewModel.getListSearchMulti().removeObservers(getViewLifecycleOwner());
         searchPeopleViewModel.getListPeopleData().removeObservers(getViewLifecycleOwner());
             searchMovieViewModel.getListMovieData().removeObservers(getViewLifecycleOwner());
@@ -633,6 +638,7 @@ public class SearchFragment extends BaseFragment implements SearchItemOnClickLis
         searchMovieAdapter.notifyDataSetChanged();
         searchPersonAdapter.notifyDataSetChanged();
         searchAdapter.notifyDataSetChanged();
+        searchView.setQuery("",false);
     }
 
     @Override

@@ -1,13 +1,19 @@
 package com.example.netflop.ui.adapters.local;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.graphics.drawable.ColorDrawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
@@ -21,6 +27,7 @@ import com.example.netflop.data.models.local.FavouriteMedia;
 import com.example.netflop.data.models.local.SearchHistory;
 import com.example.netflop.utils.listeners.FavouriteListener;
 import com.example.netflop.viewmodel.local.FavouriteMediaViewModel;
+import com.google.android.material.button.MaterialButton;
 
 import java.util.List;
 
@@ -68,7 +75,38 @@ public class ListFavouriteMediaAdapter extends RecyclerView.Adapter<ListFavourit
        holder.removeButton.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View view) {
-               favouriteMediaViewModel.deleteFavouriteMedia(favouriteMedia.getId());
+               AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(view.getRootView().getContext());
+               // Setting Alert Dialog Title
+               alertDialogBuilder.setTitle("Alert");
+               // Icon Of Alert Dialog
+//               alertDialogBuilder.setIcon(R.drawable.question);
+               // Setting Alert Dialog Message
+               alertDialogBuilder.setMessage("Are you sure you want to delete this item?");
+               alertDialogBuilder.setCancelable(false);
+
+               alertDialogBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+
+                   @Override
+                   public void onClick(DialogInterface arg0, int arg1) {
+//                       finish();
+                       favouriteMediaViewModel.deleteFavouriteMedia(favouriteMedia.getId());
+                       arg0.dismiss();
+                   }
+               });
+
+               alertDialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                   @Override
+                   public void onClick(DialogInterface dialog, int which) {
+//                       Toast.makeText(view.getRootView().getContext(),"You clicked over No",Toast.LENGTH_SHORT).show();
+                       dialog.dismiss();
+                   }
+               });
+
+
+               AlertDialog alertDialog = alertDialogBuilder.create();
+               alertDialog.show();
+
+
            }
        });
     }

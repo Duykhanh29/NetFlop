@@ -10,8 +10,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.Switch;
+import android.widget.TextView;
 
 import com.example.netflop.R;
 import com.example.netflop.constants.StringConstants;
@@ -23,7 +25,10 @@ public class FilterActivity extends AppCompatActivity {
     Switch adultSwitch;
     Button applyBT;
     Toolbar toolbar;
+    TextView adultText;
     boolean isCheckAll,isTV,isMovie,isPerson,isAdult;
+    LinearLayout adultLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,6 +36,7 @@ public class FilterActivity extends AppCompatActivity {
 //        setContentView(R.layout.activity_filter);
         setContentView(binding.getRoot());
         getBinding();
+        turnOffIsAdult();
         getData();
         initialize();
         onSwitchHandle();
@@ -44,10 +50,12 @@ public class FilterActivity extends AppCompatActivity {
         tvRadioButton=binding.checkTVButton;
         adultSwitch=binding.switchAdultFilterView;
         applyBT=binding.applyFilterButtonView;
+        adultText=binding.textOfIsAdult;
+        adultLayout=binding.isAdultLayout;
     }
     private void getData(){
         Intent intent=getIntent();
-        isAdult = intent.getBooleanExtra(StringConstants.isAdultKey, false);
+//        isAdult = intent.getBooleanExtra(StringConstants.isAdultKey, false);
         isCheckAll = intent.getBooleanExtra(StringConstants.isCheckAllKey, true);
         isPerson = intent.getBooleanExtra(StringConstants.isPersonKey, true);
         isMovie = intent.getBooleanExtra(StringConstants.isMovieKey, true);
@@ -83,6 +91,10 @@ public class FilterActivity extends AppCompatActivity {
         tvRadioButton.setChecked(isTV);
         adultSwitch.setChecked(isAdult);
     }
-
+    private void turnOffIsAdult(){
+        adultLayout.setVisibility(View.GONE);
+        adultSwitch.setVisibility(View.GONE);
+        adultText.setVisibility(View.GONE);
+    }
 
 }

@@ -70,6 +70,7 @@
 
 <!--            is Adult-->
             <LinearLayout
+                android:id="@+id/isAdultLayout"
                 android:layout_marginTop="20dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -80,6 +81,7 @@
                     android:layout_height="wrap_content"
                     android:text="Adult"
                     style="@style/HeadingTextStyle"
+                    android:id="@+id/textOfIsAdult"
                     ></TextView>
                 <View
                     android:layout_width="0dp"
