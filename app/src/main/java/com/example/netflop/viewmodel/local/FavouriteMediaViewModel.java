@@ -9,6 +9,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.netflop.constants.enums.TypeOfMedia;
+import com.example.netflop.constants.enums.WatchStatus;
 import com.example.netflop.data.models.local.FavouriteMedia;
 import com.example.netflop.data.models.local.SearchHistory;
 import com.example.netflop.data.repository.local.FavouriteMediaRepository;
@@ -69,9 +70,15 @@ public class FavouriteMediaViewModel extends AndroidViewModel {
             fetchData();
         }
     }
-    public void insertFavouriteMedia(int mediaID, String title, TypeOfMedia typeOfMedia, Integer seasonNumber, Integer episodeNumber, String image){
-        boolean id = repository.insertFavouriteMedia(mediaID,title,typeOfMedia,seasonNumber,episodeNumber,image);
+    public void insertFavouriteMedia(int mediaID, String title, TypeOfMedia typeOfMedia, Integer seasonNumber, Integer episodeNumber, String image, WatchStatus watchStatus){
+        boolean id = repository.insertFavouriteMedia(mediaID,title,typeOfMedia,seasonNumber,episodeNumber,image,watchStatus);
         if(id){
+            fetchData();
+        }
+    }
+    public void updateWatchStatus(int id,WatchStatus watchStatus){
+        boolean result = repository.updateWatchStatus(id,watchStatus);
+        if(result){
             fetchData();
         }
     }

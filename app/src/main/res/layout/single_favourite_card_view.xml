@@ -20,14 +20,35 @@
                 android:layout_height="100dp"
                 android:id="@+id/imageFavouriteView"
                 ></ImageView>
-            <ImageButton
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="top|right"
-                android:id="@+id/removeFavourite"
-                android:src="@drawable/remove"
-                android:elevation="5dp"
-                ></ImageButton>
+                android:orientation="horizontal"
+                android:layout_gravity="top"
+                >
+                <ImageButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:id="@+id/removeFavourite"
+                    android:src="@drawable/remove"
+                    android:elevation="5dp"
+                    ></ImageButton>
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    ></View>
+                <ImageButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:src="@drawable/edit"
+                    android:elevation="5dp"
+                    android:id="@+id/editWatchStatusButton"
+                    ></ImageButton>
+            </LinearLayout>
+
         </FrameLayout>
         <TextView
             android:layout_width="match_parent"

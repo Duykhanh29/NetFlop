@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.example.netflop.constants.enums.SearchType;
 import com.example.netflop.constants.enums.TypeOfMedia;
+import com.example.netflop.constants.enums.WatchStatus;
 import com.example.netflop.data.data_source.local_data_source.DatabaseHelper;
 import com.example.netflop.data.data_source.local_data_source.FavouriteMediaTable;
 import com.example.netflop.data.data_source.local_data_source.SearchHistoryTable;
@@ -21,7 +22,7 @@ public class FavouriteMediaRepository {
     public FavouriteMediaRepository(Context context) {
         databaseHelper = new DatabaseHelper(context);
     }
-    public boolean insertFavouriteMedia(int mediaID,String title, TypeOfMedia typeOfMedia, Integer seasonNumber,Integer episodeNumber,String image){
+    public boolean insertFavouriteMedia(int mediaID, String title, TypeOfMedia typeOfMedia, Integer seasonNumber, Integer episodeNumber, String image, WatchStatus watchStatus){
         SQLiteDatabase database=databaseHelper.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put(FavouriteMediaTable.COLUMN_MEDIA_ID,mediaID);
@@ -30,6 +31,7 @@ public class FavouriteMediaRepository {
         cv.put(FavouriteMediaTable.COLUMN_EPISODE,episodeNumber);
         cv.put(FavouriteMediaTable.COLUMN_SEASON,seasonNumber);
         cv.put(FavouriteMediaTable.COLUMN_IMAGE,image);
+        cv.put(FavouriteMediaTable.COLUMN_WATCH_STATUS,watchStatus.name());
         long result = database.insert(FavouriteMediaTable.TABLE_NAME,null, cv);
         if(result == -1){
             return false;
@@ -55,6 +57,21 @@ public class FavouriteMediaRepository {
 //            return true;
 //        }
 //    }
+
+    // update method
+    public boolean updateWatchStatus(int id,WatchStatus watchStatus){
+        SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        ContentValues cv=new ContentValues();
+        cv.put(FavouriteMediaTable.COLUMN_WATCH_STATUS,watchStatus.name());
+        long result = db.update(FavouriteMediaTable.TABLE_NAME, cv,"id=?",new String[]{String.valueOf(id)});
+        if(result == -1){
+            return false;
+        }else {
+            return true;
+        }
+    }
+
+    // get method
     private Cursor getAllFavouriteMedia() {
         SQLiteDatabase db = databaseHelper.getReadableDatabase();
         return db.rawQuery("SELECT * FROM " + FavouriteMediaTable.TABLE_NAME, null);
@@ -64,15 +81,16 @@ public class FavouriteMediaRepository {
         Cursor cursor=getAllFavouriteMedia();
         if (cursor != null && cursor.moveToFirst()) {
             do {
-                String typeOfMedia=cursor.getString(cursor.getColumnIndexOrThrow(FavouriteMediaTable.COLUMN_MEDIA_TYPE));
+                    String typeOfMedia=cursor.getString(cursor.getColumnIndexOrThrow(FavouriteMediaTable.COLUMN_MEDIA_TYPE));
                     int id = cursor.getInt(cursor.getColumnIndexOrThrow(FavouriteMediaTable.COLUMN_ID));
                     String title = cursor.getString(cursor.getColumnIndexOrThrow(FavouriteMediaTable.COLUMN_TITLE));
                     int mediaID =cursor.getInt(cursor.getColumnIndexOrThrow(FavouriteMediaTable.COLUMN_MEDIA_ID));
                     String imageURL=cursor.getString(cursor.getColumnIndexOrThrow(FavouriteMediaTable.COLUMN_IMAGE));
                     Integer seasonNumber =cursor.getInt(cursor.getColumnIndexOrThrow(FavouriteMediaTable.COLUMN_SEASON));
                     Integer episodeNumber=cursor.getInt(cursor.getColumnIndexOrThrow(FavouriteMediaTable.COLUMN_EPISODE));
+                    String watchStatus=cursor.getString(cursor.getColumnIndexOrThrow(FavouriteMediaTable.COLUMN_WATCH_STATUS));
                     // get other attributes
-                    FavouriteMedia favouriteMedia=new FavouriteMedia(id,mediaID,TypeOfMedia.valueOf(typeOfMedia),imageURL,seasonNumber,episodeNumber,title);
+                    FavouriteMedia favouriteMedia=new FavouriteMedia(id,mediaID,TypeOfMedia.valueOf(typeOfMedia),imageURL,seasonNumber,episodeNumber,title,WatchStatus.valueOf(watchStatus));
                     list.add(favouriteMedia);
             } while (cursor.moveToNext());
         }
@@ -95,8 +113,9 @@ public class FavouriteMediaRepository {
                     String imageURL=cursor.getString(cursor.getColumnIndexOrThrow(FavouriteMediaTable.COLUMN_IMAGE));
                     Integer seasonNumber =cursor.getInt(cursor.getColumnIndexOrThrow(FavouriteMediaTable.COLUMN_SEASON));
                     Integer episodeNumber=cursor.getInt(cursor.getColumnIndexOrThrow(FavouriteMediaTable.COLUMN_EPISODE));
+                    String watchStatus=cursor.getString(cursor.getColumnIndexOrThrow(FavouriteMediaTable.COLUMN_WATCH_STATUS));
                     // get other attributes
-                    FavouriteMedia favouriteMedia=new FavouriteMedia(id,mediaID,TypeOfMedia.valueOf(typeOfMedia),imageURL,seasonNumber,episodeNumber,title);
+                    FavouriteMedia favouriteMedia=new FavouriteMedia(id,mediaID,TypeOfMedia.valueOf(typeOfMedia),imageURL,seasonNumber,episodeNumber,title,WatchStatus.valueOf(watchStatus));
                     list.add(favouriteMedia);
                 }
             } while (cursor.moveToNext());
@@ -119,8 +138,9 @@ public class FavouriteMediaRepository {
                     String imageURL=cursor.getString(cursor.getColumnIndexOrThrow(FavouriteMediaTable.COLUMN_IMAGE));
                     Integer seasonNumber =cursor.getInt(cursor.getColumnIndexOrThrow(FavouriteMediaTable.COLUMN_SEASON));
                     Integer episodeNumber=cursor.getInt(cursor.getColumnIndexOrThrow(FavouriteMediaTable.COLUMN_EPISODE));
+                    String watchStatus=cursor.getString(cursor.getColumnIndexOrThrow(FavouriteMediaTable.COLUMN_WATCH_STATUS));
                     // get other attributes
-                    FavouriteMedia favouriteMedia=new FavouriteMedia(id,mediaID,TypeOfMedia.valueOf(typeOfMedia),imageURL,seasonNumber,episodeNumber,title);
+                    FavouriteMedia favouriteMedia=new FavouriteMedia(id,mediaID,TypeOfMedia.valueOf(typeOfMedia),imageURL,seasonNumber,episodeNumber,title,WatchStatus.valueOf(watchStatus));
                     list.add(favouriteMedia);
                 }
             } while (cursor.moveToNext());
@@ -143,8 +163,9 @@ public class FavouriteMediaRepository {
                     String imageURL=cursor.getString(cursor.getColumnIndexOrThrow(FavouriteMediaTable.COLUMN_IMAGE));
                     Integer seasonNumber =cursor.getInt(cursor.getColumnIndexOrThrow(FavouriteMediaTable.COLUMN_SEASON));
                     Integer episodeNumber=cursor.getInt(cursor.getColumnIndexOrThrow(FavouriteMediaTable.COLUMN_EPISODE));
+                    String watchStatus=cursor.getString(cursor.getColumnIndexOrThrow(FavouriteMediaTable.COLUMN_WATCH_STATUS));
                     // get other attributes
-                    FavouriteMedia favouriteMedia=new FavouriteMedia(id,mediaID,TypeOfMedia.valueOf(typeOfMedia),imageURL,seasonNumber,episodeNumber,title);
+                    FavouriteMedia favouriteMedia=new FavouriteMedia(id,mediaID,TypeOfMedia.valueOf(typeOfMedia),imageURL,seasonNumber,episodeNumber,title,WatchStatus.valueOf(watchStatus));
                     list.add(favouriteMedia);
                 }
             } while (cursor.moveToNext());
@@ -167,8 +188,9 @@ public class FavouriteMediaRepository {
                     String imageURL=cursor.getString(cursor.getColumnIndexOrThrow(FavouriteMediaTable.COLUMN_IMAGE));
                     Integer seasonNumber =cursor.getInt(cursor.getColumnIndexOrThrow(FavouriteMediaTable.COLUMN_SEASON));
                     Integer episodeNumber=cursor.getInt(cursor.getColumnIndexOrThrow(FavouriteMediaTable.COLUMN_EPISODE));
+                    String watchStatus=cursor.getString(cursor.getColumnIndexOrThrow(FavouriteMediaTable.COLUMN_WATCH_STATUS));
                     // get other attributes
-                    FavouriteMedia favouriteMedia=new FavouriteMedia(id,mediaID,TypeOfMedia.valueOf(typeOfMedia),imageURL,seasonNumber,episodeNumber,title);
+                    FavouriteMedia favouriteMedia=new FavouriteMedia(id,mediaID,TypeOfMedia.valueOf(typeOfMedia),imageURL,seasonNumber,episodeNumber,title,WatchStatus.valueOf(watchStatus));
                     list.add(favouriteMedia);
                 }
             } while (cursor.moveToNext());
@@ -191,8 +213,9 @@ public class FavouriteMediaRepository {
                     String imageURL=cursor.getString(cursor.getColumnIndexOrThrow(FavouriteMediaTable.COLUMN_IMAGE));
                     Integer seasonNumber =cursor.getInt(cursor.getColumnIndexOrThrow(FavouriteMediaTable.COLUMN_SEASON));
                     Integer episodeNumber=cursor.getInt(cursor.getColumnIndexOrThrow(FavouriteMediaTable.COLUMN_EPISODE));
+                    String watchStatus=cursor.getString(cursor.getColumnIndexOrThrow(FavouriteMediaTable.COLUMN_WATCH_STATUS));
                     // get other attributes
-                    FavouriteMedia favouriteMedia=new FavouriteMedia(id,mediaID,TypeOfMedia.valueOf(typeOfMedia),imageURL,seasonNumber,episodeNumber,title);
+                    FavouriteMedia favouriteMedia=new FavouriteMedia(id,mediaID,TypeOfMedia.valueOf(typeOfMedia),imageURL,seasonNumber,episodeNumber,title,WatchStatus.valueOf(watchStatus));
                     list.add(favouriteMedia);
                 }
             } while (cursor.moveToNext());
@@ -215,8 +238,9 @@ public class FavouriteMediaRepository {
                     String imageURL=cursor.getString(cursor.getColumnIndexOrThrow(FavouriteMediaTable.COLUMN_IMAGE));
                     Integer seasonNumber =cursor.getInt(cursor.getColumnIndexOrThrow(FavouriteMediaTable.COLUMN_SEASON));
                     Integer episodeNumber=cursor.getInt(cursor.getColumnIndexOrThrow(FavouriteMediaTable.COLUMN_EPISODE));
+                    String watchStatus=cursor.getString(cursor.getColumnIndexOrThrow(FavouriteMediaTable.COLUMN_WATCH_STATUS));
                     // get other attributes
-                    FavouriteMedia favouriteMedia=new FavouriteMedia(id,mediaID,TypeOfMedia.valueOf(typeOfMedia),imageURL,seasonNumber,episodeNumber,title);
+                    FavouriteMedia favouriteMedia=new FavouriteMedia(id,mediaID,TypeOfMedia.valueOf(typeOfMedia),imageURL,seasonNumber,episodeNumber,title,WatchStatus.valueOf(watchStatus));
                     list.add(favouriteMedia);
                 }
             } while (cursor.moveToNext());

@@ -19,6 +19,7 @@ import com.example.netflop.R;
 import com.example.netflop.constants.StringConstants;
 import com.example.netflop.constants.URLConstants;
 import com.example.netflop.constants.enums.TypeOfMedia;
+import com.example.netflop.constants.enums.WatchStatus;
 import com.example.netflop.data.models.local.FavouriteMedia;
 import com.example.netflop.data.models.remote.TVs.GuestStar;
 import com.example.netflop.utils.listeners.OnClickIDListener;
@@ -84,7 +85,7 @@ public class ListGuestStarAdapter extends RecyclerView.Adapter<ListGuestStarAdap
                 if(optionalFavouriteMedia.isPresent()){
                     favouriteMediaViewModel.deleteFavouriteMedia(optionalFavouriteMedia.get().getId());
                 }else{
-                    favouriteMediaViewModel.insertFavouriteMedia(guestStar.getId(),guestStar.getName(), TypeOfMedia.person,null,null,guestStar.getProfilePath());
+                    favouriteMediaViewModel.insertFavouriteMedia(guestStar.getId(),guestStar.getName(), TypeOfMedia.person,null,null,guestStar.getProfilePath(), WatchStatus.UNWATCH);
                 }
             }
         });

@@ -19,6 +19,7 @@ import com.example.netflop.R;
 import com.example.netflop.constants.StringConstants;
 import com.example.netflop.constants.URLConstants;
 import com.example.netflop.constants.enums.TypeOfMedia;
+import com.example.netflop.constants.enums.WatchStatus;
 import com.example.netflop.data.models.local.FavouriteMedia;
 import com.example.netflop.data.models.remote.TVs.CrewTV;
 import com.example.netflop.data.models.remote.TVs.GuestStar;
@@ -204,7 +205,7 @@ public class TVEpisodeDetailActivity extends BaseActivity implements OnClickIDLi
                         isFavourite=false;
                     }
                 }else{
-                    favouriteMediaViewModel.insertFavouriteMedia(tvSeriesID,tvTitle, TypeOfMedia.TVSeason,seasonNumber,episodeNumber,imagePath);
+                    favouriteMediaViewModel.insertFavouriteMedia(tvSeriesID,tvTitle, TypeOfMedia.TVSeason,seasonNumber,episodeNumber,imagePath, WatchStatus.UNWATCH);
                 }
 
             }

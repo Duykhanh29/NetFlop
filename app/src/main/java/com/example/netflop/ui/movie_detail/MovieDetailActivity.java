@@ -24,6 +24,7 @@ import com.example.netflop.R;
 import com.example.netflop.constants.StringConstants;
 import com.example.netflop.constants.URLConstants;
 import com.example.netflop.constants.enums.TypeOfMedia;
+import com.example.netflop.constants.enums.WatchStatus;
 import com.example.netflop.data.models.local.FavouriteMedia;
 import com.example.netflop.data.models.remote.people.Cast;
 import com.example.netflop.data.models.remote.movies.Credit;
@@ -512,7 +513,7 @@ public class MovieDetailActivity extends BaseActivity implements ItemTouchHelper
                         isFavourite=false;
                     }
                 }else{
-                    favouriteMediaViewModel.insertFavouriteMedia(movieID,titleOfMovie,TypeOfMedia.movie,null,null,posterImage);
+                    favouriteMediaViewModel.insertFavouriteMedia(movieID,titleOfMovie,TypeOfMedia.movie,null,null,posterImage, WatchStatus.UNWATCH);
                 }
 
             }

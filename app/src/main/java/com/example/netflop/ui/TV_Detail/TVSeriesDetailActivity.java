@@ -28,6 +28,7 @@ import com.example.netflop.R;
 import com.example.netflop.constants.StringConstants;
 import com.example.netflop.constants.URLConstants;
 import com.example.netflop.constants.enums.TypeOfMedia;
+import com.example.netflop.constants.enums.WatchStatus;
 import com.example.netflop.data.models.local.FavouriteMedia;
 import com.example.netflop.data.models.remote.movies.Genre;
 import com.example.netflop.data.models.remote.movies.ProductionCompany;
@@ -245,7 +246,7 @@ public class TVSeriesDetailActivity extends BaseActivity implements OnTVClickLis
                         isFavourite=false;
                     }
                 }else{
-                    favouriteMediaViewModel.insertFavouriteMedia(tvSeriesID,tvSeriesTitle, TypeOfMedia.TVSeries,null,null,imagePath);
+                    favouriteMediaViewModel.insertFavouriteMedia(tvSeriesID,tvSeriesTitle, TypeOfMedia.TVSeries,null,null,imagePath, WatchStatus.UNWATCH);
                 }
 
             }

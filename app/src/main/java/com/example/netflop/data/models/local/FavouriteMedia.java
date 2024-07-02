@@ -2,6 +2,7 @@ package com.example.netflop.data.models.local;
 
 import com.example.netflop.constants.enums.SearchType;
 import com.example.netflop.constants.enums.TypeOfMedia;
+import com.example.netflop.constants.enums.WatchStatus;
 
 public class FavouriteMedia {
     private int id;
@@ -11,8 +12,9 @@ public class FavouriteMedia {
     private String urlImage;
     private String title;
     private Integer seasonNumber,episodeNumber;
+    private WatchStatus watchStatus;
 
-    public FavouriteMedia(int id, int mediaID, TypeOfMedia typeOfMedia, String urlImage, Integer seasonNumber, Integer episodeNumber,String title) {
+    public FavouriteMedia(int id, int mediaID, TypeOfMedia typeOfMedia, String urlImage, Integer seasonNumber, Integer episodeNumber,String title,WatchStatus watchStatus) {
         this.id = id;
         this.mediaID = mediaID;
         this.typeOfMedia = typeOfMedia;
@@ -20,9 +22,18 @@ public class FavouriteMedia {
         this.seasonNumber = seasonNumber;
         this.episodeNumber = episodeNumber;
         this.title=title;
+        this.watchStatus=watchStatus;
     }
 
     public FavouriteMedia() {
+    }
+
+    public WatchStatus getWatchStatus() {
+        return watchStatus;
+    }
+
+    public void setWatchStatus(WatchStatus watchStatus) {
+        this.watchStatus = watchStatus;
     }
 
     public int getId() {

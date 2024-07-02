@@ -18,6 +18,7 @@ import com.bumptech.glide.Glide;
 import com.example.netflop.R;
 import com.example.netflop.constants.URLConstants;
 import com.example.netflop.constants.enums.TypeOfMedia;
+import com.example.netflop.constants.enums.WatchStatus;
 import com.example.netflop.data.models.local.FavouriteMedia;
 import com.example.netflop.data.models.remote.TVs.AiringTodayModel;
 import com.example.netflop.utils.listeners.ItemTVOnClickListener;
@@ -82,7 +83,7 @@ public class GridTVAdapter extends RecyclerView.Adapter<GridTVAdapter.ViewHolder
                 if(optionalFavouriteMedia.isPresent()){
                     favouriteMediaViewModel.deleteFavouriteMedia(optionalFavouriteMedia.get().getId());
                 }else{
-                    favouriteMediaViewModel.insertFavouriteMedia(todayModel.getId(),todayModel.getName(), TypeOfMedia.TVSeries,null,null,todayModel.getPosterPath());
+                    favouriteMediaViewModel.insertFavouriteMedia(todayModel.getId(),todayModel.getName(), TypeOfMedia.TVSeries,null,null,todayModel.getPosterPath(), WatchStatus.UNWATCH);
                 }
             }
         });

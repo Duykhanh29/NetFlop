@@ -20,6 +20,7 @@ import com.bumptech.glide.Glide;
 import com.example.netflop.R;
 import com.example.netflop.constants.URLConstants;
 import com.example.netflop.constants.enums.TypeOfMedia;
+import com.example.netflop.constants.enums.WatchStatus;
 import com.example.netflop.data.models.local.FavouriteMedia;
 import com.example.netflop.data.models.remote.movies.Movie;
 import com.example.netflop.utils.listeners.ItemTouchHelperAdapter;
@@ -80,7 +81,7 @@ public class SecondListMovieAdapter extends RecyclerView.Adapter<SecondListMovie
                 if(optionalFavouriteMedia.isPresent()){
                     favouriteMediaViewModel.deleteFavouriteMedia(optionalFavouriteMedia.get().getId());
                 }else{
-                    favouriteMediaViewModel.insertFavouriteMedia(movie.getID(),movie.getTitle(),TypeOfMedia.movie,null,null,movie.getPosterPath());
+                    favouriteMediaViewModel.insertFavouriteMedia(movie.getID(),movie.getTitle(),TypeOfMedia.movie,null,null,movie.getPosterPath(), WatchStatus.UNWATCH);
                 }
             }
         });

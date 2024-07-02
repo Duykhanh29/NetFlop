@@ -18,6 +18,7 @@ import com.bumptech.glide.Glide;
 import com.example.netflop.R;
 import com.example.netflop.constants.URLConstants;
 import com.example.netflop.constants.enums.TypeOfMedia;
+import com.example.netflop.constants.enums.WatchStatus;
 import com.example.netflop.data.models.local.FavouriteMedia;
 import com.example.netflop.data.models.remote.TVs.Season;
 import com.example.netflop.utils.listeners.OnTVClickListener;
@@ -83,7 +84,7 @@ public class ListSeasonAdapter extends RecyclerView.Adapter<ListSeasonAdapter.Vi
                 if(optionalFavouriteMedia.isPresent()){
                     favouriteMediaViewModel.deleteFavouriteMedia(optionalFavouriteMedia.get().getId());
                 }else{
-                    favouriteMediaViewModel.insertFavouriteMedia(tvSeriesID,season.getName(), TypeOfMedia.TVSeason,season.getSeasonNumber(),null,season.getPosterPath());
+                    favouriteMediaViewModel.insertFavouriteMedia(tvSeriesID,season.getName(), TypeOfMedia.TVSeason,season.getSeasonNumber(),null,season.getPosterPath(), WatchStatus.UNWATCH);
                 }
             }
         });

@@ -13,6 +13,8 @@ import android.os.Bundle;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
+import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -21,6 +23,7 @@ import android.widget.TextView;
 import com.example.netflop.R;
 import com.example.netflop.constants.StringConstants;
 import com.example.netflop.constants.enums.TypeOfMedia;
+import com.example.netflop.constants.enums.WatchStatus;
 import com.example.netflop.data.models.local.FavouriteMedia;
 import com.example.netflop.databinding.ActivityAllFavouriteEpisodeBinding;
 import com.example.netflop.databinding.ActivityAllFavouriteMediaBinding;
@@ -107,6 +110,7 @@ public class AllFavouriteMediaActivity extends BaseActivity implements Favourite
                     listFavourite.clear();  // Clear the list to ensure no duplicates if needed
                     listFavourite.addAll(favouriteMedia);
                     listFavouriteMediaAdapter.notifyDataSetChanged();
+                    listFavouriteMediaAdapter.updateList(favouriteMedia);
                 }else{
                     recyclerView.setVisibility(View.GONE);
                     noDataImage.setVisibility(View.VISIBLE);
@@ -151,11 +155,29 @@ public class AllFavouriteMediaActivity extends BaseActivity implements Favourite
         if(itemID==android.R.id.home){
             finish();
         }
+
+        if(itemID==R.id.menu_all){
+            listFavouriteMediaAdapter.filterItems(null);
+        }
+        if(itemID==R.id.menu_unwatched){
+            listFavouriteMediaAdapter.filterItems(WatchStatus.UNWATCH);
+        }
+        if(itemID== R.id.menu_watched){
+            listFavouriteMediaAdapter.filterItems(WatchStatus.WATCHED);
+        }
+        if(itemID==R.id.menu_in_progress){
+            listFavouriteMediaAdapter.filterItems(WatchStatus.IN_PROGRESS);
+        }
         return  true;
     }
     @Override
     protected void onResume() {
         super.onResume();
         callAPI();
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.watch_status_menu, menu);
+        return true;
     }
 }

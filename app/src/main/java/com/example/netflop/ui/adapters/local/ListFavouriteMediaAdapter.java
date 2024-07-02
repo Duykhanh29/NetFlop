@@ -9,9 +9,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,25 +25,31 @@ import com.bumptech.glide.Glide;
 import com.example.netflop.R;
 import com.example.netflop.constants.URLConstants;
 import com.example.netflop.constants.enums.TypeOfMedia;
+import com.example.netflop.constants.enums.WatchStatus;
 import com.example.netflop.data.models.local.FavouriteMedia;
 import com.example.netflop.data.models.local.SearchHistory;
 import com.example.netflop.utils.listeners.FavouriteListener;
 import com.example.netflop.viewmodel.local.FavouriteMediaViewModel;
 import com.google.android.material.button.MaterialButton;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ListFavouriteMediaAdapter extends RecyclerView.Adapter<ListFavouriteMediaAdapter.ViewHolder> {
     List<FavouriteMedia> listFavourite;
     Context context;
     FavouriteListener favouriteListener;
     FavouriteMediaViewModel favouriteMediaViewModel;
+    private List<FavouriteMedia> originalListFavourite;
 
     public ListFavouriteMediaAdapter(List<FavouriteMedia> listFavourite, Context context, FavouriteListener favouriteListener,FavouriteMediaViewModel favouriteMediaViewModel) {
         this.listFavourite = listFavourite;
         this.context = context;
         this.favouriteListener = favouriteListener;
         this.favouriteMediaViewModel=favouriteMediaViewModel;
+        this.originalListFavourite = new ArrayList<>(listFavourite);
     }
 
     @NonNull
@@ -50,6 +58,7 @@ public class ListFavouriteMediaAdapter extends RecyclerView.Adapter<ListFavourit
         View view= LayoutInflater.from(context).inflate(R.layout.single_favourite_card_view,parent,false);
         return new ViewHolder(view);
     }
+
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
@@ -109,6 +118,62 @@ public class ListFavouriteMediaAdapter extends RecyclerView.Adapter<ListFavourit
 
            }
        });
+       if(favouriteMedia.getTypeOfMedia()!=TypeOfMedia.person){
+           holder.editWatchStatusButton.setOnClickListener(new View.OnClickListener() {
+               @Override
+               public void onClick(View view) {
+                   onShowDialog(view.getRootView().getContext(),favouriteMedia);
+
+               }
+
+           });
+       }else{
+           holder.editWatchStatusButton.setVisibility(View.GONE);
+       }
+
+    }
+    private void onShowDialog(Context context,FavouriteMedia favouriteMedia){
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("Select Watch Status");
+
+        View dialogView = LayoutInflater.from(context).inflate(R.layout.dropdown_layout, null);
+        Spinner spinner = dialogView.findViewById(R.id.spinner);
+
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(context,
+                R.array.dropdown_options, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+
+        // Set the initial value of the Spinner based on the item's watchStatus
+        String[] options = context.getResources().getStringArray(R.array.dropdown_options);
+        String watchStatusName = favouriteMedia.getWatchStatus().name().replace("_", " ").toLowerCase();
+
+        int initialPosition = -1;
+        for (int i = 0; i < options.length; i++) {
+            if (watchStatusName.equals(options[i].toLowerCase())) {
+                initialPosition = i;
+                break;
+            }
+        }
+        if(initialPosition!=-1){
+            spinner.setSelection(initialPosition);
+            builder.setView(dialogView).setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    String selectedOption = spinner.getSelectedItem().toString();
+                    WatchStatus watchStatus=WatchStatus.valueOf(selectedOption.replace(" ", "_").toUpperCase());
+                    favouriteMediaViewModel.updateWatchStatus(favouriteMedia.getId(),watchStatus);
+                    dialogInterface.dismiss();
+                }
+            }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    dialogInterface.dismiss();
+                }
+            });
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        }
     }
 
     @Override
@@ -119,7 +184,7 @@ public class ListFavouriteMediaAdapter extends RecyclerView.Adapter<ListFavourit
     public static class ViewHolder extends RecyclerView.ViewHolder{
         ImageView imageView;
         TextView titleTV,typeTV,tvDetailTV;
-        ImageButton removeButton;
+        ImageButton removeButton,editWatchStatusButton;
         CardView cardView;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -129,6 +194,33 @@ public class ListFavouriteMediaAdapter extends RecyclerView.Adapter<ListFavourit
             typeTV=(TextView) itemView.findViewById(R.id.typeOfMediaFavouriteView);
             tvDetailTV=(TextView) itemView.findViewById(R.id.tvDetailFavouriteView);
             removeButton=(ImageButton) itemView.findViewById(R.id.removeFavourite);
+            editWatchStatusButton=(ImageButton) itemView.findViewById(R.id.editWatchStatusButton);
         }
     }
+    public void filterItems(WatchStatus status) {
+        listFavourite.clear(); // Xóa danh sách hiện tại
+        List<FavouriteMedia> filteredList=new ArrayList<>();
+        if (status == null) {
+            // Hiển thị tất cả các mục khi status là null
+            filteredList.addAll(originalListFavourite);
+        } else {
+            // Lọc danh sách theo WatchStatus
+            for (FavouriteMedia media : originalListFavourite) {
+                if (media.getWatchStatus() == status) {
+                    filteredList.add(media);
+                }
+            }
+        }
+        listFavourite.addAll((ArrayList)filteredList);
+        notifyDataSetChanged(); // Cập nhật RecyclerView
+    }
+    public void updateList(List<FavouriteMedia> list){
+        listFavourite.clear();
+        listFavourite.addAll(list);
+        originalListFavourite.clear();
+        originalListFavourite.addAll(listFavourite);
+        Log.d("NUMBER IS","NUMBER: "+list.size());
+        notifyDataSetChanged();
+    }
+
 }

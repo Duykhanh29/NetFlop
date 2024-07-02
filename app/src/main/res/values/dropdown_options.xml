@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="Test">YourAppName</string>
+    <string-array name="dropdown_options">
+        <item>Unwatch</item>
+        <item>Watched</item>
+        <item>In Progress</item>
+    </string-array>
+</resources>

@@ -19,6 +19,7 @@ import com.bumptech.glide.Glide;
 import com.example.netflop.R;
 import com.example.netflop.constants.URLConstants;
 import com.example.netflop.constants.enums.TypeOfMedia;
+import com.example.netflop.constants.enums.WatchStatus;
 import com.example.netflop.data.models.local.FavouriteMedia;
 import com.example.netflop.data.models.remote.people.Person;
 import com.example.netflop.utils.listeners.ItemTouchHelperAdapter;
@@ -82,7 +83,7 @@ public class GridPeopleAdapter extends RecyclerView.Adapter<GridPeopleAdapter.Vi
                 if(optionalFavouriteMedia.isPresent()){
                     favouriteMediaViewModel.deleteFavouriteMedia(optionalFavouriteMedia.get().getId());
                 }else{
-                    favouriteMediaViewModel.insertFavouriteMedia(person.getID(),person.getName(), TypeOfMedia.person,null,null, person.getProfilePath());
+                    favouriteMediaViewModel.insertFavouriteMedia(person.getID(),person.getName(), TypeOfMedia.person,null,null, person.getProfilePath(), WatchStatus.UNWATCH);
                 }
             }
         });

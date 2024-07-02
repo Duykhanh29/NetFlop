@@ -30,6 +30,7 @@ import com.example.netflop.constants.StringConstants;
 import com.example.netflop.constants.URLConstants;
 import com.example.netflop.constants.enums.GenderEnums;
 import com.example.netflop.constants.enums.TypeOfMedia;
+import com.example.netflop.constants.enums.WatchStatus;
 import com.example.netflop.data.models.local.FavouriteMedia;
 import com.example.netflop.data.models.remote.movies.CombinedCredit;
 import com.example.netflop.data.models.remote.movies.MovieCast;
@@ -345,7 +346,7 @@ public class PersonDetailActivity extends BaseActivity implements ItemMovieCastL
                         isFavourite=false;
                     }
                 }else{
-                    favouriteMediaViewModel.insertFavouriteMedia(personID,personName, TypeOfMedia.person,null,null,personAvatar);
+                    favouriteMediaViewModel.insertFavouriteMedia(personID,personName, TypeOfMedia.person,null,null,personAvatar, WatchStatus.UNWATCH);
                 }
 
             }
