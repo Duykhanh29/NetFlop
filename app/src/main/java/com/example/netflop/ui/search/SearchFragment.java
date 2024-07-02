@@ -46,8 +46,10 @@ import com.example.netflop.ui.adapters.remote.SearchPersonAdapter;
 import com.example.netflop.ui.adapters.remote.SearchTVAdapter;
 import com.example.netflop.ui.adapters.local.SearchHistoryAdapter;
 import com.example.netflop.ui.base.BaseFragment;
+import com.example.netflop.ui.home.AllTrendingMovieActivity;
 import com.example.netflop.ui.movie_detail.MovieDetailActivity;
 import com.example.netflop.ui.person_detail.PersonDetailActivity;
+import com.example.netflop.utils.SeeMoreOnClickListener;
 import com.example.netflop.utils.listeners.ItemTVOnClickListener;
 import com.example.netflop.utils.listeners.ItemTouchHelperAdapter;
 import com.example.netflop.utils.listeners.OnSearchHistoryListener;
@@ -95,6 +97,7 @@ public class SearchFragment extends BaseFragment implements SearchItemOnClickLis
     // UI
     DrawerLayout drawerLayout;
     TextView typeOfSearchingTV,isAdultTV;
+    TextView clearAllHistoryTextView;
 
     ImageButton filterButton;
 
@@ -176,6 +179,8 @@ public class SearchFragment extends BaseFragment implements SearchItemOnClickLis
             isBackupCheckAll = isCheckAll;
             shouldRefresh = true;
         }
+        Log.d("Test queryText back","queryText back: "+queryText);
+        searchView.setQuery(queryText,false);
 
         if(shouldRefresh &&queryText!=null&& !queryText.isEmpty()){
             refreshSearchResults();
@@ -231,6 +236,7 @@ public class SearchFragment extends BaseFragment implements SearchItemOnClickLis
         getBinding();
         initialize();
         callSearchHistoryData();
+        onHandleClearAllClick();
         observeSearchHistoryChanged();
         observeDataChanged();
         getOnBackPressed();
@@ -251,6 +257,7 @@ public class SearchFragment extends BaseFragment implements SearchItemOnClickLis
         searchHistoriesRecyclerView=binding.searchHistoryRecyclerView;
         explorationView=binding.explorationImage;
         searchHistoryView=binding.searchHistoryView;
+        clearAllHistoryTextView=binding.clearAllHistory;
     }
 
 
@@ -437,7 +444,9 @@ public class SearchFragment extends BaseFragment implements SearchItemOnClickLis
                             searchHistoriesData.add(searchHistories.get(searchHistories.size()-i-1));
                         }
                     }else{
-                        searchHistoriesData.addAll(searchHistories);
+                        for (int i = 0; i < searchHistories.size(); i++) {
+                            searchHistoriesData.add(searchHistories.get(searchHistories.size()-i-1));
+                        }
                     }
 //                    searchHistoriesData.addAll(searchHistories);
                     searchHistoryAdapter.notifyDataSetChanged();
@@ -554,6 +563,7 @@ public class SearchFragment extends BaseFragment implements SearchItemOnClickLis
             public void onClick(View view) {
                 Intent intent=new Intent(requireActivity(),FilterActivity.class);
                 isFilterForward=true;
+                Log.d("Test queryText","queryText: "+queryText);
                 intent.putExtra("requestCode", RequestCode.REQUEST_FILTER);
                 intent.putExtra(StringConstants.isAdultKey,isAdult);
                 intent.putExtra(StringConstants.isPersonKey,isPerson);
@@ -627,6 +637,11 @@ public class SearchFragment extends BaseFragment implements SearchItemOnClickLis
             isSearched=false;
         }
 
+    }
+    private void onHandleClearAllClick(){
+        SeeMoreOnClickListener.getSeeMoreOnClick(clearAllHistoryTextView,() -> {
+            searchHistoryViewModel.clearSearchHistory();
+        });
     }
 
     @Override

@@ -58,12 +58,30 @@
                     android:visibility="gone"
                     android:id="@+id/searchHistoryView"
                     android:orientation="vertical">
-                    <TextView
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Recent search"
-                        style="@style/Heading2TextStyle"
-                        ></TextView>
+                        android:orientation="horizontal"
+                        >
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Recent search"
+                            style="@style/Heading2TextStyle"
+                            ></TextView>
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            ></View>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Clear all"
+                            android:id="@+id/clearAllHistory"
+                            style="@style/NormalTextStyle"
+                            ></TextView>
+                    </LinearLayout>
                     <androidx.recyclerview.widget.RecyclerView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

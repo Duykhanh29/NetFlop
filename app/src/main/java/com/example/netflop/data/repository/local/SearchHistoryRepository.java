@@ -18,6 +18,49 @@ public class SearchHistoryRepository {
     public SearchHistoryRepository(Context context) {
         databaseHelper = new DatabaseHelper(context);
     }
+
+    public boolean insertOrUpdateSearchKey(String searchKey, SearchType searchType, int isAdult) {
+        SQLiteDatabase database = databaseHelper.getWritableDatabase();
+
+        // Check if an entry with the same searchKey, searchType, and isAdult exists
+        String selection = SearchHistoryTable.COLUMN_SEARCH_KEY + " = ? AND " +
+                SearchHistoryTable.COLUMN_SEARCH_TYPE + " = ? AND " +
+                SearchHistoryTable.COLUMN_IS_ADULT + " = ?";
+        String[] selectionArgs = { searchKey, searchType.name(), String.valueOf(isAdult) };
+
+        Cursor cursor = database.query(SearchHistoryTable.TABLE_NAME, null, selection, selectionArgs, null, null, null);
+        boolean exists = cursor.getCount() > 0;
+        cursor.close();
+
+        if (exists) {
+            return updateSearchKey(searchKey, searchType, isAdult);
+        } else {
+            return insertSearchKey(searchKey, searchType, isAdult);
+        }
+    }
+
+    public boolean deleteAndInsertSearchKey(String searchKey, SearchType searchType, int isAdult) {
+        SQLiteDatabase database = databaseHelper.getWritableDatabase();
+
+        // Check if an entry with the same searchKey, searchType, and isAdult exists
+        String selection = SearchHistoryTable.COLUMN_SEARCH_KEY + " = ? AND " +
+                SearchHistoryTable.COLUMN_SEARCH_TYPE + " = ? AND " +
+                SearchHistoryTable.COLUMN_IS_ADULT + " = ?";
+        String[] selectionArgs = { searchKey, searchType.name(), String.valueOf(isAdult) };
+
+        Cursor cursor = database.query(SearchHistoryTable.TABLE_NAME, null, selection, selectionArgs, null, null, null);
+        if (cursor != null && cursor.moveToFirst()) {
+            int id = cursor.getInt(cursor.getColumnIndexOrThrow(SearchHistoryTable.COLUMN_ID));
+            cursor.close();
+            // Delete the old entry
+            deleteSearchKey(id);
+        } else if (cursor != null) {
+            cursor.close();
+        }
+
+        // Insert the new entry
+        return insertSearchKey(searchKey, searchType, isAdult);
+    }
     public boolean insertSearchKey(String searchKey,SearchType searchType,int isAdult){
         SQLiteDatabase database=databaseHelper.getWritableDatabase();
         ContentValues cv = new ContentValues();
@@ -30,6 +73,21 @@ public class SearchHistoryRepository {
         }else {
             return true;
         }
+    }
+    private boolean updateSearchKey(String searchKey, SearchType searchType, int isAdult) {
+        SQLiteDatabase database = databaseHelper.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(SearchHistoryTable.COLUMN_SEARCH_KEY, searchKey);
+        cv.put(SearchHistoryTable.COLUMN_SEARCH_TYPE, searchType.name());
+        cv.put(SearchHistoryTable.COLUMN_IS_ADULT, isAdult);
+
+        String selection = SearchHistoryTable.COLUMN_SEARCH_KEY + " = ? AND " +
+                SearchHistoryTable.COLUMN_SEARCH_TYPE + " = ? AND " +
+                SearchHistoryTable.COLUMN_IS_ADULT + " = ?";
+        String[] selectionArgs = { searchKey, searchType.name(), String.valueOf(isAdult) };
+
+        long result = database.update(SearchHistoryTable.TABLE_NAME, cv, selection, selectionArgs);
+        return result != -1;
     }
     public boolean deleteSearchKey(int id){
         SQLiteDatabase database=databaseHelper.getWritableDatabase();
@@ -71,5 +129,10 @@ public class SearchHistoryRepository {
             cursor.close();
         }
         return list;
+    }
+    public boolean clearSearchHistory() {
+        SQLiteDatabase database = databaseHelper.getWritableDatabase();
+        int result = database.delete(SearchHistoryTable.TABLE_NAME, null, null);
+        return result != -1;
     }
 }

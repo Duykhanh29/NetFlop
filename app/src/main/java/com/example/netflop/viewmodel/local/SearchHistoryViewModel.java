@@ -30,7 +30,7 @@ public class SearchHistoryViewModel extends AndroidViewModel {
         return searchHistories;
     }
     public void insertSearchHistory(String searchKey, SearchType searchType, int isAdult) {
-        boolean id = repository.insertSearchKey(searchKey,searchType,isAdult);
+        boolean id = repository.deleteAndInsertSearchKey(searchKey,searchType,isAdult);
         if (id) {
             // Handle success
             getData();
@@ -44,6 +44,12 @@ public class SearchHistoryViewModel extends AndroidViewModel {
     }
     public void getData(){
         searchHistories.postValue(repository.getListSearchHistory());;
+    }
+    public void clearSearchHistory() {
+        boolean success = repository.clearSearchHistory();
+        if (success) {
+            getData();  // Refresh data after clearing
+        }
     }
 
 }
