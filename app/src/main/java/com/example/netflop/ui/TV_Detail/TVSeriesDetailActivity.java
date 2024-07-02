@@ -42,6 +42,8 @@ import com.example.netflop.helpers.NoInternetToastHelpers;
 import com.example.netflop.ui.adapters.remote.ListCreatedByAdapter;
 import com.example.netflop.ui.adapters.remote.ListSeasonAdapter;
 import com.example.netflop.ui.base.BaseActivity;
+import com.example.netflop.ui.person_detail.PersonDetailActivity;
+import com.example.netflop.utils.listeners.OnClickIDListener;
 import com.example.netflop.utils.listeners.OnTVClickListener;
 import com.example.netflop.utils.RecyclerViewUtils;
 import com.example.netflop.utils.ToolBarUtils;
@@ -53,7 +55,7 @@ import com.google.android.flexbox.FlexboxLayout;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TVSeriesDetailActivity extends BaseActivity implements OnTVClickListener {
+public class TVSeriesDetailActivity extends BaseActivity implements OnTVClickListener, OnClickIDListener {
     ActivityTvseriesDetailBinding binding;
 
 
@@ -181,7 +183,7 @@ public class TVSeriesDetailActivity extends BaseActivity implements OnTVClickLis
         slideModels=new ArrayList<>();
         listSeason=new ArrayList<>();
         listCreatedBy=new ArrayList<>();
-        listCreatedByAdapter=new ListCreatedByAdapter(listCreatedBy,this);
+        listCreatedByAdapter=new ListCreatedByAdapter(listCreatedBy,this,this);
         listSeasonAdapter=new ListSeasonAdapter(tvSeriesID,listSeason,this,this,favouriteMediaViewModel);
         RecyclerViewUtils.setupHorizontalRecyclerView(this,createdByRecyclerView,listCreatedByAdapter,LinearLayoutManager.HORIZONTAL,false);
         RecyclerViewUtils.setupHorizontalRecyclerView(this,seasonsTVSeriesRecyclerView,listSeasonAdapter,LinearLayoutManager.HORIZONTAL,false);
@@ -350,7 +352,7 @@ public class TVSeriesDetailActivity extends BaseActivity implements OnTVClickLis
         if(tvSeriesDetail.getCreatedBy()!=null&&!tvSeriesDetail.getCreatedBy().isEmpty()){
             listCreatedBy=tvSeriesDetail.getCreatedBy();
             listCreatedByAdapter.notifyDataSetChanged();
-            listCreatedByAdapter=new ListCreatedByAdapter(listCreatedBy,this);
+            listCreatedByAdapter=new ListCreatedByAdapter(listCreatedBy,this,this);
             createdByRecyclerView.setAdapter(listCreatedByAdapter);
         }else{
             isHavingCreatedByEpisodeView.setVisibility(View.VISIBLE);
@@ -386,5 +388,14 @@ public class TVSeriesDetailActivity extends BaseActivity implements OnTVClickLis
     protected void onResume() {
         super.onResume();
         loadFavouriteData();
+    }
+
+    @Override
+    public void onCLick(int id, String type) {
+        if(type.equals(StringConstants.personType)){
+            Intent intent=new Intent(this, PersonDetailActivity.class);
+            intent.putExtra(StringConstants.personDetailDataKey,id);
+            startActivity(intent);
+        }
     }
 }

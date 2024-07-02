@@ -14,18 +14,22 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.netflop.R;
+import com.example.netflop.constants.StringConstants;
 import com.example.netflop.constants.URLConstants;
 import com.example.netflop.data.models.remote.TVs.CreatedBy;
+import com.example.netflop.utils.listeners.OnClickIDListener;
 
 import java.util.List;
 
 public class ListCreatedByAdapter extends RecyclerView.Adapter<ListCreatedByAdapter.ViewHolder> {
     List<CreatedBy> listData;
     Context context;
+    OnClickIDListener itemTouchHelperAdapter;
 
-    public ListCreatedByAdapter(List<CreatedBy> listData, Context context) {
+    public ListCreatedByAdapter(List<CreatedBy> listData, Context context,OnClickIDListener itemTouchHelperAdapter) {
         this.listData = listData;
         this.context = context;
+        this.itemTouchHelperAdapter=itemTouchHelperAdapter;
     }
 
     @NonNull
@@ -46,6 +50,7 @@ public class ListCreatedByAdapter extends RecyclerView.Adapter<ListCreatedByAdap
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                 itemTouchHelperAdapter.onCLick(createdBy.getId(), StringConstants.personType);
             }
         });
     }

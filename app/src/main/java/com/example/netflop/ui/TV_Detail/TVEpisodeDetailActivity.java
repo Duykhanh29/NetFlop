@@ -29,6 +29,7 @@ import com.example.netflop.databinding.ActivityTvepisodeDetailBinding;
 import com.example.netflop.ui.adapters.remote.ListCrewTVAdapter;
 import com.example.netflop.ui.adapters.remote.ListGuestStarAdapter;
 import com.example.netflop.ui.base.BaseActivity;
+import com.example.netflop.ui.person_detail.PersonDetailActivity;
 import com.example.netflop.utils.listeners.OnClickIDListener;
 import com.example.netflop.utils.RecyclerViewUtils;
 import com.example.netflop.utils.ToolBarUtils;
@@ -259,6 +260,10 @@ public class TVEpisodeDetailActivity extends BaseActivity implements OnClickIDLi
 
     @Override
     public void onCLick(int id, String type) {
-
+        if(type.equals(StringConstants.personType)){
+            Intent intent=new Intent(this, PersonDetailActivity.class);
+            intent.putExtra(StringConstants.personDetailDataKey,id);
+            startActivity(intent);
+        }
     }
 }
