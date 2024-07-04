@@ -501,14 +501,14 @@ public class MovieDetailActivity extends BaseActivity implements ItemTouchHelper
             @Override
             public void onClick(View view) {
                 if(isFavourite){
-                    int index=0;
+                    int index=-1;
                     for (int i = 0; i <listFavouriteMovie.size() ; i++) {
                         if(listFavouriteMovie.get(i).getMediaID()==movieID){
                             index=i;
                             break;
                         }
                     }
-                    if(index!=0){
+                    if(index!=-1){
                         favouriteMediaViewModel.deleteFavouriteMedia(listFavouriteMovie.get(index).getId());
                         isFavourite=false;
                     }

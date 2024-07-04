@@ -173,12 +173,12 @@ public class TVEpisodeDetailActivity extends BaseActivity implements OnClickIDLi
 
     }
     private  void observeFavouriteDataChange(){
-        favouriteMediaViewModel.getFavouritePeople().observe(this, new Observer<List<FavouriteMedia>>() {
+        favouriteMediaViewModel.getFavouriteTVEpisodes().observe(this, new Observer<List<FavouriteMedia>>() {
             @Override
             public void onChanged(List<FavouriteMedia> favouriteMedia) {
                 listFavourite=favouriteMedia;
                 for (int i = 0; i < favouriteMedia.size(); i++) {
-                    if(favouriteMedia.get(i).getMediaID()==tvSeriesID){
+                    if(favouriteMedia.get(i).getMediaID()==tvSeriesID&&favouriteMedia.get(i).getSeasonNumber()==seasonNumber&&favouriteMedia.get(i).getEpisodeNumber()==episodeNumber){
                         isFavourite=true;
                         addFavouriteView.setImageResource(R.drawable.favoourite_no_border);
                     }
@@ -194,19 +194,19 @@ public class TVEpisodeDetailActivity extends BaseActivity implements OnClickIDLi
             @Override
             public void onClick(View view) {
                 if(isFavourite){
-                    int index=0;
+                    int index=-1;
                     for (int i = 0; i <listFavourite.size() ; i++) {
                         if(listFavourite.get(i).getMediaID()==tvSeriesID&&listFavourite.get(i).getSeasonNumber()==seasonNumber&&listFavourite.get(i).getEpisodeNumber()==episodeNumber){
                             index=i;
                             break;
                         }
                     }
-                    if(index!=0){
+                    if(index!=-1){
                         favouriteMediaViewModel.deleteFavouriteMedia(listFavourite.get(index).getId());
                         isFavourite=false;
                     }
                 }else{
-                    favouriteMediaViewModel.insertFavouriteMedia(tvSeriesID,tvTitle, TypeOfMedia.TVSeason,seasonNumber,episodeNumber,imagePath, WatchStatus.UNWATCH);
+                    favouriteMediaViewModel.insertFavouriteMedia(tvSeriesID,tvTitle, TypeOfMedia.TVEpisode,seasonNumber,episodeNumber,imagePath, WatchStatus.UNWATCH);
                 }
 
             }

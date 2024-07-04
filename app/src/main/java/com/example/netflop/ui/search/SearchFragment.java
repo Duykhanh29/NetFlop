@@ -635,6 +635,9 @@ public class SearchFragment extends BaseFragment implements SearchItemOnClickLis
             typeOfSearchingTV.setText("");
             isAdultTV.setText("");
             isSearched=false;
+            searchLayoutView.setVisibility(View.GONE);
+            nonSearchLayout.setVisibility(View.VISIBLE);
+            callSearchHistoryData();
         }
 
     }
@@ -738,24 +741,28 @@ public class SearchFragment extends BaseFragment implements SearchItemOnClickLis
                 searchView.setQuery(queryText,false);
                 nonSearchLayout.setVisibility(View.GONE);
                 searchLayoutView.setVisibility(View.VISIBLE);
+                searchHistoryViewModel.insertSearchHistory(queryText,SearchType.TV,searchHistory.isAdult());
             }else if(searchHistory.getSearchType()==SearchType.MOVIE){
                 callMovieAPI(searchHistory.getSearchKey(),searchHistory.isAdult()==1?true:false);
                 queryText=searchHistory.getSearchKey();
                 searchView.setQuery(queryText,false);
                 nonSearchLayout.setVisibility(View.GONE);
                 searchLayoutView.setVisibility(View.VISIBLE);
+                searchHistoryViewModel.insertSearchHistory(queryText,SearchType.MOVIE,searchHistory.isAdult());
             }else if(searchHistory.getSearchType()==SearchType.MULTI){
                 callAPIs(searchHistory.getSearchKey(),searchHistory.isAdult()==1?true:false);
                 queryText=searchHistory.getSearchKey();
                 searchView.setQuery(queryText,false);
                 nonSearchLayout.setVisibility(View.GONE);
                 searchLayoutView.setVisibility(View.VISIBLE);
+                searchHistoryViewModel.insertSearchHistory(queryText,SearchType.MULTI,searchHistory.isAdult());
             }else{
                 callPersonAPI(searchHistory.getSearchKey(),searchHistory.isAdult()==1?true:false);
                 queryText=searchHistory.getSearchKey();
                 searchView.setQuery(queryText,false);
                 nonSearchLayout.setVisibility(View.GONE);
                 searchLayoutView.setVisibility(View.VISIBLE);
+                searchHistoryViewModel.insertSearchHistory(queryText,SearchType.PEOPLE,searchHistory.isAdult());
             }
         }else{
             NoInternetToastHelpers.show(getActivity());

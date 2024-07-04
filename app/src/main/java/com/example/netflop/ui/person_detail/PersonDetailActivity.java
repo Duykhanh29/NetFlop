@@ -313,7 +313,7 @@ public class PersonDetailActivity extends BaseActivity implements ItemMovieCastL
     }
 
     private  void observeFavouriteDataChange(){
-        favouriteMediaViewModel.getFavouriteMovies().observe(this, new Observer<List<FavouriteMedia>>() {
+        favouriteMediaViewModel.getFavouritePeople().observe(this, new Observer<List<FavouriteMedia>>() {
             @Override
             public void onChanged(List<FavouriteMedia> favouriteMedia) {
                 listFavourite=favouriteMedia;
@@ -334,14 +334,14 @@ public class PersonDetailActivity extends BaseActivity implements ItemMovieCastL
             @Override
             public void onClick(View view) {
                 if(isFavourite){
-                    int index=0;
+                    int index=-1;
                     for (int i = 0; i <listFavourite.size() ; i++) {
                         if(listFavourite.get(i).getMediaID()==personID){
                             index=i;
                             break;
                         }
                     }
-                    if(index!=0){
+                    if(index!=-1){
                         favouriteMediaViewModel.deleteFavouriteMedia(listFavourite.get(index).getId());
                         isFavourite=false;
                     }

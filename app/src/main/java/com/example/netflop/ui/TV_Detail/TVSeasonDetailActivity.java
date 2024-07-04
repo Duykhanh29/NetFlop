@@ -68,7 +68,7 @@ public class TVSeasonDetailActivity extends BaseActivity implements OnTVClickLis
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_tvseason_detail);
+        setContentView(R.layout.activity_tvseason_detail);
 
         binding=ActivityTvseasonDetailBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -141,12 +141,12 @@ public class TVSeasonDetailActivity extends BaseActivity implements OnTVClickLis
         });
     }
     private  void observeFavouriteDataChange(){
-        favouriteMediaViewModel.getFavouriteTVEpisodes().observe(this, new Observer<List<FavouriteMedia>>() {
+        favouriteMediaViewModel.getFavouriteTVSeasons().observe(this, new Observer<List<FavouriteMedia>>() {
             @Override
             public void onChanged(List<FavouriteMedia> favouriteMedia) {
                 listFavourite=favouriteMedia;
                 for (int i = 0; i < favouriteMedia.size(); i++) {
-                    if(favouriteMedia.get(i).getMediaID()==tvSeriesID){
+                    if(favouriteMedia.get(i).getMediaID()==tvSeriesID&&favouriteMedia.get(i).getSeasonNumber()==seasonNumber){
                         isFavourite=true;
                         addFavouriteView.setImageResource(R.drawable.favoourite_no_border);
                     }
@@ -162,14 +162,14 @@ public class TVSeasonDetailActivity extends BaseActivity implements OnTVClickLis
             @Override
             public void onClick(View view) {
                 if(isFavourite){
-                    int index=0;
+                    int index=-1;
                     for (int i = 0; i <listFavourite.size() ; i++) {
                         if(listFavourite.get(i).getMediaID()==tvSeriesID&&listFavourite.get(i).getSeasonNumber()==seasonNumber){
                             index=i;
                             break;
                         }
                     }
-                    if(index!=0){
+                    if(index!=-1){
                         favouriteMediaViewModel.deleteFavouriteMedia(listFavourite.get(index).getId());
                         isFavourite=false;
                     }
