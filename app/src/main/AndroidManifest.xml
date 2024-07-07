@@ -11,9 +11,9 @@
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:forceDarkAllowed="false"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/netflop_logo"
+        android:icon="@mipmap/netflop_foreground"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/netflop_logo"
+        android:roundIcon="@mipmap/netflop_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.NetFlop"
         tools:targetApi="31">
@@ -44,7 +44,7 @@
         <activity
             android:name=".ui.on_boarding.OnBoardingActivity"
             android:exported="false"
-            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
 
         </activity>
         <activity

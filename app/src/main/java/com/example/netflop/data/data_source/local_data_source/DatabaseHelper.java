@@ -15,18 +15,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public DatabaseHelper(@Nullable Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
-
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         try {
             sqLiteDatabase.execSQL(SearchHistoryTable.CREATE_TABLE);
             sqLiteDatabase.execSQL(FavouriteMediaTable.CREATE_TABLE);
-            Log.d("HFAGSDFD", "Tables created successfully.");
+            Log.d("LOG", "Tables created successfully.");
         } catch (Exception e) {
-            Log.e("HFAGSDFD", "Error creating tables: " + e.getMessage());
+            Log.e("LOG", "Error creating tables: " + e.getMessage());
         }
     }
-
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS "+SearchHistoryTable.TABLE_NAME);
