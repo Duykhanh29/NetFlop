@@ -48,15 +48,15 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
         SearchMultiModel searchMultiModel= listSearch.get(position);
         holder.typeTV.setText(searchMultiModel.getMediaType());
         String imageURL= URLConstants.imageURL;
-        if(searchMultiModel.getMediaType()=="movie"){
-            if(searchMultiModel.getTitle()!=null&&searchMultiModel.getTitle()!=""){
+        if(searchMultiModel.getMediaType().equals("movie")){
+            if(searchMultiModel.getTitle()!=null&& !searchMultiModel.getTitle().equals("")){
                 holder.nameTV.setText(searchMultiModel.getTitle());
             }else{
                 holder.nameTV.setText(searchMultiModel.getOriginalTitle());
             }
             imageURL+=searchMultiModel.getPosterPath();
         }else if(searchMultiModel.getMediaType()=="person"){
-            if(searchMultiModel.getName()!=null&&searchMultiModel.getName()!=""){
+            if(searchMultiModel.getName()!=null&&!searchMultiModel.getName().equals("")){
                 holder.nameTV.setText(searchMultiModel.getName());
             }else{
                 holder.nameTV.setText(searchMultiModel.getOriginalName());
